@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Terms of Service for Discord Bot - Use at your own risk.">
+    <title>Terms of Service | Discord Bot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0e14;
+            --bg-surface: #151922;
+            --bg-surface-elevated: #1c2230;
+            --border-color: #262e40;
+            --border-highlight: #3b4661;
+            --accent: #5865f2;
+            --accent-hover: #4752c4;
+            --accent-glow: rgba(88, 101, 242, 0.18);
+            --warning-bg: rgba(245, 158, 11, 0.08);
+            --warning-border: rgba(245, 158, 11, 0.3);
+            --warning-text: #fbbf24;
+            --danger-bg: rgba(239, 68, 68, 0.08);
+            --danger-border: rgba(239, 68, 68, 0.3);
+            --danger-text: #f87171;
+            --text-main: #e6edf3;
+            --text-secondary: #9aa5b8;
+            --text-muted: #626f84;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.7;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(88, 101, 242, 0.08), transparent 30%),
+                radial-gradient(circle at 85% 80%, rgba(239, 68, 68, 0.05), transparent 35%);
+            background-attachment: fixed;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(11, 14, 20, 0.85);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .bot-badge {
+            background: var(--accent);
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.45rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-secondary);
+            padding: 0.45rem 0.9rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-main);
+            background: var(--bg-surface-elevated);
+        }
+
+        .nav-link.active {
+            color: #ffffff;
+            background: var(--accent);
+        }
+
+        main {
+            flex: 1;
+            max-width: 900px;
+            width: 100%;
+            margin: 2.5rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .meta-info {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            flex-wrap: wrap;
+        }
+
+        .alert-box {
+            background: var(--danger-bg);
+            border: 1px solid var(--danger-border);
+            border-radius: var(--radius-md);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .alert-title {
+            color: var(--danger-text);
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-box p {
+            color: var(--text-secondary);
+            font-size: 0.925rem;
+            line-height: 1.6;
+        }
+
+        .section {
+            margin-top: 2.25rem;
+        }
+
+        .section-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.85rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .section-num {
+            font-family: var(--font-mono);
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        p, ul, ol {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.985rem;
+        }
+
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        strong {
+            color: var(--text-main);
+        }
+
+        .highlight-card {
+            background: var(--bg-surface-elevated);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.25rem;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin: 1.25rem 0;
+            font-size: 0.95rem;
+        }
+
+        .caps-notice {
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-highlight);
+            padding: 1.25rem;
+            border-radius: var(--radius-md);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 1.65;
+            color: #d1d7e0;
+            margin: 1.5rem 0;
+        }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            background: var(--bg-primary);
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            .card {
+                padding: 1.5rem;
+            }
+            .page-title {
+                font-size: 1.75rem;
+            }
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <a href="terms.html" class="logo-area">
+                <span>Discord Bot</span>
+                <span class="bot-badge">Public Bot</span>
+            </a>
+            <nav aria-label="Legal Navigation">
+                <a href="terms.html" class="nav-link active">Terms of Service</a>
+                <a href="privacy.html" class="nav-link">Privacy Policy</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <article class="card">
+            <header class="page-header">
+                <h1 class="page-title">Terms of Service</h1>
+                <div class="meta-info">
+                    <span>Effective Date: August 15, 2026</span>
+                    <span>•</span>
+                    <span>Version 1.0</span>
+                    <span>•</span>
+                    <span>Public Distribution</span>
+                </div>
+            </header>
+
+            <div class="alert-box">
+                <div class="alert-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    CRITICAL NOTICE: USE AT YOUR OWN RISK
+                </div>
+                <p>
+                    This Discord bot is provided strictly on an <strong>"AS-IS"</strong> and <strong>"AS-AVAILABLE"</strong> basis without warranties of any kind. 
+                    Interactions take place in shared public and community environments. By inviting, accessing, or interacting with this bot, you explicitly agree that your use is entirely at your own risk.
+                </p>
+            </div>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">01.</span> Agreement to Terms</h2>
+                <p>
+                    By adding this bot ("the Bot", "the Service") to a Discord server, or by interacting with the Bot through slash commands, context menus, direct messages, or message triggers, you ("User", "you") acknowledge that you have read, understood, and agreed to be bound by these Terms of Service ("Terms") as well as our <a href="privacy.html" style="color: var(--accent);">Privacy Policy</a>.
+                </p>
+                <p>
+                    If you do not agree to these Terms, you must immediately cease using the Bot, kick or ban it from your Discord servers, and refrain from interacting with its commands.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">02.</span> Eligibility & Discord Platform Requirements</h2>
+                <p>
+                    To use this Bot, you must satisfy Discord's minimum age requirements (at least 13 years of age, or the legal age of digital consent in your jurisdiction).
+                </p>
+                <p>
+                    Your use of this Bot is also subject to and must fully comply with:
+                </p>
+                <ul>
+                    <li><a href="https://discord.com/terms" target="_blank" rel="noopener noreferrer" style="color: var(--accent);">Discord Terms of Service</a></li>
+                    <li><a href="https://discord.com/guidelines" target="_blank" rel="noopener noreferrer" style="color: var(--accent);">Discord Community Guidelines</a></li>
+                    <li><a href="https://discord.com/developers/docs/policies-and-agreements/developer-terms-of-service" target="_blank" rel="noopener noreferrer" style="color: var(--accent);">Discord Developer Terms of Service</a></li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">03.</span> Nature of Service & Public Interaction</h2>
+                <p>
+                    The Bot is designed for public and semi-public multi-server environments. Commands, interactions, status responses, and audit logs are visible to other members and server administrators in accordance with Discord's permission structures.
+                </p>
+                <div class="highlight-card">
+                    <strong>No Expectation of Confidentiality:</strong> Any commands, parameters, text, media requests, or interactions transmitted through the Bot occur in public or guild-shared contexts and should never contain sensitive personal, financial, or confidential information.
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">04.</span> Virtual Currency, Economy & Features</h2>
+                <p>
+                    If the Bot provides virtual currency, economy balances, levels, roles, items, or leaderboard statistics:
+                </p>
+                <ul>
+                    <li><strong>Zero Real-World Value:</strong> All in-bot points, balances, items, or currencies are fictitious virtual tokens with zero monetary, cash, or real-world value. They cannot be redeemed, sold, exchanged, or converted into fiat currency or real-world goods.</li>
+                    <li><strong>No Ownership Rights:</strong> You do not own any virtual currency, inventory, or metadata stored by the Bot. All data is provided as an entertainment feature subject to modification, reset, or deletion.</li>
+                    <li><strong>Wipes and Resets:</strong> Bot maintainers reserve the right to reset, recalculate, alter, or purge economy balances, ledgers, or game states at any time without notice or compensation.</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">05.</span> Prohibited Conduct</h2>
+                <p>You agree not to engage in any of the following prohibited activities:</p>
+                <ul>
+                    <li>Attempting to exploit bugs, race conditions, vulnerabilities, or command glitches.</li>
+                    <li>Automating interactions, macroing, or spamming commands to bypass cooldowns, rate limits, or usage quotas.</li>
+                    <li>Using the Bot to harass, spam, defraud, impersonate, or violate the privacy of others.</li>
+                    <li>Using the Bot to transmit illegal, infringing, malicious, or abusive content.</li>
+                    <li>Reverse engineering, decompiling, or launching denial-of-service (DoS) attacks against the Bot's hosting infrastructure or databases.</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">06.</span> Availability, Uptime & Modifications</h2>
+                <p>
+                    The Bot is provided as an independent project. We do not guarantee continuous, uninterrupted, error-free, or secure availability. 
+                    The Bot may experience downtime, maintenance outages, feature removals, database corruption, or sudden discontinuation at any time without prior notice or liability.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">07.</span> Disclaimer of Warranties</h2>
+                <div class="caps-notice">
+                    THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTY OF ANY KIND, EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT. WE DO NOT WARRANT THAT THE BOT WILL MEET YOUR REQUIREMENTS, OPERATE WITHOUT INTERRUPTION, BE ACCURATE, SECURE, OR ERROR-FREE.
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">08.</span> Limitation of Liability</h2>
+                <div class="caps-notice">
+                    TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL THE BOT CREATORS, DEVELOPERS, HOSTS, OR AFFILIATES BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES (INCLUDING LOSS OF DATA, LOSS OF VIRTUAL ASSETS, SERVER DISRUPTIONS, CORRUPTION OF RECORDS, OR COST OF SUBSTITUTE SERVICES) ARISING OUT OF OR IN CONNECTION WITH YOUR USE OR INABILITY TO USE THE BOT, REGARDLESS OF THE THEORY OF LIABILITY.
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">09.</span> Termination & Access Revocation</h2>
+                <p>
+                    We reserve the unrestricted right, in our sole discretion and without notice or liability, to deny access, blacklist, block, or restrict any user or entire Discord server from using the Bot for any reason, including but not limited to violation of these Terms or abuse of resources.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">10.</span> Changes to Terms</h2>
+                <p>
+                    We may update or modify these Terms at any time. The updated Terms will be posted to this page with an updated effective date. Continued use of the Bot following any revisions constitutes your acceptance of the revised Terms.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">11.</span> Contact & Inquiries</h2>
+                <p>
+                    If you have questions regarding these Terms or need to report an issue, please contact the bot maintainers through the official support server or Discord support channel.
+                </p>
+            </section>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Discord Bot. All rights reserved. Not affiliated with, endorsed by, or sponsored by Discord Inc.</p>
+        <p style="margin-top: 0.5rem;"><a href="terms.html">Terms of Service</a> &bull; <a href="privacy.html">Privacy Policy</a></p>
+    </footer>
+
+</body>
+</html>

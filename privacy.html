@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Privacy Policy for Discord Bot - Public bot data practices and disclaimers.">
+    <title>Privacy Policy | Discord Bot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0e14;
+            --bg-surface: #151922;
+            --bg-surface-elevated: #1c2230;
+            --border-color: #262e40;
+            --border-highlight: #3b4661;
+            --accent: #5865f2;
+            --accent-hover: #4752c4;
+            --accent-glow: rgba(88, 101, 242, 0.18);
+            --warning-bg: rgba(245, 158, 11, 0.08);
+            --warning-border: rgba(245, 158, 11, 0.3);
+            --warning-text: #fbbf24;
+            --danger-bg: rgba(239, 68, 68, 0.08);
+            --danger-border: rgba(239, 68, 68, 0.3);
+            --danger-text: #f87171;
+            --info-bg: rgba(59, 130, 246, 0.08);
+            --info-border: rgba(59, 130, 246, 0.3);
+            --info-text: #60a5fa;
+            --text-main: #e6edf3;
+            --text-secondary: #9aa5b8;
+            --text-muted: #626f84;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.7;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(88, 101, 242, 0.08), transparent 30%),
+                radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.05), transparent 35%);
+            background-attachment: fixed;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(11, 14, 20, 0.85);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .bot-badge {
+            background: var(--accent);
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.45rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-secondary);
+            padding: 0.45rem 0.9rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-main);
+            background: var(--bg-surface-elevated);
+        }
+
+        .nav-link.active {
+            color: #ffffff;
+            background: var(--accent);
+        }
+
+        main {
+            flex: 1;
+            max-width: 900px;
+            width: 100%;
+            margin: 2.5rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .page-title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .meta-info {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            flex-wrap: wrap;
+        }
+
+        .alert-box {
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            border-radius: var(--radius-md);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .alert-title {
+            color: var(--warning-text);
+            font-weight: 700;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-box p {
+            color: var(--text-secondary);
+            font-size: 0.925rem;
+            line-height: 1.6;
+        }
+
+        .section {
+            margin-top: 2.25rem;
+        }
+
+        .section-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.85rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .section-num {
+            font-family: var(--font-mono);
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        p, ul, ol {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.985rem;
+        }
+
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        strong {
+            color: var(--text-main);
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin: 1.25rem 0;
+        }
+
+        .data-card {
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-color);
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .data-card h3 {
+            font-size: 0.95rem;
+            color: #ffffff;
+            margin-bottom: 0.35rem;
+        }
+
+        .data-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        .highlight-card {
+            background: var(--bg-surface-elevated);
+            border-left: 3px solid var(--accent);
+            padding: 1rem 1.25rem;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin: 1.25rem 0;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            background: var(--bg-primary);
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 640px) {
+            .card {
+                padding: 1.5rem;
+            }
+            .page-title {
+                font-size: 1.75rem;
+            }
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <a href="privacy.html" class="logo-area">
+                <span>Discord Bot</span>
+                <span class="bot-badge">Public Bot</span>
+            </a>
+            <nav aria-label="Legal Navigation">
+                <a href="terms.html" class="nav-link">Terms of Service</a>
+                <a href="privacy.html" class="nav-link active">Privacy Policy</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <article class="card">
+            <header class="page-header">
+                <h1 class="page-title">Privacy Policy</h1>
+                <div class="meta-info">
+                    <span>Effective Date: August 15, 2026</span>
+                    <span>•</span>
+                    <span>Version 1.0</span>
+                    <span>•</span>
+                    <span>Public Bot Disclosure</span>
+                </div>
+            </header>
+
+            <div class="alert-box">
+                <div class="alert-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    NO EXPECTATION OF PRIVACY IN PUBLIC CHANNELS
+                </div>
+                <p>
+                    This Discord bot operates inside shared server channels and community spaces. All commands, inputs, interactions, and bot outputs are visible to other members and server moderators. <strong>You should have zero expectation of privacy or confidentiality when interacting with this bot.</strong> Never provide passwords, financial credentials, personal identity documents, or private personal data.
+                </p>
+            </div>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">01.</span> Overview & Scope</h2>
+                <p>
+                    This Privacy Policy explains how this Discord bot ("the Bot", "we", "us", or "our") processes, stores, and handles information when you interact with the Bot or add it to a Discord server ("Guild").
+                </p>
+                <p>
+                    By interacting with the Bot, you consent to the data practices described in this policy and our <a href="terms.html" style="color: var(--accent);">Terms of Service</a>.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">02.</span> Information We Collect and Process</h2>
+                <p>
+                    The Bot only accesses and processes data necessary to execute its functions, maintain server-specific state, and provide features (such as economy balances, cooldowns, and server configuration).
+                </p>
+
+                <div class="data-grid">
+                    <div class="data-card">
+                        <h3>Discord Identifiers</h3>
+                        <p>Public numeric IDs (User ID, Guild/Server ID, Channel ID, Role IDs) provided via Discord's Gateway API.</p>
+                    </div>
+                    <div class="data-card">
+                        <h3>Interaction & Command Data</h3>
+                        <p>Command names, arguments, parameters, timestamps, and button/component interaction states.</p>
+                    </div>
+                    <div class="data-card">
+                        <h3>Feature & Economy State</h3>
+                        <p>Virtual balances, ledger entries, transaction histories, cooldown timestamps, and permission levels.</p>
+                    </div>
+                    <div class="data-card">
+                        <h3>Audit & Diagnostic Logs</h3>
+                        <p>Error traces, execution logs, and system events used for maintenance, anti-abuse, and debugging.</p>
+                    </div>
+                </div>
+
+                <p>
+                    <strong>Message Content:</strong> The Bot does not passively archive or eavesdrop on general chat conversation. If Message Content Intent is active, message content is read solely to process explicitly invoked commands or automated server-scoped triggers configured by guild administrators.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">03.</span> How We Use Information</h2>
+                <p>Collected data is used strictly for the following operational purposes:</p>
+                <ul>
+                    <li><strong>Service Execution:</strong> Executing slash commands, tracking cooldowns, calculating role income, managing bank balances, and processing requests.</li>
+                    <li><strong>Server Isolation:</strong> Keeping each Discord server's economy, configurations, and settings isolated from other servers.</li>
+                    <li><strong>Abuse Prevention & Security:</strong> Enforcing rate limits, preventing command automation or exploit loops, and maintaining server integrity.</li>
+                    <li><strong>Technical Maintenance:</strong> Monitoring system health, troubleshooting database exceptions, and tracking bot latency.</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">04.</span> Data Retention & Automated Cleanup</h2>
+                <p>
+                    We believe in minimal data footprint. Data is maintained only for as long as necessary to provide service functionality:
+                </p>
+                <ul>
+                    <li><strong>Member Departure Cleanup:</strong> When a member leaves, is kicked, or is banned from a Discord server, the Bot may immediately purge or reset that member's guild-specific account and balance records.</li>
+                    <li><strong>Server Removal / De-authorization:</strong> If the Bot is removed, kicked, or banned from a server, the server's associated data may be scheduled for permanent deletion.</li>
+                    <li><strong>Diagnostic Logs:</strong> Temporary execution logs and error diagnostics are periodically overwritten or purged.</li>
+                    <li><strong>Arbitrary Purge Rights:</strong> As a "use at your own risk" service, the bot maintainers reserve the right to wipe, reset, or purge any or all database records at any time without notice.</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">05.</span> Data Sharing & Third Parties</h2>
+                <p>
+                    <strong>We do not sell, rent, monetize, or trade your data to any third party or advertiser.</strong>
+                </p>
+                <p>Data is only shared in the following scenarios:</p>
+                <ul>
+                    <li><strong>Discord Platform:</strong> All interactions flow through Discord's API and infrastructure, which is governed by the <a href="https://discord.com/privacy" target="_blank" rel="noopener noreferrer" style="color: var(--accent);">Discord Privacy Policy</a>.</li>
+                    <li><strong>Public Server Visibility:</strong> Commands invoked in public channels, balance queries, leaderboard listings, and bot responses are inherently visible to other members of that Discord server.</li>
+                    <li><strong>Legal Compliance:</strong> If required by law, subpoena, or lawful court order, data may be disclosed to relevant authorities.</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">06.</span> Security & Disclaimer</h2>
+                <p>
+                    We implement reasonable technical measures (such as container isolation, private network database binding, and secure credential handling) to safeguard data.
+                </p>
+                <div class="highlight-card">
+                    <strong>No Absolute Guarantee:</strong> However, no internet transmission or electronic database is 100% secure. You acknowledge that you provide data and interact with the Bot at your own risk, with no liability on the part of the bot developers or hosts in the event of data loss, breach, or corruption.
+                </div>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">07.</span> Children's Privacy</h2>
+                <p>
+                    The Bot is not intended for or directed toward children under the age of 13 (or the minimum legal age required in your jurisdiction). In accordance with Discord's Terms of Service, users must meet the minimum age requirement to use Discord and this Bot.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">08.</span> Your Rights & Data Deletion Requests</h2>
+                <p>
+                    You can remove your active data from the Bot's operational database at any time by:
+                </p>
+                <ul>
+                    <li>Leaving the Discord server(s) where the Bot is active (triggering automated member cleanup where enabled).</li>
+                    <li>Requesting a server administrator to reset your server profile or kick the Bot.</li>
+                    <li>Contacting the bot maintainer directly to request a manual wipe of your Discord User ID from the database records.</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">09.</span> Changes to This Privacy Policy</h2>
+                <p>
+                    We may revise or update this Privacy Policy at our discretion. Any modifications will be reflected on this page with an updated effective date. Continued interaction with the Bot after changes are posted constitutes acceptance of those changes.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2 class="section-title"><span class="section-num">10.</span> Contact Us</h2>
+                <p>
+                    For privacy questions, data deletion inquiries, or concerns, please reach out via the official Discord support server or contact the bot developer directly on Discord.
+                </p>
+            </section>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Discord Bot. All rights reserved. Not affiliated with, endorsed by, or sponsored by Discord Inc.</p>
+        <p style="margin-top: 0.5rem;"><a href="terms.html">Terms of Service</a> &bull; <a href="privacy.html">Privacy Policy</a></p>
+    </footer>
+
+</body>
+</html>

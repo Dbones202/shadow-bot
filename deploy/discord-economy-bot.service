@@ -1,0 +1,23 @@
+[Unit]
+Description=Discord Economy Bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=discordbot
+Group=discordbot
+WorkingDirectory=/opt/discord-economy-bot
+EnvironmentFile=/etc/discord-economy-bot/bot.env
+ExecStart=/opt/discord-economy-bot/.venv/bin/discord-economy-bot
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
+
