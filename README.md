@@ -1,6 +1,6 @@
-# Discord Economy Bot
+# Shadow Bot
 
-This is the first foundation milestone for a private, multi-server Discord economy and future
+This is the first foundation milestone for a private, multi-server Shadow Bot economy and future
 Radarr/Sonarr request bot. Each Discord server has an isolated economy and configuration.
 
 ## Included in this milestone
@@ -40,9 +40,9 @@ right-click yourself and the test server to copy their numeric IDs.
 Run the following from the PostgreSQL container as a PostgreSQL administrator:
 
 ```sql
-CREATE ROLE discord_bot LOGIN;
-\password discord_bot
-CREATE DATABASE discord_bot OWNER discord_bot;
+CREATE ROLE shadow_bot LOGIN;
+\password shadow_bot
+CREATE DATABASE shadow_bot OWNER shadow_bot;
 ```
 
 Choose a unique password when prompted. This avoids putting it into shell history.
@@ -50,7 +50,7 @@ Choose a unique password when prompted. This avoids putting it into shell histor
 Because PostgreSQL is in a separate container:
 
 - Allow PostgreSQL to listen on its private LAN address.
-- Add a `pg_hba.conf` entry permitting only the bot container's IP address and `discord_bot` user.
+- Add a `pg_hba.conf` entry permitting only the bot container's IP address and `shadow_bot` user.
 - Allow TCP port 5432 from the bot container only.
 - Do not expose PostgreSQL to the public internet.
 
@@ -58,29 +58,29 @@ The exact PostgreSQL configuration file locations depend on its Ubuntu and Postg
 
 ## 3. Transfer the project
 
-The whole `discord-economy-bot` folder is the deployable project. Transfer it with WinSCP to a
-temporary location on the Debian bot container, such as `/tmp/discord-economy-bot`.
+The whole `shadow-bot` folder is the deployable project. Transfer it with WinSCP to a
+temporary location on the Debian bot container, such as `/tmp/shadow-bot`.
 
 Then connect over SSH and run:
 
 ```bash
 sudo apt update
 sudo apt install -y python3 python3-venv
-sudo adduser --system --group --home /opt/discord-economy-bot discordbot
-sudo cp -a /tmp/discord-economy-bot/. /opt/discord-economy-bot/
-sudo chown -R discordbot:discordbot /opt/discord-economy-bot
-sudo -u discordbot python3 -m venv /opt/discord-economy-bot/.venv
-sudo -u discordbot /opt/discord-economy-bot/.venv/bin/pip install /opt/discord-economy-bot
+sudo adduser --system --group --home /opt/shadow-bot shadowbot
+sudo cp -a /tmp/shadow-bot/. /opt/shadow-bot/
+sudo chown -R shadowbot:shadowbot /opt/shadow-bot
+sudo -u shadowbot python3 -m venv /opt/shadow-bot/.venv
+sudo -u shadowbot /opt/shadow-bot/.venv/bin/pip install /opt/shadow-bot
 ```
 
 ## 4. Create the protected configuration
 
 ```bash
-sudo install -d -m 750 -o root -g discordbot /etc/discord-economy-bot
-sudo cp /opt/discord-economy-bot/.env.example /etc/discord-economy-bot/bot.env
-sudo chown root:discordbot /etc/discord-economy-bot/bot.env
-sudo chmod 640 /etc/discord-economy-bot/bot.env
-sudo nano /etc/discord-economy-bot/bot.env
+sudo install -d -m 750 -o root -g shadowbot /etc/shadow-bot
+sudo cp /opt/shadow-bot/.env.example /etc/shadow-bot/bot.env
+sudo chown root:shadowbot /etc/shadow-bot/bot.env
+sudo chmod 640 /etc/shadow-bot/bot.env
+sudo nano /etc/shadow-bot/bot.env
 ```
 
 Set these values:
@@ -96,9 +96,9 @@ inside the password becomes `%40`.
 ## 5. Create the database tables
 
 ```bash
-cd /opt/discord-economy-bot
-sudo -u discordbot bash -c \
-  'set -a; source /etc/discord-economy-bot/bot.env; set +a; .venv/bin/alembic upgrade head'
+cd /opt/shadow-bot
+sudo -u shadowbot bash -c \
+  'set -a; source /etc/shadow-bot/bot.env; set +a; .venv/bin/alembic upgrade head'
 ```
 
 Alembic records the installed schema version. Future updates will add migrations rather than asking
@@ -107,16 +107,16 @@ you to recreate the database.
 ## 6. Install and start the service
 
 ```bash
-sudo cp /opt/discord-economy-bot/deploy/discord-economy-bot.service /etc/systemd/system/
+sudo cp /opt/shadow-bot/deploy/shadow-bot.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable --now discord-economy-bot
-sudo systemctl status discord-economy-bot
+sudo systemctl enable --now shadow-bot
+sudo systemctl status shadow-bot
 ```
 
 To follow its logs:
 
 ```bash
-sudo journalctl -u discord-economy-bot -f
+sudo journalctl -u shadow-bot -f
 ```
 
 Run `/ping` in the test server. It should show Discord and PostgreSQL as connected.

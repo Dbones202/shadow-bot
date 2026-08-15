@@ -3,7 +3,7 @@ from __future__ import annotations
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from discord_economy_bot.db.models import (
+from shadow_bot.db.models import (
     EconomyAccount,
     RoleCollectionCooldown,
     RoleIncomeRule,

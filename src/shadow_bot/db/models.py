@@ -23,7 +23,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from discord_economy_bot.db.base import Base
+from shadow_bot.db.base import Base
 
 
 class TimestampMixin:

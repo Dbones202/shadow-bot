@@ -1,4 +1,4 @@
-from discord_economy_bot.domain.permissions import CapabilityGrant, combine_grants
+from shadow_bot.domain.permissions import CapabilityGrant, combine_grants
 
 
 def test_no_roles_means_not_allowed() -> None:

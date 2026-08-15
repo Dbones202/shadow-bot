@@ -9,7 +9,7 @@
       "source_file": "migrations/env.py",
       "source_location": "L1",
       "id": "migrations_env_py",
-      "community": 10,
+      "community": 6,
       "norm_label": "env.py"
     },
     {
@@ -18,7 +18,7 @@
       "source_file": "migrations/env.py",
       "source_location": "L28",
       "id": "migrations_env_run_migrations_offline",
-      "community": 10,
+      "community": 6,
       "norm_label": "run_migrations_offline()"
     },
     {
@@ -27,7 +27,7 @@
       "source_file": "migrations/env.py",
       "source_location": "L43",
       "id": "migrations_env_do_run_migrations",
-      "community": 10,
+      "community": 6,
       "norm_label": "do_run_migrations()"
     },
     {
@@ -36,7 +36,7 @@
       "source_file": "migrations/env.py",
       "source_location": "L49",
       "id": "migrations_env_run_async_migrations",
-      "community": 10,
+      "community": 6,
       "norm_label": "run_async_migrations()"
     },
     {
@@ -78,91 +78,91 @@
     {
       "label": "bot.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_bot_py",
-      "community": 2,
+      "id": "src_shadow_bot_bot_py",
+      "community": 10,
       "norm_label": "bot.py"
     },
     {
       "label": "EconomyBot",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L16",
-      "id": "discord_economy_bot_bot_economybot",
-      "community": 2,
+      "id": "shadow_bot_bot_economybot",
+      "community": 10,
       "norm_label": "economybot"
     },
     {
       "label": ".__init__()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L17",
-      "id": "discord_economy_bot_bot_economybot_init",
-      "community": 2,
+      "id": "shadow_bot_bot_economybot_init",
+      "community": 10,
       "norm_label": ".__init__()"
     },
     {
       "label": ".setup_hook()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L25",
-      "id": "discord_economy_bot_bot_economybot_setup_hook",
-      "community": 2,
+      "id": "shadow_bot_bot_economybot_setup_hook",
+      "community": 10,
       "norm_label": ".setup_hook()"
     },
     {
       "label": ".close()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L39",
-      "id": "discord_economy_bot_bot_economybot_close",
-      "community": 2,
+      "id": "shadow_bot_bot_economybot_close",
+      "community": 10,
       "norm_label": ".close()"
     },
     {
       "label": ".on_ready()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L43",
-      "id": "discord_economy_bot_bot_economybot_on_ready",
-      "community": 2,
+      "id": "shadow_bot_bot_economybot_on_ready",
+      "community": 10,
       "norm_label": ".on_ready()"
     },
     {
       "label": "_tree_error()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L50",
-      "id": "discord_economy_bot_bot_tree_error",
-      "community": 2,
+      "id": "shadow_bot_bot_tree_error",
+      "community": 10,
       "norm_label": "_tree_error()"
     },
     {
       "label": "run_bot()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L61",
-      "id": "discord_economy_bot_bot_run_bot",
-      "community": 2,
+      "id": "shadow_bot_bot_run_bot",
+      "community": 10,
       "norm_label": "run_bot()"
     },
     {
       "label": "config.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_config_py",
-      "community": 6,
+      "id": "src_shadow_bot_config_py",
+      "community": 16,
       "norm_label": "config.py"
     },
     {
       "label": "ConfigurationError",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L9",
-      "id": "discord_economy_bot_config_configurationerror",
-      "community": 6,
+      "id": "shadow_bot_config_configurationerror",
+      "community": 16,
       "norm_label": "configurationerror"
     },
     {
@@ -171,139 +171,130 @@
       "source_file": "",
       "source_location": "",
       "id": "runtimeerror",
-      "community": 10,
+      "community": 6,
       "norm_label": "runtimeerror"
     },
     {
       "label": "_required()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L13",
-      "id": "discord_economy_bot_config_required",
-      "community": 6,
+      "id": "shadow_bot_config_required",
+      "community": 16,
       "norm_label": "_required()"
     },
     {
       "label": "_optional_snowflake()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L20",
-      "id": "discord_economy_bot_config_optional_snowflake",
-      "community": 6,
+      "id": "shadow_bot_config_optional_snowflake",
+      "community": 16,
       "norm_label": "_optional_snowflake()"
     },
     {
       "label": "_snowflake_set()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L33",
-      "id": "discord_economy_bot_config_snowflake_set",
-      "community": 6,
+      "id": "shadow_bot_config_snowflake_set",
+      "community": 16,
       "norm_label": "_snowflake_set()"
     },
     {
       "label": "_boolean()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L48",
-      "id": "discord_economy_bot_config_boolean",
-      "community": 6,
+      "id": "shadow_bot_config_boolean",
+      "community": 16,
       "norm_label": "_boolean()"
     },
     {
       "label": "Settings",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L61",
-      "id": "discord_economy_bot_config_settings",
-      "community": 6,
+      "id": "shadow_bot_config_settings",
+      "community": 16,
       "norm_label": "settings"
     },
     {
       "label": "from_environment()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L71",
-      "id": "discord_economy_bot_config_from_environment",
-      "community": 6,
+      "id": "shadow_bot_config_from_environment",
+      "community": 16,
       "norm_label": "from_environment()"
     },
     {
       "label": "Raised when required application configuration is missing or invalid.",
       "file_type": "rationale",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L10",
-      "id": "discord_economy_bot_config_rationale_10",
-      "community": 6,
+      "id": "shadow_bot_config_rationale_10",
+      "community": 16,
       "norm_label": "raised when required application configuration is missing or invalid."
     },
     {
       "label": "logging_config.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/logging_config.py",
+      "source_file": "src/shadow_bot/logging_config.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_logging_config_py",
-      "community": 2,
+      "id": "src_shadow_bot_logging_config_py",
+      "community": 10,
       "norm_label": "logging_config.py"
     },
     {
       "label": "configure_logging()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/logging_config.py",
+      "source_file": "src/shadow_bot/logging_config.py",
       "source_location": "L6",
-      "id": "discord_economy_bot_logging_config_configure_logging",
-      "community": 2,
+      "id": "shadow_bot_logging_config_configure_logging",
+      "community": 10,
       "norm_label": "configure_logging()"
     },
     {
       "label": "__init__.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/__init__.py",
+      "source_file": "src/shadow_bot/__init__.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_init_py",
-      "community": 14,
+      "id": "src_shadow_bot_init_py",
+      "community": 19,
       "norm_label": "__init__.py"
-    },
-    {
-      "label": "Discord economy bot package.",
-      "file_type": "rationale",
-      "source_file": "src/discord_economy_bot/__init__.py",
-      "source_location": "L1",
-      "id": "discord_economy_bot_init_rationale_1",
-      "community": 14,
-      "norm_label": "discord economy bot package."
     },
     {
       "label": "__main__.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/__main__.py",
+      "source_file": "src/shadow_bot/__main__.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_main_py",
-      "community": 2,
+      "id": "src_shadow_bot_main_py",
+      "community": 10,
       "norm_label": "__main__.py"
     },
     {
       "label": "main()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/__main__.py",
+      "source_file": "src/shadow_bot/__main__.py",
       "source_location": "L8",
-      "id": "discord_economy_bot_main_main",
-      "community": 2,
+      "id": "shadow_bot_main_main",
+      "community": 10,
       "norm_label": "main()"
     },
     {
       "label": "health.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/cogs/health.py",
+      "source_file": "src/shadow_bot/cogs/health.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_cogs_health_py",
+      "id": "src_shadow_bot_cogs_health_py",
       "community": 9,
       "norm_label": "health.py"
     },
     {
       "label": "HealthCog",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/cogs/health.py",
+      "source_file": "src/shadow_bot/cogs/health.py",
       "source_location": "L10",
       "id": "cogs_health_healthcog",
       "community": 9,
@@ -312,7 +303,7 @@
     {
       "label": ".__init__()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/cogs/health.py",
+      "source_file": "src/shadow_bot/cogs/health.py",
       "source_location": "L11",
       "id": "cogs_health_healthcog_init",
       "community": 9,
@@ -321,7 +312,7 @@
     {
       "label": "ping()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/cogs/health.py",
+      "source_file": "src/shadow_bot/cogs/health.py",
       "source_location": "L15",
       "id": "cogs_health_ping",
       "community": 9,
@@ -330,7 +321,7 @@
     {
       "label": "setup()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/cogs/health.py",
+      "source_file": "src/shadow_bot/cogs/health.py",
       "source_location": "L34",
       "id": "cogs_health_setup",
       "community": 9,
@@ -339,16 +330,16 @@
     {
       "label": "member_lifecycle.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_file": "src/shadow_bot/cogs/member_lifecycle.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_cogs_member_lifecycle_py",
+      "id": "src_shadow_bot_cogs_member_lifecycle_py",
       "community": 4,
       "norm_label": "member_lifecycle.py"
     },
     {
       "label": "MemberLifecycleCog",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_file": "src/shadow_bot/cogs/member_lifecycle.py",
       "source_location": "L16",
       "id": "cogs_member_lifecycle_memberlifecyclecog",
       "community": 4,
@@ -357,7 +348,7 @@
     {
       "label": ".__init__()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_file": "src/shadow_bot/cogs/member_lifecycle.py",
       "source_location": "L17",
       "id": "cogs_member_lifecycle_memberlifecyclecog_init",
       "community": 4,
@@ -366,7 +357,7 @@
     {
       "label": "on_raw_member_remove()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_file": "src/shadow_bot/cogs/member_lifecycle.py",
       "source_location": "L21",
       "id": "cogs_member_lifecycle_on_raw_member_remove",
       "community": 4,
@@ -375,7 +366,7 @@
     {
       "label": "on_member_update()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_file": "src/shadow_bot/cogs/member_lifecycle.py",
       "source_location": "L29",
       "id": "cogs_member_lifecycle_on_member_update",
       "community": 4,
@@ -384,7 +375,7 @@
     {
       "label": "setup()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_file": "src/shadow_bot/cogs/member_lifecycle.py",
       "source_location": "L39",
       "id": "cogs_member_lifecycle_setup",
       "community": 4,
@@ -393,16 +384,16 @@
     {
       "label": "__init__.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/cogs/__init__.py",
+      "source_file": "src/shadow_bot/cogs/__init__.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_cogs_init_py",
+      "id": "src_shadow_bot_cogs_init_py",
       "community": 12,
       "norm_label": "__init__.py"
     },
     {
       "label": "Discord command groups.",
       "file_type": "rationale",
-      "source_file": "src/discord_economy_bot/cogs/__init__.py",
+      "source_file": "src/shadow_bot/cogs/__init__.py",
       "source_location": "L1",
       "id": "cogs_init_rationale_1",
       "community": 12,
@@ -411,16 +402,16 @@
     {
       "label": "base.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/base.py",
+      "source_file": "src/shadow_bot/db/base.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_db_base_py",
+      "id": "src_shadow_bot_db_base_py",
       "community": 0,
       "norm_label": "base.py"
     },
     {
       "label": "Base",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/base.py",
+      "source_file": "src/shadow_bot/db/base.py",
       "source_location": "L15",
       "id": "db_base_base",
       "community": 0,
@@ -438,16 +429,16 @@
     {
       "label": "member_cleanup.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/member_cleanup.py",
+      "source_file": "src/shadow_bot/db/member_cleanup.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_db_member_cleanup_py",
+      "id": "src_shadow_bot_db_member_cleanup_py",
       "community": 4,
       "norm_label": "member_cleanup.py"
     },
     {
       "label": "delete_member_economy()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/member_cleanup.py",
+      "source_file": "src/shadow_bot/db/member_cleanup.py",
       "source_location": "L13",
       "id": "db_member_cleanup_delete_member_economy",
       "community": 4,
@@ -456,7 +447,7 @@
     {
       "label": "reset_lost_role_cooldowns()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/member_cleanup.py",
+      "source_file": "src/shadow_bot/db/member_cleanup.py",
       "source_location": "L22",
       "id": "db_member_cleanup_reset_lost_role_cooldowns",
       "community": 4,
@@ -465,16 +456,16 @@
     {
       "label": "models.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_db_models_py",
+      "id": "src_shadow_bot_db_models_py",
       "community": 0,
       "norm_label": "models.py"
     },
     {
       "label": "TimestampMixin",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L29",
       "id": "db_models_timestampmixin",
       "community": 0,
@@ -483,7 +474,7 @@
     {
       "label": "GuildSettings",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L38",
       "id": "db_models_guildsettings",
       "community": 0,
@@ -501,7 +492,7 @@
     {
       "label": "EconomyAccount",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L56",
       "id": "db_models_economyaccount",
       "community": 0,
@@ -510,7 +501,7 @@
     {
       "label": "LedgerEntry",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L72",
       "id": "db_models_ledgerentry",
       "community": 0,
@@ -519,7 +510,7 @@
     {
       "label": "ActivityCooldown",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L108",
       "id": "db_models_activitycooldown",
       "community": 0,
@@ -528,7 +519,7 @@
     {
       "label": "RoleIncomeRule",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L120",
       "id": "db_models_roleincomerule",
       "community": 0,
@@ -537,7 +528,7 @@
     {
       "label": "RoleCollectionCooldown",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L141",
       "id": "db_models_rolecollectioncooldown",
       "community": 0,
@@ -546,7 +537,7 @@
     {
       "label": "ActivityRule",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L157",
       "id": "db_models_activityrule",
       "community": 0,
@@ -555,7 +546,7 @@
     {
       "label": "FlavorText",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L183",
       "id": "db_models_flavortext",
       "community": 0,
@@ -564,7 +555,7 @@
     {
       "label": "InterestPolicy",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L198",
       "id": "db_models_interestpolicy",
       "community": 0,
@@ -573,7 +564,7 @@
     {
       "label": "InterestRun",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L218",
       "id": "db_models_interestrun",
       "community": 0,
@@ -582,7 +573,7 @@
     {
       "label": "EconomyRolePermission",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L239",
       "id": "db_models_economyrolepermission",
       "community": 0,
@@ -591,7 +582,7 @@
     {
       "label": "CapabilityUsage",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L259",
       "id": "db_models_capabilityusage",
       "community": 0,
@@ -600,7 +591,7 @@
     {
       "label": "AuditEvent",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L273",
       "id": "db_models_auditevent",
       "community": 0,
@@ -609,16 +600,16 @@
     {
       "label": "session.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/session.py",
+      "source_file": "src/shadow_bot/db/session.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_db_session_py",
+      "id": "src_shadow_bot_db_session_py",
       "community": 2,
       "norm_label": "session.py"
     },
     {
       "label": "Database",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/session.py",
+      "source_file": "src/shadow_bot/db/session.py",
       "source_location": "L12",
       "id": "db_session_database",
       "community": 2,
@@ -627,7 +618,7 @@
     {
       "label": ".__init__()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/session.py",
+      "source_file": "src/shadow_bot/db/session.py",
       "source_location": "L13",
       "id": "db_session_database_init",
       "community": 2,
@@ -636,7 +627,7 @@
     {
       "label": ".check_connection()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/session.py",
+      "source_file": "src/shadow_bot/db/session.py",
       "source_location": "L26",
       "id": "db_session_database_check_connection",
       "community": 2,
@@ -645,7 +636,7 @@
     {
       "label": ".close()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/session.py",
+      "source_file": "src/shadow_bot/db/session.py",
       "source_location": "L30",
       "id": "db_session_database_close",
       "community": 2,
@@ -654,16 +645,16 @@
     {
       "label": "__init__.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/db/__init__.py",
+      "source_file": "src/shadow_bot/db/__init__.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_db_init_py",
+      "id": "src_shadow_bot_db_init_py",
       "community": 13,
       "norm_label": "__init__.py"
     },
     {
       "label": "Database models and session management.",
       "file_type": "rationale",
-      "source_file": "src/discord_economy_bot/db/__init__.py",
+      "source_file": "src/shadow_bot/db/__init__.py",
       "source_location": "L1",
       "id": "db_init_rationale_1",
       "community": 13,
@@ -672,16 +663,16 @@
     {
       "label": "fines.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/domain/fines.py",
+      "source_file": "src/shadow_bot/domain/fines.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_domain_fines_py",
+      "id": "src_shadow_bot_domain_fines_py",
       "community": 8,
       "norm_label": "fines.py"
     },
     {
       "label": "FineResult",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/domain/fines.py",
+      "source_file": "src/shadow_bot/domain/fines.py",
       "source_location": "L7",
       "id": "domain_fines_fineresult",
       "community": 8,
@@ -690,7 +681,7 @@
     {
       "label": "collected()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/domain/fines.py",
+      "source_file": "src/shadow_bot/domain/fines.py",
       "source_location": "L15",
       "id": "domain_fines_collected",
       "community": 8,
@@ -699,7 +690,7 @@
     {
       "label": "apply_fine()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/domain/fines.py",
+      "source_file": "src/shadow_bot/domain/fines.py",
       "source_location": "L19",
       "id": "domain_fines_apply_fine",
       "community": 8,
@@ -708,7 +699,7 @@
     {
       "label": "Apply a fine to cash first, then bank, without crossing either floor.",
       "file_type": "rationale",
-      "source_file": "src/discord_economy_bot/domain/fines.py",
+      "source_file": "src/shadow_bot/domain/fines.py",
       "source_location": "L22",
       "id": "domain_fines_rationale_22",
       "community": 8,
@@ -717,16 +708,16 @@
     {
       "label": "permissions.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_file": "src/shadow_bot/domain/permissions.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_domain_permissions_py",
+      "id": "src_shadow_bot_domain_permissions_py",
       "community": 3,
       "norm_label": "permissions.py"
     },
     {
       "label": "Capability",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_file": "src/shadow_bot/domain/permissions.py",
       "source_location": "L7",
       "id": "domain_permissions_capability",
       "community": 3,
@@ -744,7 +735,7 @@
     {
       "label": "CapabilityGrant",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_file": "src/shadow_bot/domain/permissions.py",
       "source_location": "L19",
       "id": "domain_permissions_capabilitygrant",
       "community": 3,
@@ -753,7 +744,7 @@
     {
       "label": "EffectiveGrant",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_file": "src/shadow_bot/domain/permissions.py",
       "source_location": "L25",
       "id": "domain_permissions_effectivegrant",
       "community": 3,
@@ -762,7 +753,7 @@
     {
       "label": "combine_grants()",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_file": "src/shadow_bot/domain/permissions.py",
       "source_location": "L31",
       "id": "domain_permissions_combine_grants",
       "community": 3,
@@ -771,7 +762,7 @@
     {
       "label": "Combine role grants, choosing the most permissive limit in each category.",
       "file_type": "rationale",
-      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_file": "src/shadow_bot/domain/permissions.py",
       "source_location": "L32",
       "id": "domain_permissions_rationale_32",
       "community": 3,
@@ -780,16 +771,16 @@
     {
       "label": "__init__.py",
       "file_type": "code",
-      "source_file": "src/discord_economy_bot/domain/__init__.py",
+      "source_file": "src/shadow_bot/domain/__init__.py",
       "source_location": "L1",
-      "id": "src_discord_economy_bot_domain_init_py",
+      "id": "src_shadow_bot_domain_init_py",
       "community": 15,
       "norm_label": "__init__.py"
     },
     {
       "label": "Pure economy and permission rules.",
       "file_type": "rationale",
-      "source_file": "src/discord_economy_bot/domain/__init__.py",
+      "source_file": "src/shadow_bot/domain/__init__.py",
       "source_location": "L1",
       "id": "domain_init_rationale_1",
       "community": 15,
@@ -866,6 +857,114 @@
       "id": "tests_test_permissions_test_unlimited_grant_wins",
       "community": 3,
       "norm_label": "test_unlimited_grant_wins()"
+    },
+    {
+      "label": "AGENTS.md",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L1",
+      "id": "agents_md",
+      "community": 17,
+      "norm_label": "agents.md"
+    },
+    {
+      "label": "GitNexus \u2014 Code Intelligence",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L2",
+      "id": "discord_bot_agents_gitnexus_code_intelligence",
+      "community": 17,
+      "norm_label": "gitnexus \u2014 code intelligence"
+    },
+    {
+      "label": "Always Do",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L8",
+      "id": "discord_bot_agents_always_do",
+      "community": 17,
+      "norm_label": "always do"
+    },
+    {
+      "label": "Never Do",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L17",
+      "id": "discord_bot_agents_never_do",
+      "community": 17,
+      "norm_label": "never do"
+    },
+    {
+      "label": "Resources",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L24",
+      "id": "discord_bot_agents_resources",
+      "community": 17,
+      "norm_label": "resources"
+    },
+    {
+      "label": "CLI",
+      "file_type": "document",
+      "source_file": "AGENTS.md",
+      "source_location": "L33",
+      "id": "discord_bot_agents_cli",
+      "community": 17,
+      "norm_label": "cli"
+    },
+    {
+      "label": "CLAUDE.md",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L1",
+      "id": "claude_md",
+      "community": 18,
+      "norm_label": "claude.md"
+    },
+    {
+      "label": "GitNexus \u2014 Code Intelligence",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L2",
+      "id": "discord_bot_claude_gitnexus_code_intelligence",
+      "community": 18,
+      "norm_label": "gitnexus \u2014 code intelligence"
+    },
+    {
+      "label": "Always Do",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L8",
+      "id": "discord_bot_claude_always_do",
+      "community": 18,
+      "norm_label": "always do"
+    },
+    {
+      "label": "Never Do",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L17",
+      "id": "discord_bot_claude_never_do",
+      "community": 18,
+      "norm_label": "never do"
+    },
+    {
+      "label": "Resources",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L24",
+      "id": "discord_bot_claude_resources",
+      "community": 18,
+      "norm_label": "resources"
+    },
+    {
+      "label": "CLI",
+      "file_type": "document",
+      "source_file": "CLAUDE.md",
+      "source_location": "L33",
+      "id": "discord_bot_claude_cli",
+      "community": 18,
+      "norm_label": "cli"
     },
     {
       "label": "ECONOMY_SPEC.md",
@@ -958,13 +1057,13 @@
       "norm_label": "readme.md"
     },
     {
-      "label": "Discord Economy Bot",
+      "label": "Shadow Bot",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "L1",
-      "id": "discord_bot_readme_discord_economy_bot",
+      "id": "discord_bot_readme_shadow_bot",
       "community": 1,
-      "norm_label": "discord economy bot"
+      "norm_label": "shadow bot"
     },
     {
       "label": "Included in this milestone",
@@ -994,13 +1093,13 @@
       "norm_label": "2. prepare postgresql"
     },
     {
-      "label": "code:sql (CREATE ROLE discord_bot LOGIN;)",
+      "label": "code:sql (CREATE ROLE shadow_bot LOGIN;)",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "L42",
       "id": "discord_bot_readme_codeblock_1",
       "community": 1,
-      "norm_label": "code:sql (create role discord_bot login;)"
+      "norm_label": "code:sql (create role shadow_bot login;)"
     },
     {
       "label": "3. Transfer the project",
@@ -1030,13 +1129,13 @@
       "norm_label": "4. create the protected configuration"
     },
     {
-      "label": "code:bash (sudo install -d -m 750 -o root -g discordbot /etc/discord-ec)",
+      "label": "code:bash (sudo install -d -m 750 -o root -g shadowbot /etc/shadow-bot)",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "L78",
       "id": "discord_bot_readme_codeblock_3",
       "community": 1,
-      "norm_label": "code:bash (sudo install -d -m 750 -o root -g discordbot /etc/discord-ec)"
+      "norm_label": "code:bash (sudo install -d -m 750 -o root -g shadowbot /etc/shadow-bot)"
     },
     {
       "label": "5. Create the database tables",
@@ -1048,13 +1147,13 @@
       "norm_label": "5. create the database tables"
     },
     {
-      "label": "code:bash (cd /opt/discord-economy-bot)",
+      "label": "code:bash (cd /opt/shadow-bot)",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "L98",
       "id": "discord_bot_readme_codeblock_4",
       "community": 1,
-      "norm_label": "code:bash (cd /opt/discord-economy-bot)"
+      "norm_label": "code:bash (cd /opt/shadow-bot)"
     },
     {
       "label": "6. Install and start the service",
@@ -1066,22 +1165,22 @@
       "norm_label": "6. install and start the service"
     },
     {
-      "label": "code:bash (sudo cp /opt/discord-economy-bot/deploy/discord-economy-bot.)",
+      "label": "code:bash (sudo cp /opt/shadow-bot/deploy/shadow-bot.service /etc/syste)",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "L109",
       "id": "discord_bot_readme_codeblock_5",
       "community": 1,
-      "norm_label": "code:bash (sudo cp /opt/discord-economy-bot/deploy/discord-economy-bot.)"
+      "norm_label": "code:bash (sudo cp /opt/shadow-bot/deploy/shadow-bot.service /etc/syste)"
     },
     {
-      "label": "code:bash (sudo journalctl -u discord-economy-bot -f)",
+      "label": "code:bash (sudo journalctl -u shadow-bot -f)",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "L118",
       "id": "discord_bot_readme_codeblock_6",
       "community": 1,
-      "norm_label": "code:bash (sudo journalctl -u discord-economy-bot -f)"
+      "norm_label": "code:bash (sudo journalctl -u shadow-bot -f)"
     },
     {
       "label": "Updating later",
@@ -1199,6 +1298,321 @@
       "id": "docs_economy_spec_lifecycle_and_auditing",
       "community": 7,
       "norm_label": "lifecycle and auditing"
+    },
+    {
+      "label": "bot.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L1",
+      "community": 2,
+      "norm_label": "bot.py",
+      "id": "src_discord_economy_bot_bot_py"
+    },
+    {
+      "label": "EconomyBot",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L16",
+      "community": 2,
+      "norm_label": "economybot",
+      "id": "discord_economy_bot_bot_economybot"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L17",
+      "community": 2,
+      "norm_label": ".__init__()",
+      "id": "discord_economy_bot_bot_economybot_init"
+    },
+    {
+      "label": ".setup_hook()",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L25",
+      "community": 2,
+      "norm_label": ".setup_hook()",
+      "id": "discord_economy_bot_bot_economybot_setup_hook"
+    },
+    {
+      "label": ".close()",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L39",
+      "community": 2,
+      "norm_label": ".close()",
+      "id": "discord_economy_bot_bot_economybot_close"
+    },
+    {
+      "label": ".on_ready()",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L43",
+      "community": 2,
+      "norm_label": ".on_ready()",
+      "id": "discord_economy_bot_bot_economybot_on_ready"
+    },
+    {
+      "label": "_tree_error()",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L50",
+      "community": 2,
+      "norm_label": "_tree_error()",
+      "id": "discord_economy_bot_bot_tree_error"
+    },
+    {
+      "label": "run_bot()",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L61",
+      "community": 2,
+      "norm_label": "run_bot()",
+      "id": "discord_economy_bot_bot_run_bot"
+    },
+    {
+      "label": "config.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L1",
+      "community": 6,
+      "norm_label": "config.py",
+      "id": "src_discord_economy_bot_config_py"
+    },
+    {
+      "label": "ConfigurationError",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L9",
+      "community": 6,
+      "norm_label": "configurationerror",
+      "id": "discord_economy_bot_config_configurationerror"
+    },
+    {
+      "label": "_required()",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L13",
+      "community": 6,
+      "norm_label": "_required()",
+      "id": "discord_economy_bot_config_required"
+    },
+    {
+      "label": "_optional_snowflake()",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L20",
+      "community": 6,
+      "norm_label": "_optional_snowflake()",
+      "id": "discord_economy_bot_config_optional_snowflake"
+    },
+    {
+      "label": "_snowflake_set()",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L33",
+      "community": 6,
+      "norm_label": "_snowflake_set()",
+      "id": "discord_economy_bot_config_snowflake_set"
+    },
+    {
+      "label": "_boolean()",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L48",
+      "community": 6,
+      "norm_label": "_boolean()",
+      "id": "discord_economy_bot_config_boolean"
+    },
+    {
+      "label": "Settings",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L61",
+      "community": 6,
+      "norm_label": "settings",
+      "id": "discord_economy_bot_config_settings"
+    },
+    {
+      "label": "from_environment()",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L71",
+      "community": 6,
+      "norm_label": "from_environment()",
+      "id": "discord_economy_bot_config_from_environment"
+    },
+    {
+      "label": "Raised when required application configuration is missing or invalid.",
+      "file_type": "rationale",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L10",
+      "community": 6,
+      "norm_label": "raised when required application configuration is missing or invalid.",
+      "id": "discord_economy_bot_config_rationale_10"
+    },
+    {
+      "label": "logging_config.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/logging_config.py",
+      "source_location": "L1",
+      "community": 2,
+      "norm_label": "logging_config.py",
+      "id": "src_discord_economy_bot_logging_config_py"
+    },
+    {
+      "label": "configure_logging()",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/logging_config.py",
+      "source_location": "L6",
+      "community": 2,
+      "norm_label": "configure_logging()",
+      "id": "discord_economy_bot_logging_config_configure_logging"
+    },
+    {
+      "label": "__init__.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/__init__.py",
+      "source_location": "L1",
+      "community": 14,
+      "norm_label": "__init__.py",
+      "id": "src_discord_economy_bot_init_py"
+    },
+    {
+      "label": "Discord economy bot package.",
+      "file_type": "rationale",
+      "source_file": "src/discord_economy_bot/__init__.py",
+      "source_location": "L1",
+      "community": 14,
+      "norm_label": "discord economy bot package.",
+      "id": "discord_economy_bot_init_rationale_1"
+    },
+    {
+      "label": "__main__.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/__main__.py",
+      "source_location": "L1",
+      "community": 2,
+      "norm_label": "__main__.py",
+      "id": "src_discord_economy_bot_main_py"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/__main__.py",
+      "source_location": "L8",
+      "community": 2,
+      "norm_label": "main()",
+      "id": "discord_economy_bot_main_main"
+    },
+    {
+      "label": "health.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/cogs/health.py",
+      "source_location": "L1",
+      "community": 9,
+      "norm_label": "health.py",
+      "id": "src_discord_economy_bot_cogs_health_py"
+    },
+    {
+      "label": "member_lifecycle.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_location": "L1",
+      "community": 4,
+      "norm_label": "member_lifecycle.py",
+      "id": "src_discord_economy_bot_cogs_member_lifecycle_py"
+    },
+    {
+      "label": "__init__.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/cogs/__init__.py",
+      "source_location": "L1",
+      "community": 12,
+      "norm_label": "__init__.py",
+      "id": "src_discord_economy_bot_cogs_init_py"
+    },
+    {
+      "label": "base.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/db/base.py",
+      "source_location": "L1",
+      "community": 0,
+      "norm_label": "base.py",
+      "id": "src_discord_economy_bot_db_base_py"
+    },
+    {
+      "label": "member_cleanup.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/db/member_cleanup.py",
+      "source_location": "L1",
+      "community": 4,
+      "norm_label": "member_cleanup.py",
+      "id": "src_discord_economy_bot_db_member_cleanup_py"
+    },
+    {
+      "label": "models.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L1",
+      "community": 0,
+      "norm_label": "models.py",
+      "id": "src_discord_economy_bot_db_models_py"
+    },
+    {
+      "label": "session.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/db/session.py",
+      "source_location": "L1",
+      "community": 2,
+      "norm_label": "session.py",
+      "id": "src_discord_economy_bot_db_session_py"
+    },
+    {
+      "label": "__init__.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/db/__init__.py",
+      "source_location": "L1",
+      "community": 13,
+      "norm_label": "__init__.py",
+      "id": "src_discord_economy_bot_db_init_py"
+    },
+    {
+      "label": "fines.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/domain/fines.py",
+      "source_location": "L1",
+      "community": 8,
+      "norm_label": "fines.py",
+      "id": "src_discord_economy_bot_domain_fines_py"
+    },
+    {
+      "label": "permissions.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_location": "L1",
+      "community": 3,
+      "norm_label": "permissions.py",
+      "id": "src_discord_economy_bot_domain_permissions_py"
+    },
+    {
+      "label": "__init__.py",
+      "file_type": "code",
+      "source_file": "src/discord_economy_bot/domain/__init__.py",
+      "source_location": "L1",
+      "community": 15,
+      "norm_label": "__init__.py",
+      "id": "src_discord_economy_bot_domain_init_py"
+    },
+    {
+      "label": "Discord Economy Bot",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "community": 1,
+      "norm_label": "discord economy bot",
+      "id": "discord_bot_readme_discord_economy_bot"
     }
   ],
   "links": [
@@ -1208,9 +1622,9 @@
       "source_file": "migrations/env.py",
       "source_location": "L28",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "migrations_env_py",
-      "target": "migrations_env_run_migrations_offline",
-      "confidence_score": 1.0
+      "target": "migrations_env_run_migrations_offline"
     },
     {
       "relation": "contains",
@@ -1218,9 +1632,9 @@
       "source_file": "migrations/env.py",
       "source_location": "L43",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "migrations_env_py",
-      "target": "migrations_env_do_run_migrations",
-      "confidence_score": 1.0
+      "target": "migrations_env_do_run_migrations"
     },
     {
       "relation": "contains",
@@ -1228,9 +1642,9 @@
       "source_file": "migrations/env.py",
       "source_location": "L49",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "migrations_env_py",
-      "target": "migrations_env_run_async_migrations",
-      "confidence_score": 1.0
+      "target": "migrations_env_run_async_migrations"
     },
     {
       "relation": "calls",
@@ -1260,9 +1674,9 @@
       "source_file": "migrations/versions/0001_initial_economy.py",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "migrations_versions_0001_initial_economy_py",
-      "target": "versions_0001_initial_economy_upgrade",
-      "confidence_score": 1.0
+      "target": "versions_0001_initial_economy_upgrade"
     },
     {
       "relation": "contains",
@@ -1270,9 +1684,9 @@
       "source_file": "migrations/versions/0001_initial_economy.py",
       "source_location": "L309",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "migrations_versions_0001_initial_economy_py",
-      "target": "versions_0001_initial_economy_downgrade",
-      "confidence_score": 1.0
+      "target": "versions_0001_initial_economy_downgrade"
     },
     {
       "relation": "rationale_for",
@@ -1280,108 +1694,108 @@
       "source_file": "migrations/versions/0001_initial_economy.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "versions_0001_initial_economy_rationale_1",
-      "target": "migrations_versions_0001_initial_economy_py",
-      "confidence_score": 1.0
+      "target": "migrations_versions_0001_initial_economy_py"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L16",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_bot_py",
-      "target": "discord_economy_bot_bot_economybot",
+      "source": "src_shadow_bot_bot_py",
+      "target": "shadow_bot_bot_economybot",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L50",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_bot_py",
-      "target": "discord_economy_bot_bot_tree_error",
+      "source": "src_shadow_bot_bot_py",
+      "target": "shadow_bot_bot_tree_error",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L61",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_bot_py",
-      "target": "discord_economy_bot_bot_run_bot",
+      "source": "src_shadow_bot_bot_py",
+      "target": "shadow_bot_bot_run_bot",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L17",
       "weight": 1.0,
-      "source": "discord_economy_bot_bot_economybot",
-      "target": "discord_economy_bot_bot_economybot_init",
+      "source": "shadow_bot_bot_economybot",
+      "target": "shadow_bot_bot_economybot_init",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L25",
       "weight": 1.0,
-      "source": "discord_economy_bot_bot_economybot",
-      "target": "discord_economy_bot_bot_economybot_setup_hook",
+      "source": "shadow_bot_bot_economybot",
+      "target": "shadow_bot_bot_economybot_setup_hook",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L39",
       "weight": 1.0,
-      "source": "discord_economy_bot_bot_economybot",
-      "target": "discord_economy_bot_bot_economybot_close",
+      "source": "shadow_bot_bot_economybot",
+      "target": "shadow_bot_bot_economybot_close",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L43",
       "weight": 1.0,
-      "source": "discord_economy_bot_bot_economybot",
-      "target": "discord_economy_bot_bot_economybot_on_ready",
+      "source": "shadow_bot_bot_economybot",
+      "target": "shadow_bot_bot_economybot_on_ready",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L65",
       "weight": 1.0,
-      "source": "discord_economy_bot_bot_run_bot",
-      "target": "discord_economy_bot_bot_economybot",
+      "source": "shadow_bot_bot_run_bot",
+      "target": "shadow_bot_bot_economybot",
       "confidence_score": 1.0
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L9",
       "weight": 0.8,
-      "source": "discord_economy_bot_bot_economybot",
-      "target": "discord_economy_bot_config_settings",
+      "source": "shadow_bot_bot_economybot",
+      "target": "shadow_bot_config_settings",
       "confidence_score": 0.5
     },
     {
       "relation": "uses",
       "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L10",
       "weight": 0.8,
-      "source": "discord_economy_bot_bot_economybot",
+      "source": "shadow_bot_bot_economybot",
       "target": "db_session_database",
       "confidence_score": 0.5
     },
@@ -1390,21 +1804,21 @@
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L63",
       "weight": 1.0,
-      "source": "discord_economy_bot_bot_run_bot",
-      "target": "discord_economy_bot_logging_config_configure_logging"
+      "source": "shadow_bot_bot_run_bot",
+      "target": "shadow_bot_logging_config_configure_logging"
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
-      "source_file": "src/discord_economy_bot/bot.py",
+      "source_file": "src/shadow_bot/bot.py",
       "source_location": "L64",
       "weight": 1.0,
-      "source": "discord_economy_bot_bot_run_bot",
+      "source": "shadow_bot_bot_run_bot",
       "target": "db_session_database"
     },
     {
@@ -1412,80 +1826,155 @@
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
-      "source_file": "src/discord_economy_bot/__main__.py",
+      "source_file": "src/shadow_bot/__main__.py",
       "source_location": "L9",
       "weight": 1.0,
-      "source": "discord_economy_bot_main_main",
-      "target": "discord_economy_bot_bot_run_bot"
+      "source": "shadow_bot_main_main",
+      "target": "shadow_bot_bot_run_bot"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L9",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_config_py",
-      "target": "discord_economy_bot_config_configurationerror",
+      "source": "src_shadow_bot_config_py",
+      "target": "shadow_bot_config_configurationerror",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L13",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_config_py",
-      "target": "discord_economy_bot_config_required",
+      "source": "src_shadow_bot_config_py",
+      "target": "shadow_bot_config_required",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L20",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_config_py",
-      "target": "discord_economy_bot_config_optional_snowflake",
+      "source": "src_shadow_bot_config_py",
+      "target": "shadow_bot_config_optional_snowflake",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L33",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_config_py",
-      "target": "discord_economy_bot_config_snowflake_set",
+      "source": "src_shadow_bot_config_py",
+      "target": "shadow_bot_config_snowflake_set",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L48",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_config_py",
-      "target": "discord_economy_bot_config_boolean",
+      "source": "src_shadow_bot_config_py",
+      "target": "shadow_bot_config_boolean",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L61",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_config_py",
-      "target": "discord_economy_bot_config_settings",
+      "source": "src_shadow_bot_config_py",
+      "target": "shadow_bot_config_settings",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L71",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_config_py",
-      "target": "discord_economy_bot_config_from_environment",
+      "source": "src_shadow_bot_config_py",
+      "target": "shadow_bot_config_from_environment",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/config.py",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "shadow_bot_config_configurationerror",
+      "target": "runtimeerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/config.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "shadow_bot_config_required",
+      "target": "shadow_bot_config_configurationerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/config.py",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "shadow_bot_config_optional_snowflake",
+      "target": "shadow_bot_config_configurationerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/config.py",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "shadow_bot_config_snowflake_set",
+      "target": "shadow_bot_config_configurationerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/config.py",
+      "source_location": "L57",
+      "weight": 1.0,
+      "source": "shadow_bot_config_boolean",
+      "target": "shadow_bot_config_configurationerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/config.py",
+      "source_location": "L75",
+      "weight": 1.0,
+      "source": "shadow_bot_config_from_environment",
+      "target": "shadow_bot_config_configurationerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/config.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "shadow_bot_config_rationale_10",
+      "target": "shadow_bot_config_configurationerror",
       "confidence_score": 1.0
     },
     {
@@ -1494,176 +1983,101 @@
       "source_file": "src/discord_economy_bot/config.py",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_economy_bot_config_configurationerror",
-      "target": "runtimeerror",
-      "confidence_score": 1.0
+      "target": "runtimeerror"
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
-      "source_location": "L16",
-      "weight": 1.0,
-      "source": "discord_economy_bot_config_required",
-      "target": "discord_economy_bot_config_configurationerror",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
-      "source_location": "L27",
-      "weight": 1.0,
-      "source": "discord_economy_bot_config_optional_snowflake",
-      "target": "discord_economy_bot_config_configurationerror",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
-      "source_location": "L40",
-      "weight": 1.0,
-      "source": "discord_economy_bot_config_snowflake_set",
-      "target": "discord_economy_bot_config_configurationerror",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
-      "source_location": "L57",
-      "weight": 1.0,
-      "source": "discord_economy_bot_config_boolean",
-      "target": "discord_economy_bot_config_configurationerror",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
-      "source_location": "L75",
-      "weight": 1.0,
-      "source": "discord_economy_bot_config_from_environment",
-      "target": "discord_economy_bot_config_configurationerror",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
-      "source_location": "L10",
-      "weight": 1.0,
-      "source": "discord_economy_bot_config_rationale_10",
-      "target": "discord_economy_bot_config_configurationerror",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L73",
       "weight": 1.0,
-      "source": "discord_economy_bot_config_from_environment",
-      "target": "discord_economy_bot_config_required",
+      "source": "shadow_bot_config_from_environment",
+      "target": "shadow_bot_config_required",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L82",
       "weight": 1.0,
-      "source": "discord_economy_bot_config_from_environment",
-      "target": "discord_economy_bot_config_optional_snowflake",
+      "source": "shadow_bot_config_from_environment",
+      "target": "shadow_bot_config_optional_snowflake",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L81",
       "weight": 1.0,
-      "source": "discord_economy_bot_config_from_environment",
-      "target": "discord_economy_bot_config_snowflake_set",
+      "source": "shadow_bot_config_from_environment",
+      "target": "shadow_bot_config_snowflake_set",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/config.py",
+      "source_file": "src/shadow_bot/config.py",
       "source_location": "L83",
       "weight": 1.0,
-      "source": "discord_economy_bot_config_from_environment",
-      "target": "discord_economy_bot_config_boolean",
+      "source": "shadow_bot_config_from_environment",
+      "target": "shadow_bot_config_boolean",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/logging_config.py",
+      "source_file": "src/shadow_bot/logging_config.py",
       "source_location": "L6",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_logging_config_py",
-      "target": "discord_economy_bot_logging_config_configure_logging",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/__init__.py",
-      "source_location": "L1",
-      "weight": 1.0,
-      "source": "discord_economy_bot_init_rationale_1",
-      "target": "src_discord_economy_bot_init_py",
+      "source": "src_shadow_bot_logging_config_py",
+      "target": "shadow_bot_logging_config_configure_logging",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/__main__.py",
+      "source_file": "src/shadow_bot/__main__.py",
       "source_location": "L8",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_main_py",
-      "target": "discord_economy_bot_main_main",
+      "source": "src_shadow_bot_main_py",
+      "target": "shadow_bot_main_main",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/cogs/health.py",
+      "source_file": "src/shadow_bot/cogs/health.py",
       "source_location": "L10",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_cogs_health_py",
+      "source": "src_shadow_bot_cogs_health_py",
       "target": "cogs_health_healthcog",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/cogs/health.py",
+      "source_file": "src/shadow_bot/cogs/health.py",
       "source_location": "L15",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_cogs_health_py",
+      "source": "src_shadow_bot_cogs_health_py",
       "target": "cogs_health_ping",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/cogs/health.py",
+      "source_file": "src/shadow_bot/cogs/health.py",
       "source_location": "L34",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_cogs_health_py",
+      "source": "src_shadow_bot_cogs_health_py",
       "target": "cogs_health_setup",
       "confidence_score": 1.0
     },
@@ -1673,9 +2087,9 @@
       "source_file": "src/discord_economy_bot/cogs/health.py",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cogs_health_healthcog",
-      "target": "cogs_health_healthcog_init",
-      "confidence_score": 1.0
+      "target": "cogs_health_healthcog_init"
     },
     {
       "relation": "calls",
@@ -1684,47 +2098,77 @@
       "source_file": "src/discord_economy_bot/cogs/health.py",
       "source_location": "L35",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cogs_health_setup",
-      "target": "cogs_health_healthcog",
-      "confidence_score": 1.0
+      "target": "cogs_health_healthcog"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_file": "src/discord_economy_bot/cogs/health.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_cogs_health_py",
+      "target": "cogs_health_healthcog"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/cogs/health.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_cogs_health_py",
+      "target": "cogs_health_ping"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/cogs/health.py",
+      "source_location": "L34",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_cogs_health_py",
+      "target": "cogs_health_setup"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/cogs/member_lifecycle.py",
       "source_location": "L16",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_cogs_member_lifecycle_py",
+      "source": "src_shadow_bot_cogs_member_lifecycle_py",
       "target": "cogs_member_lifecycle_memberlifecyclecog",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_file": "src/shadow_bot/cogs/member_lifecycle.py",
       "source_location": "L21",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_cogs_member_lifecycle_py",
+      "source": "src_shadow_bot_cogs_member_lifecycle_py",
       "target": "cogs_member_lifecycle_on_raw_member_remove",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_file": "src/shadow_bot/cogs/member_lifecycle.py",
       "source_location": "L29",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_cogs_member_lifecycle_py",
+      "source": "src_shadow_bot_cogs_member_lifecycle_py",
       "target": "cogs_member_lifecycle_on_member_update",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_file": "src/shadow_bot/cogs/member_lifecycle.py",
       "source_location": "L39",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_cogs_member_lifecycle_py",
+      "source": "src_shadow_bot_cogs_member_lifecycle_py",
       "target": "cogs_member_lifecycle_setup",
       "confidence_score": 1.0
     },
@@ -1734,9 +2178,9 @@
       "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cogs_member_lifecycle_memberlifecyclecog",
-      "target": "cogs_member_lifecycle_memberlifecyclecog_init",
-      "confidence_score": 1.0
+      "target": "cogs_member_lifecycle_memberlifecyclecog_init"
     },
     {
       "relation": "calls",
@@ -1745,9 +2189,19 @@
       "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
       "source_location": "L40",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cogs_member_lifecycle_setup",
-      "target": "cogs_member_lifecycle_memberlifecyclecog",
-      "confidence_score": 1.0
+      "target": "cogs_member_lifecycle_memberlifecyclecog"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_cogs_member_lifecycle_py",
+      "target": "cogs_member_lifecycle_memberlifecyclecog"
     },
     {
       "relation": "calls",
@@ -1761,6 +2215,16 @@
       "target": "db_member_cleanup_delete_member_economy"
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_cogs_member_lifecycle_py",
+      "target": "cogs_member_lifecycle_on_raw_member_remove"
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "INFERRED",
@@ -1772,22 +2236,52 @@
       "target": "db_member_cleanup_reset_lost_role_cooldowns"
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_location": "L29",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_cogs_member_lifecycle_py",
+      "target": "cogs_member_lifecycle_on_member_update"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/cogs/member_lifecycle.py",
+      "source_location": "L39",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_cogs_member_lifecycle_py",
+      "target": "cogs_member_lifecycle_setup"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/cogs/__init__.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "cogs_init_rationale_1",
+      "target": "src_shadow_bot_cogs_init_py",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "src/discord_economy_bot/cogs/__init__.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "cogs_init_rationale_1",
-      "target": "src_discord_economy_bot_cogs_init_py",
-      "confidence_score": 1.0
+      "target": "src_discord_economy_bot_cogs_init_py"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/base.py",
+      "source_file": "src/shadow_bot/db/base.py",
       "source_location": "L15",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_base_py",
+      "source": "src_shadow_bot_db_base_py",
       "target": "db_base_base",
       "confidence_score": 1.0
     },
@@ -1797,149 +2291,179 @@
       "source_file": "src/discord_economy_bot/db/base.py",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_base_base",
-      "target": "declarativebase",
+      "target": "declarativebase"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "db_models_timestampmixin",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "db_models_guildsettings",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "db_models_economyaccount",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "db_models_ledgerentry",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "db_models_activitycooldown",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "db_models_roleincomerule",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "db_models_rolecollectioncooldown",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "db_models_activityrule",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "db_models_flavortext",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "db_models_interestpolicy",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "db_models_interestrun",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "db_models_economyrolepermission",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "db_models_capabilityusage",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L26",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "db_models_auditevent",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/base.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_base_py",
+      "target": "db_base_base"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/db/member_cleanup.py",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_shadow_bot_db_member_cleanup_py",
+      "target": "db_member_cleanup_delete_member_economy",
       "confidence_score": 1.0
     },
     {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/db/models.py",
-      "source_location": "L26",
-      "weight": 0.8,
-      "source": "db_models_timestampmixin",
-      "target": "db_base_base",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/db/models.py",
-      "source_location": "L26",
-      "weight": 0.8,
-      "source": "db_models_guildsettings",
-      "target": "db_base_base",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/db/models.py",
-      "source_location": "L26",
-      "weight": 0.8,
-      "source": "db_models_economyaccount",
-      "target": "db_base_base",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/db/models.py",
-      "source_location": "L26",
-      "weight": 0.8,
-      "source": "db_models_ledgerentry",
-      "target": "db_base_base",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/db/models.py",
-      "source_location": "L26",
-      "weight": 0.8,
-      "source": "db_models_activitycooldown",
-      "target": "db_base_base",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/db/models.py",
-      "source_location": "L26",
-      "weight": 0.8,
-      "source": "db_models_roleincomerule",
-      "target": "db_base_base",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/db/models.py",
-      "source_location": "L26",
-      "weight": 0.8,
-      "source": "db_models_rolecollectioncooldown",
-      "target": "db_base_base",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/db/models.py",
-      "source_location": "L26",
-      "weight": 0.8,
-      "source": "db_models_activityrule",
-      "target": "db_base_base",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/db/models.py",
-      "source_location": "L26",
-      "weight": 0.8,
-      "source": "db_models_flavortext",
-      "target": "db_base_base",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/db/models.py",
-      "source_location": "L26",
-      "weight": 0.8,
-      "source": "db_models_interestpolicy",
-      "target": "db_base_base",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/db/models.py",
-      "source_location": "L26",
-      "weight": 0.8,
-      "source": "db_models_interestrun",
-      "target": "db_base_base",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/db/models.py",
-      "source_location": "L26",
-      "weight": 0.8,
-      "source": "db_models_economyrolepermission",
-      "target": "db_base_base",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/db/models.py",
-      "source_location": "L26",
-      "weight": 0.8,
-      "source": "db_models_capabilityusage",
-      "target": "db_base_base",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "src/discord_economy_bot/db/models.py",
-      "source_location": "L26",
-      "weight": 0.8,
-      "source": "db_models_auditevent",
-      "target": "db_base_base",
-      "confidence_score": 0.5
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/db/member_cleanup.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_shadow_bot_db_member_cleanup_py",
+      "target": "db_member_cleanup_reset_lost_role_cooldowns",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1947,9 +2471,9 @@
       "source_file": "src/discord_economy_bot/db/member_cleanup.py",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_discord_economy_bot_db_member_cleanup_py",
-      "target": "db_member_cleanup_delete_member_economy",
-      "confidence_score": 1.0
+      "target": "db_member_cleanup_delete_member_economy"
     },
     {
       "relation": "contains",
@@ -1957,147 +2481,147 @@
       "source_file": "src/discord_economy_bot/db/member_cleanup.py",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_discord_economy_bot_db_member_cleanup_py",
-      "target": "db_member_cleanup_reset_lost_role_cooldowns",
-      "confidence_score": 1.0
+      "target": "db_member_cleanup_reset_lost_role_cooldowns"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L29",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_models_py",
+      "source": "src_shadow_bot_db_models_py",
       "target": "db_models_timestampmixin",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L38",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_models_py",
+      "source": "src_shadow_bot_db_models_py",
       "target": "db_models_guildsettings",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L56",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_models_py",
+      "source": "src_shadow_bot_db_models_py",
       "target": "db_models_economyaccount",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L72",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_models_py",
+      "source": "src_shadow_bot_db_models_py",
       "target": "db_models_ledgerentry",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L108",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_models_py",
+      "source": "src_shadow_bot_db_models_py",
       "target": "db_models_activitycooldown",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L120",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_models_py",
+      "source": "src_shadow_bot_db_models_py",
       "target": "db_models_roleincomerule",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L141",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_models_py",
+      "source": "src_shadow_bot_db_models_py",
       "target": "db_models_rolecollectioncooldown",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L157",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_models_py",
+      "source": "src_shadow_bot_db_models_py",
       "target": "db_models_activityrule",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L183",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_models_py",
+      "source": "src_shadow_bot_db_models_py",
       "target": "db_models_flavortext",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L198",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_models_py",
+      "source": "src_shadow_bot_db_models_py",
       "target": "db_models_interestpolicy",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L218",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_models_py",
+      "source": "src_shadow_bot_db_models_py",
       "target": "db_models_interestrun",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L239",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_models_py",
+      "source": "src_shadow_bot_db_models_py",
       "target": "db_models_economyrolepermission",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L259",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_models_py",
+      "source": "src_shadow_bot_db_models_py",
       "target": "db_models_capabilityusage",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_file": "src/shadow_bot/db/models.py",
       "source_location": "L273",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_models_py",
+      "source": "src_shadow_bot_db_models_py",
       "target": "db_models_auditevent",
       "confidence_score": 1.0
     },
@@ -2107,9 +2631,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L38",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_guildsettings",
-      "target": "db_models_timestampmixin",
-      "confidence_score": 1.0
+      "target": "db_models_timestampmixin"
     },
     {
       "relation": "inherits",
@@ -2117,9 +2641,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L56",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_economyaccount",
-      "target": "db_models_timestampmixin",
-      "confidence_score": 1.0
+      "target": "db_models_timestampmixin"
     },
     {
       "relation": "inherits",
@@ -2127,9 +2651,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L120",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_roleincomerule",
-      "target": "db_models_timestampmixin",
-      "confidence_score": 1.0
+      "target": "db_models_timestampmixin"
     },
     {
       "relation": "inherits",
@@ -2137,9 +2661,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L157",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_activityrule",
-      "target": "db_models_timestampmixin",
-      "confidence_score": 1.0
+      "target": "db_models_timestampmixin"
     },
     {
       "relation": "inherits",
@@ -2147,9 +2671,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L198",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_interestpolicy",
-      "target": "db_models_timestampmixin",
-      "confidence_score": 1.0
+      "target": "db_models_timestampmixin"
     },
     {
       "relation": "inherits",
@@ -2157,9 +2681,19 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L239",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_economyrolepermission",
-      "target": "db_models_timestampmixin",
-      "confidence_score": 1.0
+      "target": "db_models_timestampmixin"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L29",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_models_py",
+      "target": "db_models_timestampmixin"
     },
     {
       "relation": "inherits",
@@ -2167,9 +2701,19 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L38",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_guildsettings",
-      "target": "base",
-      "confidence_score": 1.0
+      "target": "base"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L38",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_models_py",
+      "target": "db_models_guildsettings"
     },
     {
       "relation": "inherits",
@@ -2177,9 +2721,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L56",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_economyaccount",
-      "target": "base",
-      "confidence_score": 1.0
+      "target": "base"
     },
     {
       "relation": "inherits",
@@ -2187,9 +2731,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L72",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_ledgerentry",
-      "target": "base",
-      "confidence_score": 1.0
+      "target": "base"
     },
     {
       "relation": "inherits",
@@ -2197,9 +2741,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L108",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_activitycooldown",
-      "target": "base",
-      "confidence_score": 1.0
+      "target": "base"
     },
     {
       "relation": "inherits",
@@ -2207,9 +2751,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L120",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_roleincomerule",
-      "target": "base",
-      "confidence_score": 1.0
+      "target": "base"
     },
     {
       "relation": "inherits",
@@ -2217,9 +2761,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L141",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_rolecollectioncooldown",
-      "target": "base",
-      "confidence_score": 1.0
+      "target": "base"
     },
     {
       "relation": "inherits",
@@ -2227,9 +2771,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L157",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_activityrule",
-      "target": "base",
-      "confidence_score": 1.0
+      "target": "base"
     },
     {
       "relation": "inherits",
@@ -2237,9 +2781,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L183",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_flavortext",
-      "target": "base",
-      "confidence_score": 1.0
+      "target": "base"
     },
     {
       "relation": "inherits",
@@ -2247,9 +2791,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L198",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_interestpolicy",
-      "target": "base",
-      "confidence_score": 1.0
+      "target": "base"
     },
     {
       "relation": "inherits",
@@ -2257,9 +2801,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L218",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_interestrun",
-      "target": "base",
-      "confidence_score": 1.0
+      "target": "base"
     },
     {
       "relation": "inherits",
@@ -2267,9 +2811,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L239",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_economyrolepermission",
-      "target": "base",
-      "confidence_score": 1.0
+      "target": "base"
     },
     {
       "relation": "inherits",
@@ -2277,9 +2821,9 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L259",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_capabilityusage",
-      "target": "base",
-      "confidence_score": 1.0
+      "target": "base"
     },
     {
       "relation": "inherits",
@@ -2287,17 +2831,137 @@
       "source_file": "src/discord_economy_bot/db/models.py",
       "source_location": "L273",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_models_auditevent",
-      "target": "base",
-      "confidence_score": 1.0
+      "target": "base"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/db/session.py",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L56",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_models_py",
+      "target": "db_models_economyaccount"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L72",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_models_py",
+      "target": "db_models_ledgerentry"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L108",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_models_py",
+      "target": "db_models_activitycooldown"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L120",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_models_py",
+      "target": "db_models_roleincomerule"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L141",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_models_py",
+      "target": "db_models_rolecollectioncooldown"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L157",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_models_py",
+      "target": "db_models_activityrule"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L183",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_models_py",
+      "target": "db_models_flavortext"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L198",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_models_py",
+      "target": "db_models_interestpolicy"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L218",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_models_py",
+      "target": "db_models_interestrun"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L239",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_models_py",
+      "target": "db_models_economyrolepermission"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L259",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_models_py",
+      "target": "db_models_capabilityusage"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/models.py",
+      "source_location": "L273",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_models_py",
+      "target": "db_models_auditevent"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/db/session.py",
       "source_location": "L12",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_db_session_py",
+      "source": "src_shadow_bot_db_session_py",
       "target": "db_session_database",
       "confidence_score": 1.0
     },
@@ -2307,9 +2971,9 @@
       "source_file": "src/discord_economy_bot/db/session.py",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_session_database",
-      "target": "db_session_database_init",
-      "confidence_score": 1.0
+      "target": "db_session_database_init"
     },
     {
       "relation": "method",
@@ -2317,9 +2981,9 @@
       "source_file": "src/discord_economy_bot/db/session.py",
       "source_location": "L26",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_session_database",
-      "target": "db_session_database_check_connection",
-      "confidence_score": 1.0
+      "target": "db_session_database_check_connection"
     },
     {
       "relation": "method",
@@ -2327,8 +2991,49 @@
       "source_file": "src/discord_economy_bot/db/session.py",
       "source_location": "L30",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_session_database",
-      "target": "db_session_database_close",
+      "target": "db_session_database_close"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L10",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "discord_economy_bot_bot_economybot",
+      "target": "db_session_database"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "discord_economy_bot_bot_run_bot",
+      "target": "db_session_database"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/db/session.py",
+      "source_location": "L12",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_db_session_py",
+      "target": "db_session_database"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/db/__init__.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "db_init_rationale_1",
+      "target": "src_shadow_bot_db_init_py",
       "confidence_score": 1.0
     },
     {
@@ -2337,37 +3042,37 @@
       "source_file": "src/discord_economy_bot/db/__init__.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "db_init_rationale_1",
-      "target": "src_discord_economy_bot_db_init_py",
-      "confidence_score": 1.0
+      "target": "src_discord_economy_bot_db_init_py"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/domain/fines.py",
+      "source_file": "src/shadow_bot/domain/fines.py",
       "source_location": "L7",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_domain_fines_py",
+      "source": "src_shadow_bot_domain_fines_py",
       "target": "domain_fines_fineresult",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/domain/fines.py",
+      "source_file": "src/shadow_bot/domain/fines.py",
       "source_location": "L15",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_domain_fines_py",
+      "source": "src_shadow_bot_domain_fines_py",
       "target": "domain_fines_collected",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/domain/fines.py",
+      "source_file": "src/shadow_bot/domain/fines.py",
       "source_location": "L19",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_domain_fines_py",
+      "source": "src_shadow_bot_domain_fines_py",
       "target": "domain_fines_apply_fine",
       "confidence_score": 1.0
     },
@@ -2378,9 +3083,29 @@
       "source_file": "src/discord_economy_bot/domain/fines.py",
       "source_location": "L33",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_fines_apply_fine",
-      "target": "domain_fines_fineresult",
-      "confidence_score": 1.0
+      "target": "domain_fines_fineresult"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/domain/fines.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_domain_fines_py",
+      "target": "domain_fines_fineresult"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/domain/fines.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_domain_fines_py",
+      "target": "domain_fines_collected"
     },
     {
       "relation": "rationale_for",
@@ -2388,9 +3113,9 @@
       "source_file": "src/discord_economy_bot/domain/fines.py",
       "source_location": "L22",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_fines_rationale_22",
-      "target": "domain_fines_apply_fine",
-      "confidence_score": 1.0
+      "target": "domain_fines_apply_fine"
     },
     {
       "relation": "calls",
@@ -2428,40 +3153,50 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_file": "src/discord_economy_bot/domain/fines.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_domain_fines_py",
+      "target": "domain_fines_apply_fine"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/domain/permissions.py",
       "source_location": "L7",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_domain_permissions_py",
+      "source": "src_shadow_bot_domain_permissions_py",
       "target": "domain_permissions_capability",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_file": "src/shadow_bot/domain/permissions.py",
       "source_location": "L19",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_domain_permissions_py",
+      "source": "src_shadow_bot_domain_permissions_py",
       "target": "domain_permissions_capabilitygrant",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_file": "src/shadow_bot/domain/permissions.py",
       "source_location": "L25",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_domain_permissions_py",
+      "source": "src_shadow_bot_domain_permissions_py",
       "target": "domain_permissions_effectivegrant",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_file": "src/shadow_bot/domain/permissions.py",
       "source_location": "L31",
       "weight": 1.0,
-      "source": "src_discord_economy_bot_domain_permissions_py",
+      "source": "src_shadow_bot_domain_permissions_py",
       "target": "domain_permissions_combine_grants",
       "confidence_score": 1.0
     },
@@ -2471,9 +3206,19 @@
       "source_file": "src/discord_economy_bot/domain/permissions.py",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_permissions_capability",
-      "target": "strenum",
-      "confidence_score": 1.0
+      "target": "strenum"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_domain_permissions_py",
+      "target": "domain_permissions_capability"
     },
     {
       "relation": "calls",
@@ -2498,15 +3243,35 @@
       "target": "domain_permissions_capabilitygrant"
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_domain_permissions_py",
+      "target": "domain_permissions_capabilitygrant"
+    },
+    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/discord_economy_bot/domain/permissions.py",
       "source_location": "L34",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_permissions_combine_grants",
-      "target": "domain_permissions_effectivegrant",
-      "confidence_score": 1.0
+      "target": "domain_permissions_effectivegrant"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_location": "L25",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_domain_permissions_py",
+      "target": "domain_permissions_effectivegrant"
     },
     {
       "relation": "rationale_for",
@@ -2514,9 +3279,9 @@
       "source_file": "src/discord_economy_bot/domain/permissions.py",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_permissions_rationale_32",
-      "target": "domain_permissions_combine_grants",
-      "confidence_score": 1.0
+      "target": "domain_permissions_combine_grants"
     },
     {
       "relation": "calls",
@@ -2552,14 +3317,34 @@
       "target": "domain_permissions_combine_grants"
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/domain/permissions.py",
+      "source_location": "L31",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_domain_permissions_py",
+      "target": "domain_permissions_combine_grants"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/shadow_bot/domain/__init__.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "domain_init_rationale_1",
+      "target": "src_shadow_bot_domain_init_py",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "src/discord_economy_bot/domain/__init__.py",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "domain_init_rationale_1",
-      "target": "src_discord_economy_bot_domain_init_py",
-      "confidence_score": 1.0
+      "target": "src_discord_economy_bot_domain_init_py"
     },
     {
       "relation": "contains",
@@ -2567,9 +3352,9 @@
       "source_file": "tests/test_fines.py",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_fines_py",
-      "target": "tests_test_fines_test_fine_uses_cash_before_bank",
-      "confidence_score": 1.0
+      "target": "tests_test_fines_test_fine_uses_cash_before_bank"
     },
     {
       "relation": "contains",
@@ -2577,9 +3362,9 @@
       "source_file": "tests/test_fines.py",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_fines_py",
-      "target": "tests_test_fines_test_fine_stops_at_both_floors",
-      "confidence_score": 1.0
+      "target": "tests_test_fines_test_fine_stops_at_both_floors"
     },
     {
       "relation": "contains",
@@ -2587,9 +3372,9 @@
       "source_file": "tests/test_fines.py",
       "source_location": "L23",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_fines_py",
-      "target": "tests_test_fines_test_negative_fine_is_rejected",
-      "confidence_score": 1.0
+      "target": "tests_test_fines_test_negative_fine_is_rejected"
     },
     {
       "relation": "contains",
@@ -2597,9 +3382,9 @@
       "source_file": "tests/test_permissions.py",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_permissions_py",
-      "target": "tests_test_permissions_test_no_roles_means_not_allowed",
-      "confidence_score": 1.0
+      "target": "tests_test_permissions_test_no_roles_means_not_allowed"
     },
     {
       "relation": "contains",
@@ -2607,9 +3392,9 @@
       "source_file": "tests/test_permissions.py",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_permissions_py",
-      "target": "tests_test_permissions_test_most_generous_limits_win",
-      "confidence_score": 1.0
+      "target": "tests_test_permissions_test_most_generous_limits_win"
     },
     {
       "relation": "contains",
@@ -2617,8 +3402,108 @@
       "source_file": "tests/test_permissions.py",
       "source_location": "L20",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "tests_test_permissions_py",
-      "target": "tests_test_permissions_test_unlimited_grant_wins",
+      "target": "tests_test_permissions_test_unlimited_grant_wins"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "agents_md",
+      "target": "discord_bot_agents_gitnexus_code_intelligence",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "discord_bot_agents_gitnexus_code_intelligence",
+      "target": "discord_bot_agents_always_do",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "discord_bot_agents_gitnexus_code_intelligence",
+      "target": "discord_bot_agents_never_do",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "discord_bot_agents_gitnexus_code_intelligence",
+      "target": "discord_bot_agents_resources",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "AGENTS.md",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "discord_bot_agents_gitnexus_code_intelligence",
+      "target": "discord_bot_agents_cli",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CLAUDE.md",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "claude_md",
+      "target": "discord_bot_claude_gitnexus_code_intelligence",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CLAUDE.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "discord_bot_claude_gitnexus_code_intelligence",
+      "target": "discord_bot_claude_always_do",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CLAUDE.md",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "discord_bot_claude_gitnexus_code_intelligence",
+      "target": "discord_bot_claude_never_do",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CLAUDE.md",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "discord_bot_claude_gitnexus_code_intelligence",
+      "target": "discord_bot_claude_resources",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CLAUDE.md",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "discord_bot_claude_gitnexus_code_intelligence",
+      "target": "discord_bot_claude_cli",
       "confidence_score": 1.0
     },
     {
@@ -2627,9 +3512,9 @@
       "source_file": "ECONOMY_SPEC.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "economy_spec_md",
-      "target": "discord_bot_economy_spec_economy_specification_approved_foundation",
-      "confidence_score": 1.0
+      "target": "discord_bot_economy_spec_economy_specification_approved_foundation"
     },
     {
       "relation": "contains",
@@ -2637,9 +3522,9 @@
       "source_file": "ECONOMY_SPEC.md",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_bot_economy_spec_economy_specification_approved_foundation",
-      "target": "discord_bot_economy_spec_scope_and_ownership",
-      "confidence_score": 1.0
+      "target": "discord_bot_economy_spec_scope_and_ownership"
     },
     {
       "relation": "contains",
@@ -2647,9 +3532,9 @@
       "source_file": "ECONOMY_SPEC.md",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_bot_economy_spec_economy_specification_approved_foundation",
-      "target": "discord_bot_economy_spec_delegated_capabilities",
-      "confidence_score": 1.0
+      "target": "discord_bot_economy_spec_delegated_capabilities"
     },
     {
       "relation": "contains",
@@ -2657,9 +3542,9 @@
       "source_file": "ECONOMY_SPEC.md",
       "source_location": "L28",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_bot_economy_spec_economy_specification_approved_foundation",
-      "target": "discord_bot_economy_spec_currency_and_balances",
-      "confidence_score": 1.0
+      "target": "discord_bot_economy_spec_currency_and_balances"
     },
     {
       "relation": "contains",
@@ -2667,9 +3552,9 @@
       "source_file": "ECONOMY_SPEC.md",
       "source_location": "L38",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_bot_economy_spec_economy_specification_approved_foundation",
-      "target": "discord_bot_economy_spec_fines",
-      "confidence_score": 1.0
+      "target": "discord_bot_economy_spec_fines"
     },
     {
       "relation": "contains",
@@ -2677,9 +3562,9 @@
       "source_file": "ECONOMY_SPEC.md",
       "source_location": "L45",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_bot_economy_spec_economy_specification_approved_foundation",
-      "target": "discord_bot_economy_spec_cooldowns_and_collection",
-      "confidence_score": 1.0
+      "target": "discord_bot_economy_spec_cooldowns_and_collection"
     },
     {
       "relation": "contains",
@@ -2687,9 +3572,9 @@
       "source_file": "ECONOMY_SPEC.md",
       "source_location": "L55",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_bot_economy_spec_economy_specification_approved_foundation",
-      "target": "discord_bot_economy_spec_time_and_interest",
-      "confidence_score": 1.0
+      "target": "discord_bot_economy_spec_time_and_interest"
     },
     {
       "relation": "contains",
@@ -2697,9 +3582,9 @@
       "source_file": "ECONOMY_SPEC.md",
       "source_location": "L63",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_bot_economy_spec_economy_specification_approved_foundation",
-      "target": "discord_bot_economy_spec_lifecycle_and_auditing",
-      "confidence_score": 1.0
+      "target": "discord_bot_economy_spec_lifecycle_and_auditing"
     },
     {
       "relation": "contains",
@@ -2708,8 +3593,18 @@
       "source_location": "L1",
       "weight": 1.0,
       "source": "readme_md",
-      "target": "discord_bot_readme_discord_economy_bot",
+      "target": "discord_bot_readme_shadow_bot",
       "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "readme_md",
+      "target": "discord_bot_readme_discord_economy_bot"
     },
     {
       "relation": "contains",
@@ -2717,7 +3612,7 @@
       "source_file": "README.md",
       "source_location": "L6",
       "weight": 1.0,
-      "source": "discord_bot_readme_discord_economy_bot",
+      "source": "discord_bot_readme_shadow_bot",
       "target": "discord_bot_readme_included_in_this_milestone",
       "confidence_score": 1.0
     },
@@ -2727,7 +3622,7 @@
       "source_file": "README.md",
       "source_location": "L24",
       "weight": 1.0,
-      "source": "discord_bot_readme_discord_economy_bot",
+      "source": "discord_bot_readme_shadow_bot",
       "target": "discord_bot_readme_1_create_the_discord_application",
       "confidence_score": 1.0
     },
@@ -2737,7 +3632,7 @@
       "source_file": "README.md",
       "source_location": "L38",
       "weight": 1.0,
-      "source": "discord_bot_readme_discord_economy_bot",
+      "source": "discord_bot_readme_shadow_bot",
       "target": "discord_bot_readme_2_prepare_postgresql",
       "confidence_score": 1.0
     },
@@ -2747,7 +3642,7 @@
       "source_file": "README.md",
       "source_location": "L59",
       "weight": 1.0,
-      "source": "discord_bot_readme_discord_economy_bot",
+      "source": "discord_bot_readme_shadow_bot",
       "target": "discord_bot_readme_3_transfer_the_project",
       "confidence_score": 1.0
     },
@@ -2757,7 +3652,7 @@
       "source_file": "README.md",
       "source_location": "L76",
       "weight": 1.0,
-      "source": "discord_bot_readme_discord_economy_bot",
+      "source": "discord_bot_readme_shadow_bot",
       "target": "discord_bot_readme_4_create_the_protected_configuration",
       "confidence_score": 1.0
     },
@@ -2767,7 +3662,7 @@
       "source_file": "README.md",
       "source_location": "L96",
       "weight": 1.0,
-      "source": "discord_bot_readme_discord_economy_bot",
+      "source": "discord_bot_readme_shadow_bot",
       "target": "discord_bot_readme_5_create_the_database_tables",
       "confidence_score": 1.0
     },
@@ -2777,7 +3672,7 @@
       "source_file": "README.md",
       "source_location": "L107",
       "weight": 1.0,
-      "source": "discord_bot_readme_discord_economy_bot",
+      "source": "discord_bot_readme_shadow_bot",
       "target": "discord_bot_readme_6_install_and_start_the_service",
       "confidence_score": 1.0
     },
@@ -2787,7 +3682,7 @@
       "source_file": "README.md",
       "source_location": "L124",
       "weight": 1.0,
-      "source": "discord_bot_readme_discord_economy_bot",
+      "source": "discord_bot_readme_shadow_bot",
       "target": "discord_bot_readme_updating_later",
       "confidence_score": 1.0
     },
@@ -2797,7 +3692,7 @@
       "source_file": "README.md",
       "source_location": "L136",
       "weight": 1.0,
-      "source": "discord_bot_readme_discord_economy_bot",
+      "source": "discord_bot_readme_shadow_bot",
       "target": "discord_bot_readme_local_checks",
       "confidence_score": 1.0
     },
@@ -2807,7 +3702,7 @@
       "source_file": "README.md",
       "source_location": "L146",
       "weight": 1.0,
-      "source": "discord_bot_readme_discord_economy_bot",
+      "source": "discord_bot_readme_shadow_bot",
       "target": "discord_bot_readme_security_notes",
       "confidence_score": 1.0
     },
@@ -2815,11 +3710,41 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "README.md",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_bot_readme_discord_economy_bot",
+      "target": "discord_bot_readme_included_in_this_milestone"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L24",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_bot_readme_discord_economy_bot",
+      "target": "discord_bot_readme_1_create_the_discord_application"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
       "source_location": "L42",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_bot_readme_2_prepare_postgresql",
-      "target": "discord_bot_readme_codeblock_1",
-      "confidence_score": 1.0
+      "target": "discord_bot_readme_codeblock_1"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L38",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_bot_readme_discord_economy_bot",
+      "target": "discord_bot_readme_2_prepare_postgresql"
     },
     {
       "relation": "contains",
@@ -2827,9 +3752,19 @@
       "source_file": "README.md",
       "source_location": "L66",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_bot_readme_3_transfer_the_project",
-      "target": "discord_bot_readme_codeblock_2",
-      "confidence_score": 1.0
+      "target": "discord_bot_readme_codeblock_2"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L59",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_bot_readme_discord_economy_bot",
+      "target": "discord_bot_readme_3_transfer_the_project"
     },
     {
       "relation": "contains",
@@ -2837,9 +3772,19 @@
       "source_file": "README.md",
       "source_location": "L78",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_bot_readme_4_create_the_protected_configuration",
-      "target": "discord_bot_readme_codeblock_3",
-      "confidence_score": 1.0
+      "target": "discord_bot_readme_codeblock_3"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L76",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_bot_readme_discord_economy_bot",
+      "target": "discord_bot_readme_4_create_the_protected_configuration"
     },
     {
       "relation": "contains",
@@ -2847,9 +3792,19 @@
       "source_file": "README.md",
       "source_location": "L98",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_bot_readme_5_create_the_database_tables",
-      "target": "discord_bot_readme_codeblock_4",
-      "confidence_score": 1.0
+      "target": "discord_bot_readme_codeblock_4"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L96",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_bot_readme_discord_economy_bot",
+      "target": "discord_bot_readme_5_create_the_database_tables"
     },
     {
       "relation": "contains",
@@ -2857,9 +3812,9 @@
       "source_file": "README.md",
       "source_location": "L109",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_bot_readme_6_install_and_start_the_service",
-      "target": "discord_bot_readme_codeblock_5",
-      "confidence_score": 1.0
+      "target": "discord_bot_readme_codeblock_5"
     },
     {
       "relation": "contains",
@@ -2867,9 +3822,29 @@
       "source_file": "README.md",
       "source_location": "L118",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_bot_readme_6_install_and_start_the_service",
-      "target": "discord_bot_readme_codeblock_6",
-      "confidence_score": 1.0
+      "target": "discord_bot_readme_codeblock_6"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L107",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_bot_readme_discord_economy_bot",
+      "target": "discord_bot_readme_6_install_and_start_the_service"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L124",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_bot_readme_discord_economy_bot",
+      "target": "discord_bot_readme_updating_later"
     },
     {
       "relation": "contains",
@@ -2877,9 +3852,29 @@
       "source_file": "README.md",
       "source_location": "L140",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "discord_bot_readme_local_checks",
-      "target": "discord_bot_readme_codeblock_7",
-      "confidence_score": 1.0
+      "target": "discord_bot_readme_codeblock_7"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L136",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_bot_readme_discord_economy_bot",
+      "target": "discord_bot_readme_local_checks"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L146",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_bot_readme_discord_economy_bot",
+      "target": "discord_bot_readme_security_notes"
     },
     {
       "relation": "contains",
@@ -2887,9 +3882,9 @@
       "source_file": "docs/ECONOMY_SPEC.md",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_economy_spec_md",
-      "target": "docs_economy_spec_economy_specification_approved_foundation",
-      "confidence_score": 1.0
+      "target": "docs_economy_spec_economy_specification_approved_foundation"
     },
     {
       "relation": "contains",
@@ -2897,9 +3892,9 @@
       "source_file": "docs/ECONOMY_SPEC.md",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_economy_spec_economy_specification_approved_foundation",
-      "target": "docs_economy_spec_scope_and_ownership",
-      "confidence_score": 1.0
+      "target": "docs_economy_spec_scope_and_ownership"
     },
     {
       "relation": "contains",
@@ -2907,9 +3902,9 @@
       "source_file": "docs/ECONOMY_SPEC.md",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_economy_spec_economy_specification_approved_foundation",
-      "target": "docs_economy_spec_delegated_capabilities",
-      "confidence_score": 1.0
+      "target": "docs_economy_spec_delegated_capabilities"
     },
     {
       "relation": "contains",
@@ -2917,9 +3912,9 @@
       "source_file": "docs/ECONOMY_SPEC.md",
       "source_location": "L28",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_economy_spec_economy_specification_approved_foundation",
-      "target": "docs_economy_spec_currency_and_balances",
-      "confidence_score": 1.0
+      "target": "docs_economy_spec_currency_and_balances"
     },
     {
       "relation": "contains",
@@ -2927,9 +3922,9 @@
       "source_file": "docs/ECONOMY_SPEC.md",
       "source_location": "L38",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_economy_spec_economy_specification_approved_foundation",
-      "target": "docs_economy_spec_fines",
-      "confidence_score": 1.0
+      "target": "docs_economy_spec_fines"
     },
     {
       "relation": "contains",
@@ -2937,9 +3932,9 @@
       "source_file": "docs/ECONOMY_SPEC.md",
       "source_location": "L45",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_economy_spec_economy_specification_approved_foundation",
-      "target": "docs_economy_spec_cooldowns_and_collection",
-      "confidence_score": 1.0
+      "target": "docs_economy_spec_cooldowns_and_collection"
     },
     {
       "relation": "contains",
@@ -2947,9 +3942,9 @@
       "source_file": "docs/ECONOMY_SPEC.md",
       "source_location": "L55",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_economy_spec_economy_specification_approved_foundation",
-      "target": "docs_economy_spec_time_and_interest",
-      "confidence_score": 1.0
+      "target": "docs_economy_spec_time_and_interest"
     },
     {
       "relation": "contains",
@@ -2957,10 +3952,333 @@
       "source_file": "docs/ECONOMY_SPEC.md",
       "source_location": "L63",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "docs_economy_spec_economy_specification_approved_foundation",
-      "target": "docs_economy_spec_lifecycle_and_auditing",
-      "confidence_score": 1.0
+      "target": "docs_economy_spec_lifecycle_and_auditing"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_bot_py",
+      "target": "discord_economy_bot_bot_economybot"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L50",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_bot_py",
+      "target": "discord_economy_bot_bot_tree_error"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L61",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_bot_py",
+      "target": "discord_economy_bot_bot_run_bot"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L17",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_bot_economybot",
+      "target": "discord_economy_bot_bot_economybot_init"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L25",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_bot_economybot",
+      "target": "discord_economy_bot_bot_economybot_setup_hook"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L39",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_bot_economybot",
+      "target": "discord_economy_bot_bot_economybot_close"
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L43",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_bot_economybot",
+      "target": "discord_economy_bot_bot_economybot_on_ready"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L65",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_bot_run_bot",
+      "target": "discord_economy_bot_bot_economybot"
+    },
+    {
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L9",
+      "weight": 0.8,
+      "confidence_score": 0.5,
+      "source": "discord_economy_bot_bot_economybot",
+      "target": "discord_economy_bot_config_settings"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/discord_economy_bot/bot.py",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "discord_economy_bot_bot_run_bot",
+      "target": "discord_economy_bot_logging_config_configure_logging"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/discord_economy_bot/__main__.py",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "discord_economy_bot_main_main",
+      "target": "discord_economy_bot_bot_run_bot"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_config_py",
+      "target": "discord_economy_bot_config_configurationerror"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_config_py",
+      "target": "discord_economy_bot_config_required"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L20",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_config_py",
+      "target": "discord_economy_bot_config_optional_snowflake"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L33",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_config_py",
+      "target": "discord_economy_bot_config_snowflake_set"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L48",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_config_py",
+      "target": "discord_economy_bot_config_boolean"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L61",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_config_py",
+      "target": "discord_economy_bot_config_settings"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L71",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_config_py",
+      "target": "discord_economy_bot_config_from_environment"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_config_required",
+      "target": "discord_economy_bot_config_configurationerror"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L27",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_config_optional_snowflake",
+      "target": "discord_economy_bot_config_configurationerror"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L40",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_config_snowflake_set",
+      "target": "discord_economy_bot_config_configurationerror"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L57",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_config_boolean",
+      "target": "discord_economy_bot_config_configurationerror"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L75",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_config_from_environment",
+      "target": "discord_economy_bot_config_configurationerror"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_config_rationale_10",
+      "target": "discord_economy_bot_config_configurationerror"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L73",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_config_from_environment",
+      "target": "discord_economy_bot_config_required"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L82",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_config_from_environment",
+      "target": "discord_economy_bot_config_optional_snowflake"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L81",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_config_from_environment",
+      "target": "discord_economy_bot_config_snowflake_set"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/config.py",
+      "source_location": "L83",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_config_from_environment",
+      "target": "discord_economy_bot_config_boolean"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/logging_config.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_logging_config_py",
+      "target": "discord_economy_bot_logging_config_configure_logging"
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/__init__.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "discord_economy_bot_init_rationale_1",
+      "target": "src_discord_economy_bot_init_py"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/discord_economy_bot/__main__.py",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "src_discord_economy_bot_main_py",
+      "target": "discord_economy_bot_main_main"
     }
   ],
-  "hyperedges": []
+  "hyperedges": [],
+  "built_at_commit": "464e8437c12047bac217a78a94caa1a7bd1cfebf"
 }

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 
-from discord_economy_bot.bot import run_bot
+from shadow_bot.bot import run_bot
 
 
 def main() -> None:

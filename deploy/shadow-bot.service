@@ -1,15 +1,15 @@
 [Unit]
-Description=Discord Economy Bot
+Description=Shadow Bot Service
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-User=discordbot
-Group=discordbot
-WorkingDirectory=/opt/discord-economy-bot
-EnvironmentFile=/etc/discord-economy-bot/bot.env
-ExecStart=/opt/discord-economy-bot/.venv/bin/discord-economy-bot
+User=shadowbot
+Group=shadowbot
+WorkingDirectory=/opt/shadow-bot
+EnvironmentFile=/etc/shadow-bot/bot.env
+ExecStart=/opt/shadow-bot/.venv/bin/shadow-bot
 Restart=on-failure
 RestartSec=5
 TimeoutStopSec=30
@@ -20,4 +20,5 @@ ProtectHome=true
 
 [Install]
 WantedBy=multi-user.target
+
 

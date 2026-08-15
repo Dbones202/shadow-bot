@@ -6,9 +6,9 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from discord_economy_bot.config import Settings
-from discord_economy_bot.db.session import Database
-from discord_economy_bot.logging_config import configure_logging
+from shadow_bot.config import Settings
+from shadow_bot.db.session import Database
+from shadow_bot.logging_config import configure_logging
 
 LOGGER = logging.getLogger(__name__)
 
@@ -24,8 +24,8 @@ class EconomyBot(commands.Bot):
 
     async def setup_hook(self) -> None:
         await self.database.check_connection()
-        await self.load_extension("discord_economy_bot.cogs.health")
-        await self.load_extension("discord_economy_bot.cogs.member_lifecycle")
+        await self.load_extension("shadow_bot.cogs.health")
+        await self.load_extension("shadow_bot.cogs.member_lifecycle")
 
         if self.settings.test_guild_id:
             guild = discord.Object(id=self.settings.test_guild_id)

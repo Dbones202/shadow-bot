@@ -1,6 +1,6 @@
 import pytest
 
-from discord_economy_bot.domain.fines import apply_fine
+from shadow_bot.domain.fines import apply_fine
 
 
 def test_fine_uses_cash_before_bank() -> None:

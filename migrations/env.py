@@ -10,8 +10,8 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from discord_economy_bot.db import models  # noqa: F401
-from discord_economy_bot.db.base import Base
+from shadow_bot.db import models  # noqa: F401
+from shadow_bot.db.base import Base
 
 config = context.config
 if config.config_file_name is not None:
