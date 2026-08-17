@@ -1,12 +1,25 @@
+# Secrets — never commit
 .env
+*.env
+!.env.example
+
+# Python
 .venv/
+venv/
 __pycache__/
 *.py[cod]
-.pytest_cache/
-.ruff_cache/
 *.egg-info/
 dist/
 build/
-graphify-out/cache/
 
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
 
+# Generated code-intelligence output (regenerate with `npx gitnexus analyze`)
+graphify-out/
+.gitnexus/
+
+# Scratch
+_to_delete/

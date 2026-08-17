@@ -12,6 +12,14 @@ from shadow_bot.logging_config import configure_logging
 
 LOGGER = logging.getLogger(__name__)
 
+#: Every cog the bot loads at startup. Keep this list authoritative — the import
+#: smoke test in tests/test_extensions.py walks it, so a bad module path fails
+#: the test suite instead of crashing the running bot.
+EXTENSIONS: tuple[str, ...] = (
+    "shadow_bot.cogs.health",
+    "shadow_bot.cogs.member_lifecycle",
+)
+
 
 class EconomyBot(commands.Bot):
     def __init__(self, settings: Settings, database: Database) -> None:
@@ -24,8 +32,10 @@ class EconomyBot(commands.Bot):
 
     async def setup_hook(self) -> None:
         await self.database.check_connection()
-        await self.load_extension("shadow_bot.cogs.health")
-        await self.load_extension("shadow_bot.cogs.member_lifecycle")
+
+        for extension in EXTENSIONS:
+            await self.load_extension(extension)
+            LOGGER.info("Loaded extension %s", extension)
 
         if self.settings.test_guild_id:
             guild = discord.Object(id=self.settings.test_guild_id)
@@ -50,8 +60,13 @@ class EconomyBot(commands.Bot):
 async def _tree_error(
     interaction: discord.Interaction, error: app_commands.AppCommandError
 ) -> None:
-    LOGGER.exception("Application command failed", exc_info=error)
-    message = "That command could not be completed. The error has been logged."
+    if isinstance(error, app_commands.CheckFailure):
+        message = "You do not have permission to use that command here."
+        LOGGER.info("Rejected command from %s: %s", interaction.user.id, error)
+    else:
+        message = "That command could not be completed. The error has been logged."
+        LOGGER.exception("Application command failed", exc_info=error)
+
     if interaction.response.is_done():
         await interaction.followup.send(message, ephemeral=True)
     else:

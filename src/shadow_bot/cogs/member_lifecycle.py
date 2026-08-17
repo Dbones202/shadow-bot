@@ -5,7 +5,7 @@ import logging
 import discord
 from discord.ext import commands
 
-from discord_economy_bot.db.member_cleanup import (
+from shadow_bot.db.member_cleanup import (
     delete_member_economy,
     reset_lost_role_cooldowns,
 )
