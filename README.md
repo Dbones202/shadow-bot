@@ -10,22 +10,45 @@ separate container over the private LAN.
 
 ## What works today
 
-- Python 3.11+ on `discord.py` 2.5+
-- Async PostgreSQL via SQLAlchemy 2.0 + psycopg 3
+- Python 3.11+ on `discord.py` 2.5+, async PostgreSQL via SQLAlchemy 2.0 + psycopg 3
 - Versioned schema through Alembic
-- `/ping` — reports Discord gateway latency and PostgreSQL reachability
+- `/setup` — guild-owner modal wizard for currency name, plural, symbol, and timezone
+- `/settings` — show the current configuration
+- `/balance` — cash, bank, and total for yourself or another member
+- `/deposit` and `/withdraw` — move money between cash and bank
+- `/pay` — send cash to another member
+- `/economy add` and `/economy remove` — owner-only currency creation and removal, audited
+- `/ping` — Discord gateway latency and PostgreSQL reachability
 - Immediate economy-data deletion when a member leaves, is kicked, or is banned
 - Per-role collection cooldown reset when a member loses that role
-- Schema for accounts, balances, ledger, role income, activities, interest,
-  flavor text, cooldowns, delegated permissions, usage limits, and audit events
+- Balance changes are row-locked and every movement writes a ledger entry
 - Tested fine behavior: cash to its floor first, then bank to its floor
 - Tested capability combining for members holding several administrative roles
 - Hardened `systemd` unit
 
-Member-facing economy commands and the setup wizard are the next milestone. The
-schema already exists so those commands drop in without restructuring anything.
+Role income, activities (work/steal/crime), interest, and delegated permissions are the next
+milestone. The schema already supports them — see `ECONOMY_SPEC.md`.
 
----
+### Command reference
+
+| Command | Who | What it does |
+|---|---|---|
+| `/setup` | Server owner | Opens the configuration wizard. Must be run before anything else — accounts have a foreign key to guild settings. |
+| `/settings` | Anyone | Shows currency, timezone, balance floors, and whether the economy is enabled. |
+| `/balance [member]` | Anyone | Cash, bank, and total. Defaults to you. |
+| `/deposit <amount>` | Anyone | Cash into bank. Accepts `all`, `half`, `2.5k`, `1,000`. |
+| `/withdraw <amount>` | Anyone | Bank into cash. Same amount formats. |
+| `/pay <member> <amount>` | Anyone | Sends cash. Cannot overdraft, cannot target bots or yourself. |
+| `/economy add <member> <amount> [cash\|bank]` | Server owner | Creates currency. The only way money enters an economy. Writes a ledger entry and an audit event. |
+| `/economy remove <member> <amount> [cash\|bank]` | Server owner | Removes currency, stopping at the configured floor and reporting any shortfall. |
+| `/ping` | Anyone | Connectivity check. |
+
+Members cannot voluntarily go negative. Balance floors exist so **fines** and administrative
+removals can collect into debt; they are not an overdraft members may draw on themselves.
+
+Currency creation and removal are limited to the guild owner and the application owner.
+Discord's Administrator permission grants no economy authority — per `ECONOMY_SPEC.md`,
+delegation happens through capability grants, which are a later milestone.
 
 ## 1. Create the Discord application
 
@@ -199,12 +222,26 @@ python -m venv .venv
 .venv/bin/ruff format --check .
 ```
 
-`tests/test_extensions.py` imports every cog listed in `EXTENSIONS` in
-`src/shadow_bot/bot.py`. Add a cog, add it to that tuple — otherwise the test
-suite fails, which is deliberate. A broken cog import is invisible to unit
-tests but fatal at startup, and that has already happened once here.
+`tests/test_extensions.py` imports every cog listed in `EXTENSIONS` in `src/shadow_bot/bot.py`.
+Add a cog, add it to that tuple — otherwise the suite fails, which is deliberate. A broken cog
+import is invisible to unit tests but fatal at startup, and that has already happened once here.
 
----
+### Database integration tests
+
+`tests/test_economy_db.py` runs against a real PostgreSQL instance and is **skipped unless
+`TEST_DATABASE_URL` is set**. The variable is deliberately not `DATABASE_URL`, so running the
+suite on the bot host can never point these at live data — they truncate tables.
+
+```bash
+TEST_DATABASE_URL=postgresql+psycopg://shadow_bot:pw@127.0.0.1:5432/shadow_bot \
+    .venv/bin/python -m pytest tests/test_economy_db.py
+```
+
+These exist because row locking cannot be verified with mocks. The bug they guard against —
+two concurrent transfers reading the same balance, the second overwriting the first, currency
+appearing from nowhere — only reproduces when real transactions contend for real rows. Removing
+`with_for_update()` makes `test_concurrent_payments_cannot_create_money` fail immediately, which
+is how you know it is doing its job.
 
 ## Security notes
 

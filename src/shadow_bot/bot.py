@@ -18,6 +18,9 @@ LOGGER = logging.getLogger(__name__)
 EXTENSIONS: tuple[str, ...] = (
     "shadow_bot.cogs.health",
     "shadow_bot.cogs.member_lifecycle",
+    "shadow_bot.cogs.setup",
+    "shadow_bot.cogs.economy",
+    "shadow_bot.cogs.admin",
 )
 
 
