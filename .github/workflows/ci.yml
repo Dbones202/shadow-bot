@@ -1,0 +1,125 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: ruff format --check .
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.11 is the floor declared in pyproject; 3.12 matches the deployed
+        # container; 3.13 is checked because it removed `audioop` from the
+        # stdlib, which discord.py imports.
+        python-version: ["3.11", "3.12", "3.13"]
+
+    services:
+      postgres:
+        # Match the server: PostgreSQL 16, UTF8, C collation. The bot stores
+        # emoji currency symbols, so encoding is not incidental here.
+        image: postgres:16
+        env:
+          POSTGRES_USER: shadow_bot
+          POSTGRES_PASSWORD: ci_password
+          POSTGRES_DB: shadow_bot
+          POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U shadow_bot"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Apply migrations
+        env:
+          DATABASE_URL: postgresql+psycopg://shadow_bot:ci_password@127.0.0.1:5432/shadow_bot
+        run: alembic upgrade head
+
+      - name: Verify the database encoding
+        # A SQL_ASCII database would silently mangle emoji currency symbols,
+        # so fail loudly rather than let the suite pass against the wrong setup.
+        run: |
+          python - <<'PY'
+          import psycopg
+          with psycopg.connect(
+              "postgresql://shadow_bot:ci_password@127.0.0.1:5432/shadow_bot"
+          ) as conn:
+              encoding = conn.execute("SHOW server_encoding").fetchone()[0]
+              print("server_encoding:", encoding)
+              assert encoding == "UTF8", f"expected UTF8, got {encoding}"
+          PY
+
+      - name: Run tests
+        env:
+          # Integration tests are skipped unless this is set. It is deliberately
+          # not DATABASE_URL — these tests TRUNCATE tables, and the separate name
+          # is what keeps them from ever pointing at a real deployment.
+          TEST_DATABASE_URL: postgresql+psycopg://shadow_bot:ci_password@127.0.0.1:5432/shadow_bot
+        run: pytest -q
+
+  migrations:
+    # A migration that cannot be undone is a migration you cannot roll back
+    # from at 2am. Check both directions on every change.
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: shadow_bot
+          POSTGRES_PASSWORD: ci_password
+          POSTGRES_DB: shadow_bot
+          POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U shadow_bot"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://shadow_bot:ci_password@127.0.0.1:5432/shadow_bot
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Upgrade to head
+        run: alembic upgrade head
+      - name: Downgrade to base
+        run: alembic downgrade base
+      - name: Upgrade again
+        run: alembic upgrade head

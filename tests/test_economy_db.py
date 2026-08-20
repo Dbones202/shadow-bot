@@ -21,14 +21,21 @@ from __future__ import annotations
 import asyncio
 import os
 import uuid
+from datetime import UTC, datetime, timedelta
 
 import pytest
 import pytest_asyncio
 from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from shadow_bot.db import economy
-from shadow_bot.db.models import AuditEvent, EconomyAccount, GuildSettings, LedgerEntry
+from shadow_bot.db import economy, income
+from shadow_bot.db.models import (
+    AuditEvent,
+    EconomyAccount,
+    GuildSettings,
+    LedgerEntry,
+    RoleCollectionCooldown,
+)
 from shadow_bot.domain.banking import BankingError
 
 TEST_URL = os.getenv("TEST_DATABASE_URL")
@@ -50,7 +57,10 @@ async def sessions():
 
     async with maker.begin() as session:
         await session.execute(
-            text("TRUNCATE audit_events, ledger_entries, economy_accounts, guild_settings CASCADE")
+            text(
+                "TRUNCATE audit_events, ledger_entries, role_collection_cooldowns, "
+                "role_income_rules, economy_accounts, guild_settings CASCADE"
+            )
         )
         session.add(GuildSettings(guild_id=GUILD, economy_enabled=True))
 
@@ -397,3 +407,154 @@ async def test_granted_currency_can_then_be_paid_and_banked(sessions) -> None:
     assert alice == (600, 0)
     assert bob == (0, 400)
     assert sum(alice) + sum(bob) == 1_000, "only the granted amount exists"
+
+
+# --- Role income --------------------------------------------------------------
+
+ROLE_A = 444_000_000_000_000_004
+ROLE_B = 555_000_000_000_000_005
+
+
+async def _rule(sessions, role_id: int, payout: int, cooldown: int):
+    async with sessions.begin() as session:
+        rule, _ = await income.upsert_rule(
+            session, GUILD, role_id=role_id, payout=payout, cooldown_seconds=cooldown
+        )
+        return rule.id
+
+
+async def test_collect_pays_every_held_income_role(sessions) -> None:
+    await _rule(sessions, ROLE_A, 300, 3_600)
+    await _rule(sessions, ROLE_B, 200, 3_600)
+
+    async with sessions.begin() as session:
+        plan = await income.collect(session, GUILD, ALICE, [ROLE_A, ROLE_B])
+
+    assert plan.total == 500
+    assert await _balances(sessions, ALICE) == (500, 0)
+
+
+async def test_collect_ignores_roles_the_member_does_not_hold(sessions) -> None:
+    """Discord is the truth for role membership, not the rules table."""
+    await _rule(sessions, ROLE_A, 300, 3_600)
+    await _rule(sessions, ROLE_B, 200, 3_600)
+
+    async with sessions.begin() as session:
+        plan = await income.collect(session, GUILD, ALICE, [ROLE_A])
+
+    assert plan.total == 300
+
+
+async def test_second_collect_within_the_cooldown_pays_nothing(sessions) -> None:
+    await _rule(sessions, ROLE_A, 300, 3_600)
+
+    async with sessions.begin() as session:
+        await income.collect(session, GUILD, ALICE, [ROLE_A])
+    async with sessions.begin() as session:
+        plan = await income.collect(session, GUILD, ALICE, [ROLE_A])
+
+    assert plan.total == 0
+    assert len(plan.waiting) == 1
+    assert await _balances(sessions, ALICE) == (300, 0)
+
+
+async def test_collect_again_after_the_cooldown_expires(sessions) -> None:
+    await _rule(sessions, ROLE_A, 300, 3_600)
+    async with sessions.begin() as session:
+        await income.collect(session, GUILD, ALICE, [ROLE_A])
+
+    later = datetime.now(UTC) + timedelta(seconds=3_601)
+    async with sessions.begin() as session:
+        plan = await income.collect(session, GUILD, ALICE, [ROLE_A], now=later)
+
+    assert plan.total == 300
+    assert await _balances(sessions, ALICE) == (600, 0)
+
+
+async def test_concurrent_collects_pay_once(sessions) -> None:
+    """The double-collect race: ten simultaneous /collect must pay one payout.
+
+    Without the account row lock, several transactions read "no cooldown", all
+    decide the member is eligible, and the payout multiplies.
+
+    The account is created up front on purpose. If it does not exist yet, every
+    transaction serialises behind the first one's INSERT ... ON CONFLICT while
+    the database decides who creates the row — which hides the race and makes
+    this test pass even with the lock removed. Verified by deleting
+    `with_for_update()` and watching this fail.
+    """
+    await _rule(sessions, ROLE_A, 300, 3_600)
+    await _grant(sessions, ALICE, 0)  # pre-create so nothing serialises on insert
+
+    async def attempt() -> int:
+        async with sessions.begin() as session:
+            plan = await income.collect(session, GUILD, ALICE, [ROLE_A])
+            return plan.total
+
+    results = await asyncio.gather(*(attempt() for _ in range(10)), return_exceptions=True)
+    errors = [r for r in results if isinstance(r, BaseException)]
+    assert not errors, f"unexpected errors: {errors}"
+
+    cash, _ = await _balances(sessions, ALICE)
+    assert cash == 300, f"expected a single payout, got {cash}"
+    assert sum(r for r in results if isinstance(r, int)) == 300
+
+
+async def test_collect_writes_one_ledger_entry_per_role(sessions) -> None:
+    await _rule(sessions, ROLE_A, 300, 3_600)
+    await _rule(sessions, ROLE_B, 200, 7_200)
+
+    async with sessions.begin() as session:
+        await income.collect(session, GUILD, ALICE, [ROLE_A, ROLE_B])
+
+    async with sessions() as session:
+        entries = (
+            (
+                await session.execute(
+                    select(LedgerEntry).where(LedgerEntry.category == "role_income")
+                )
+            )
+            .scalars()
+            .all()
+        )
+
+    assert len(entries) == 2
+    assert len({e.correlation_id for e in entries}) == 1
+    assert sum(e.cash_delta for e in entries) == 500
+    assert {e.details["role_id"] for e in entries} == {str(ROLE_A), str(ROLE_B)}
+
+
+async def test_updating_a_rule_does_not_duplicate_it(sessions) -> None:
+    first = await _rule(sessions, ROLE_A, 300, 3_600)
+    second = await _rule(sessions, ROLE_A, 900, 7_200)
+    assert first == second
+
+    async with sessions() as session:
+        rules = await income.list_rules(session, GUILD)
+    assert len(rules) == 1
+    assert rules[0].payout == 900
+
+
+async def test_removing_a_rule_clears_its_cooldowns(sessions) -> None:
+    """Otherwise an orphaned cooldown would linger and confuse a re-added rule."""
+    await _rule(sessions, ROLE_A, 300, 3_600)
+    async with sessions.begin() as session:
+        await income.collect(session, GUILD, ALICE, [ROLE_A])
+
+    async with sessions.begin() as session:
+        assert await income.delete_rule(session, GUILD, ROLE_A) is True
+
+    async with sessions() as session:
+        remaining = (await session.execute(select(RoleCollectionCooldown))).scalars().all()
+    assert remaining == []
+
+
+async def test_removing_a_rule_that_does_not_exist_reports_false(sessions) -> None:
+    async with sessions.begin() as session:
+        assert await income.delete_rule(session, GUILD, ROLE_A) is False
+
+
+async def test_collect_with_no_roles_is_harmless(sessions) -> None:
+    async with sessions.begin() as session:
+        plan = await income.collect(session, GUILD, ALICE, [])
+    assert plan.total == 0 and plan.waiting == ()

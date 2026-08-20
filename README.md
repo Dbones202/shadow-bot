@@ -18,6 +18,8 @@ separate container over the private LAN.
 - `/deposit` and `/withdraw` — move money between cash and bank
 - `/pay` — send cash to another member
 - `/economy add` and `/economy remove` — owner-only currency creation and removal, audited
+- `/income add|remove|list` — attach a payout and cooldown to a Discord role
+- `/collect` — members collect every income role they hold that is ready
 - `/ping` — Discord gateway latency and PostgreSQL reachability
 - Immediate economy-data deletion when a member leaves, is kicked, or is banned
 - Per-role collection cooldown reset when a member loses that role
@@ -26,7 +28,7 @@ separate container over the private LAN.
 - Tested capability combining for members holding several administrative roles
 - Hardened `systemd` unit
 
-Role income, activities (work/steal/crime), interest, and delegated permissions are the next
+Activities (work/steal/crime), interest, and delegated permissions are the next
 milestone. The schema already supports them — see `ECONOMY_SPEC.md`.
 
 ### Command reference
@@ -41,12 +43,21 @@ milestone. The schema already supports them — see `ECONOMY_SPEC.md`.
 | `/pay <member> <amount>` | Anyone | Sends cash. Cannot overdraft, cannot target bots or yourself. |
 | `/economy add <member> <amount> [cash\|bank]` | Server owner | Creates currency. The only way money enters an economy. Writes a ledger entry and an audit event. |
 | `/economy remove <member> <amount> [cash\|bank]` | Server owner | Removes currency, stopping at the configured floor and reporting any shortfall. |
+| `/income add <role> <payout> <cooldown>` | Server owner | Attaches income to a role. Cooldowns accept `30m`, `12h`, `1d`, `1d12h`. Re-running updates the rule. |
+| `/income remove <role>` | Server owner | Stops a role paying and clears its cooldowns. |
+| `/income list` | Anyone | Every earning role, its payout and cadence. |
+| `/collect` | Anyone | Collects every ready income role at once, and shows when the rest return. |
 | `/ping` | Anyone | Connectivity check. |
 
 Members cannot voluntarily go negative. Balance floors exist so **fines** and administrative
 removals can collect into debt; they are not an overdraft members may draw on themselves.
 
-Currency creation and removal are limited to the guild owner and the application owner.
+Missed income windows do not accumulate — a member three days late on a 12-hour income
+collects one payout, not six, and the next window starts from the moment they collect.
+Losing a role clears its cooldown, so regaining it grants immediate eligibility.
+
+Currency creation, removal, and role income configuration are limited to the guild owner
+and the application owner.
 Discord's Administrator permission grants no economy authority — per `ECONOMY_SPEC.md`,
 delegation happens through capability grants, which are a later milestone.
 

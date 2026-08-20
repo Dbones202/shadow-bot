@@ -110,6 +110,7 @@ def _ledger(
     actor: EconomyAccount | None = None,
     counterparty: EconomyAccount | None = None,
     amount: int | None = None,
+    details: dict[str, object] | None = None,
 ) -> LedgerEntry:
     return LedgerEntry(
         correlation_id=correlation_id,
@@ -122,7 +123,7 @@ def _ledger(
         bank_delta=bank_delta,
         attempted_amount=amount,
         applied_amount=amount,
-        details={},
+        details=details or {},
     )
 
 

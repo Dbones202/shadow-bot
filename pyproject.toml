@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "shadow-bot"
-version = "0.2.0"
+dynamic = ["version"]
 description = "A guild-scoped Discord multipurpose bot"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -25,6 +25,11 @@ dev = [
 
 [project.scripts]
 shadow-bot = "shadow_bot.__main__:main"
+
+[tool.setuptools.dynamic]
+# VERSION is the single source of truth. Keeping it in a plain file means a
+# release bump is one edit, and CI/tooling can read it without parsing TOML.
+version = { file = "VERSION" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
