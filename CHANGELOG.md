@@ -5,6 +5,28 @@ All notable changes to Shadow Bot will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-08-21
+
+### Added
+- **Active Income System (Activities)**:
+  - `/activity set <activity> <cooldown> <chance> <reward_min> <reward_max> <fine_min> <fine_max>`: Guild-scoped configuration for active commands with support for single and compound cooldowns, flexible percentages (`75`, `75%`, `0.75`), and min/max reward and fine ranges.
+  - `/activity enable <activity>` & `/activity disable <activity>`: Administrative toggles to activate or deactivate individual activities without deleting their configurations.
+  - `/activity list`: Overview of all configured server activities, displaying odds, reward and fine ranges, cooldown intervals, and statuses.
+  - `/work`, `/crime`, `/slut`: Active earning commands resolving outcomes deterministically with half-up scaling and cryptographic randomness (`random.SystemRandom`).
+  - `/steal <member>`: Peer-to-peer cash theft capped at the target's positive cash balance, preserving total server currency and preventing unconsented debt accumulation.
+- **Administrator Permission Integration**:
+  - Discord command group permissions (`default_permissions=discord.Permissions(administrator=True)`) applied to `/setup`, `/economy`, `/income`, and `/activity`.
+  - Interim `Authority.GUILD_ADMIN` classification in `domain.authority` enabling members with Discord's Administrator permission to manage economy settings and income.
+  - Safe `has_admin_permission(user)` helper ensuring strict type-safe guild permission checks.
+- **Concurrency & Database Protection**:
+  - Deadlock-free account and cooldown row-level locking in `db.activities`.
+  - Paired ledger entries with shared correlation IDs for steal transactions.
+  - Dual floor fine enforcement (cash down to cash floor, then bank down to bank floor) reporting exact collected amounts vs uncollected shortfalls.
+- **Test Suites**:
+  - New test suite in `tests/test_activities.py` covering activity resolution, range scaling, probability edge cases, and half-up rounding.
+  - Database integration tests in `tests/test_economy_db.py` for activity CRUD, concurrent attempts, and steal currency conservation.
+  - Authority resolution tests in `tests/test_authority.py`.
+
 ## [0.3.0] - 2026-08-19
 
 ### Added

@@ -22,12 +22,14 @@ import asyncio
 import os
 import uuid
 from datetime import UTC, datetime, timedelta
+from decimal import Decimal
 
 import pytest
 import pytest_asyncio
 from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
+from shadow_bot.db import activities as activity_db
 from shadow_bot.db import economy, income
 from shadow_bot.db.models import (
     AuditEvent,
@@ -36,6 +38,7 @@ from shadow_bot.db.models import (
     LedgerEntry,
     RoleCollectionCooldown,
 )
+from shadow_bot.domain.activities import Activity, ActivityError
 from shadow_bot.domain.banking import BankingError
 
 TEST_URL = os.getenv("TEST_DATABASE_URL")
@@ -58,8 +61,9 @@ async def sessions():
     async with maker.begin() as session:
         await session.execute(
             text(
-                "TRUNCATE audit_events, ledger_entries, role_collection_cooldowns, "
-                "role_income_rules, economy_accounts, guild_settings CASCADE"
+                "TRUNCATE audit_events, ledger_entries, activity_cooldowns, activity_rules, "
+                "role_collection_cooldowns, role_income_rules, economy_accounts, "
+                "guild_settings CASCADE"
             )
         )
         session.add(GuildSettings(guild_id=GUILD, economy_enabled=True))
@@ -558,3 +562,225 @@ async def test_collect_with_no_roles_is_harmless(sessions) -> None:
     async with sessions.begin() as session:
         plan = await income.collect(session, GUILD, ALICE, [])
     assert plan.total == 0 and plan.waiting == ()
+
+
+# --- Activities ---------------------------------------------------------------
+
+WORK = Activity.WORK
+STEAL = Activity.STEAL
+
+
+async def _configure(
+    sessions,
+    activity=WORK,
+    *,
+    chance="1",
+    reward=(100, 100),
+    fine=(50, 50),
+    cooldown=3_600,
+    enabled=True,
+):
+    async with sessions.begin() as session:
+        await activity_db.upsert_rule(
+            session,
+            GUILD,
+            activity,
+            cooldown_seconds=cooldown,
+            success_chance=Decimal(chance),
+            success_min=reward[0],
+            success_max=reward[1],
+            fine_min=fine[0],
+            fine_max=fine[1],
+            enabled=enabled,
+        )
+
+
+async def _try(
+    sessions, activity=WORK, *, user=ALICE, chance_roll="0", amount_roll=0.0, target=None, now=None
+):
+    async with sessions.begin() as session:
+        return await activity_db.attempt(
+            session,
+            GUILD,
+            user,
+            activity,
+            chance_roll=Decimal(chance_roll),
+            amount_roll=amount_roll,
+            cash_floor=-1_000,
+            bank_floor=-10_000,
+            target_id=target,
+            now=now,
+        )
+
+
+async def test_unconfigured_activity_is_refused(sessions) -> None:
+    with pytest.raises(ActivityError, match="not set up"):
+        await _try(sessions)
+
+
+async def test_disabled_activity_is_refused(sessions) -> None:
+    await _configure(sessions, enabled=False)
+    with pytest.raises(ActivityError, match="not set up"):
+        await _try(sessions)
+
+
+async def test_successful_work_pays_and_sets_a_cooldown(sessions) -> None:
+    await _configure(sessions)
+    result = await _try(sessions)
+    assert result.outcome.succeeded
+    assert await _balances(sessions, ALICE) == (100, 0)
+    assert result.next_available_at is not None
+
+
+async def test_second_attempt_within_the_cooldown_is_refused(sessions) -> None:
+    await _configure(sessions)
+    await _try(sessions)
+    with pytest.raises(activity_db.OnCooldown):
+        await _try(sessions)
+    assert await _balances(sessions, ALICE) == (100, 0), "the refused attempt paid nothing"
+
+
+async def test_attempt_after_the_cooldown_expires(sessions) -> None:
+    await _configure(sessions)
+    await _try(sessions)
+    later = datetime.now(UTC) + timedelta(seconds=3_601)
+    await _try(sessions, now=later)
+    assert await _balances(sessions, ALICE) == (200, 0)
+
+
+async def test_failure_fines_using_the_tested_fine_logic(sessions) -> None:
+    await _configure(sessions, chance="0", fine=(500, 500))
+    await _grant(sessions, ALICE, 800)
+    result = await _try(sessions, chance_roll="0.5")
+    assert not result.outcome.succeeded
+    assert result.collected == 500
+    assert await _balances(sessions, ALICE) == (300, 0)
+
+
+async def test_a_fine_draws_cash_to_its_floor_then_reaches_into_bank(sessions) -> None:
+    """Cash floor is -1,000 and bank floor -10,000, so 5,000 is fully collectable.
+
+    The bank floor extends how far a fine can reach — 1,000 from cash, then the
+    remaining 4,000 from bank.
+    """
+    await _configure(sessions, chance="0", fine=(5_000, 5_000))
+    result = await _try(sessions, chance_roll="0.5")
+    assert (result.collected, result.uncollected) == (5_000, 0)
+    assert await _balances(sessions, ALICE) == (-1_000, -4_000)
+
+
+async def test_a_fine_beyond_both_floors_reports_the_shortfall(sessions) -> None:
+    """Only 11,000 is reachable in total; the rest is uncollected, not forgiven silently."""
+    await _configure(sessions, chance="0", fine=(20_000, 20_000))
+    result = await _try(sessions, chance_roll="0.5")
+    assert (result.collected, result.uncollected) == (11_000, 9_000)
+    assert await _balances(sessions, ALICE) == (-1_000, -10_000)
+
+
+async def test_steal_moves_cash_between_members(sessions) -> None:
+    await _configure(sessions, STEAL, reward=(300, 300))
+    await _grant(sessions, BOB, 1_000)
+    result = await _try(sessions, STEAL, target=BOB)
+    assert result.outcome.succeeded
+    assert await _balances(sessions, ALICE) == (300, 0)
+    assert await _balances(sessions, BOB) == (700, 0)
+
+
+async def test_steal_is_capped_at_the_targets_cash(sessions) -> None:
+    await _configure(sessions, STEAL, reward=(900, 900))
+    await _grant(sessions, BOB, 200)
+    result = await _try(sessions, STEAL, target=BOB)
+    assert result.outcome.capped
+    assert await _balances(sessions, BOB) == (0, 0)
+    assert await _balances(sessions, ALICE) == (200, 0)
+
+
+async def test_steal_conserves_currency(sessions) -> None:
+    """Unlike work, stealing must not create money."""
+    await _configure(sessions, STEAL, reward=(400, 400))
+    await _grant(sessions, BOB, 1_000)
+    await _try(sessions, STEAL, target=BOB)
+    alice = await _balances(sessions, ALICE)
+    bob = await _balances(sessions, BOB)
+    assert sum(alice) + sum(bob) == 1_000
+
+
+async def test_stealing_from_yourself_is_refused(sessions) -> None:
+    await _configure(sessions, STEAL)
+    with pytest.raises(ActivityError, match="from yourself"):
+        await _try(sessions, STEAL, target=ALICE)
+
+
+async def test_steal_writes_both_sides_to_the_ledger(sessions) -> None:
+    await _configure(sessions, STEAL, reward=(250, 250))
+    await _grant(sessions, BOB, 1_000)
+    await _try(sessions, STEAL, target=BOB)
+
+    async with sessions() as session:
+        entries = (
+            (await session.execute(select(LedgerEntry).where(LedgerEntry.category.like("steal%"))))
+            .scalars()
+            .all()
+        )
+    assert len(entries) == 2
+    assert len({e.correlation_id for e in entries}) == 1
+    assert sum(e.cash_delta for e in entries) == 0
+
+
+async def test_concurrent_attempts_respect_the_cooldown(sessions) -> None:
+    """Ten simultaneous /work must succeed once; the other nine hit the cooldown.
+
+    Assert on the *count of successes*, not the final balance. Without the row
+    lock all ten read "no cooldown", each computes 0 + 100, and PostgreSQL
+    serialises the UPDATEs so the last write still lands on 100 — the balance is
+    correct by accident while ten members were each told they earned a wage.
+    Verified by removing `with_for_update()` and watching this fail at 10 != 1.
+    """
+    await _configure(sessions)
+    await _grant(sessions, ALICE, 0)  # pre-create; otherwise the insert serialises
+
+    async def go() -> bool:
+        try:
+            await _try(sessions)
+            return True
+        except activity_db.OnCooldown:
+            return False
+
+    results = await asyncio.gather(*(go() for _ in range(10)), return_exceptions=True)
+    errors = [r for r in results if isinstance(r, BaseException)]
+    assert not errors, f"unexpected errors: {errors}"
+
+    assert sum(1 for r in results if r is True) == 1, "more than one attempt got through"
+    assert await _balances(sessions, ALICE) == (100, 0)
+
+
+async def test_reconfiguring_does_not_duplicate_the_rule(sessions) -> None:
+    await _configure(sessions, reward=(100, 100))
+    await _configure(sessions, reward=(900, 900))
+    async with sessions() as session:
+        rules = await activity_db.list_rules(session, GUILD)
+    assert len(rules) == 1
+    assert rules[0].success_max == 900
+
+
+async def test_enable_disable_round_trip(sessions) -> None:
+    await _configure(sessions)
+    async with sessions.begin() as session:
+        assert await activity_db.set_enabled(session, GUILD, WORK, False) is True
+    with pytest.raises(ActivityError):
+        await _try(sessions)
+    async with sessions.begin() as session:
+        assert await activity_db.set_enabled(session, GUILD, WORK, True) is True
+    assert (await _try(sessions)).outcome.succeeded
+
+
+async def test_enabling_an_unconfigured_activity_reports_false(sessions) -> None:
+    async with sessions.begin() as session:
+        assert await activity_db.set_enabled(session, GUILD, Activity.CRIME, True) is False
+
+
+async def test_invalid_configuration_is_rejected_before_writing(sessions) -> None:
+    with pytest.raises(ActivityError, match="below the minimum"):
+        await _configure(sessions, reward=(900, 100))
+    async with sessions() as session:
+        assert await activity_db.list_rules(session, GUILD) == []

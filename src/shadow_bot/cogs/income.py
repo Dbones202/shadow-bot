@@ -22,7 +22,7 @@ from shadow_bot.db import economy, income
 from shadow_bot.db.models import GuildSettings
 from shadow_bot.domain.amounts import MAX_AMOUNT, AmountError, CurrencyStyle, format_money
 from shadow_bot.domain.amounts import parse_amount as parse
-from shadow_bot.domain.authority import is_economy_admin
+from shadow_bot.domain.authority import has_admin_permission, is_economy_admin
 from shadow_bot.domain.durations import (
     DurationError,
     format_duration,
@@ -41,8 +41,11 @@ NOT_CONFIGURED = "This server has no economy yet. The server owner can create on
 class IncomeCog(commands.Cog):
     group = app_commands.Group(
         name="income",
-        description="Owner tools for role-based income",
+        description="Administrator tools for role-based income",
         guild_only=True,
+        # Group-wide, so `list` is administrator-visible too. Members see their
+        # own earning roles and cooldowns through /collect, which is open to all.
+        default_permissions=discord.Permissions(administrator=True),
     )
 
     def __init__(self, bot: EconomyBot) -> None:
@@ -61,6 +64,7 @@ class IncomeCog(commands.Cog):
             interaction.user.id,
             guild_owner_id=interaction.guild.owner_id if interaction.guild else None,
             app_owner_ids=self.bot.settings.bot_owner_ids,
+            has_administrator=has_admin_permission(interaction.user),
         )
 
     # --- Owner configuration --------------------------------------------------
@@ -80,7 +84,7 @@ class IncomeCog(commands.Cog):
     ) -> None:
         if not self._is_admin(interaction):
             await interaction.response.send_message(
-                "Only the server owner can configure role income.", ephemeral=True
+                "You need Administrator permission to configure role income.", ephemeral=True
             )
             return
         settings = await self._settings(interaction)
@@ -148,7 +152,7 @@ class IncomeCog(commands.Cog):
     async def remove(self, interaction: discord.Interaction, role: discord.Role) -> None:
         if not self._is_admin(interaction):
             await interaction.response.send_message(
-                "Only the server owner can configure role income.", ephemeral=True
+                "You need Administrator permission to configure role income.", ephemeral=True
             )
             return
 

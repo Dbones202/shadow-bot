@@ -20,6 +20,8 @@ separate container over the private LAN.
 - `/economy add` and `/economy remove` — owner-only currency creation and removal, audited
 - `/income add|remove|list` — attach a payout and cooldown to a Discord role
 - `/collect` — members collect every income role they hold that is ready
+- `/work`, `/crime`, `/steal`, `/slut` — active income, with per-guild odds, rewards and fines
+- `/activity set|enable|disable|list` — configure every number an activity uses
 - `/ping` — Discord gateway latency and PostgreSQL reachability
 - Immediate economy-data deletion when a member leaves, is kicked, or is banned
 - Per-role collection cooldown reset when a member loses that role
@@ -28,36 +30,87 @@ separate container over the private LAN.
 - Tested capability combining for members holding several administrative roles
 - Hardened `systemd` unit
 
-Activities (work/steal/crime), interest, and delegated permissions are the next
-milestone. The schema already supports them — see `ECONOMY_SPEC.md`.
+Interest and delegated permissions are the next milestone. The schema already supports
+them — see `ECONOMY_SPEC.md`.
 
 ### Command reference
 
 | Command | Who | What it does |
 |---|---|---|
-| `/setup` | Server owner | Opens the configuration wizard. Must be run before anything else — accounts have a foreign key to guild settings. |
+| `/setup` | Administrator | Opens the configuration wizard. Must be run before anything else — accounts have a foreign key to guild settings. |
 | `/settings` | Anyone | Shows currency, timezone, balance floors, and whether the economy is enabled. |
 | `/balance [member]` | Anyone | Cash, bank, and total. Defaults to you. |
 | `/deposit <amount>` | Anyone | Cash into bank. Accepts `all`, `half`, `2.5k`, `1,000`. |
 | `/withdraw <amount>` | Anyone | Bank into cash. Same amount formats. |
 | `/pay <member> <amount>` | Anyone | Sends cash. Cannot overdraft, cannot target bots or yourself. |
-| `/economy add <member> <amount> [cash\|bank]` | Server owner | Creates currency. The only way money enters an economy. Writes a ledger entry and an audit event. |
-| `/economy remove <member> <amount> [cash\|bank]` | Server owner | Removes currency, stopping at the configured floor and reporting any shortfall. |
-| `/income add <role> <payout> <cooldown>` | Server owner | Attaches income to a role. Cooldowns accept `30m`, `12h`, `1d`, `1d12h`. Re-running updates the rule. |
-| `/income remove <role>` | Server owner | Stops a role paying and clears its cooldowns. |
-| `/income list` | Anyone | Every earning role, its payout and cadence. |
+| `/economy add <member> <amount> [cash\|bank]` | Administrator | Creates currency. The only way money enters an economy. Writes a ledger entry and an audit event. |
+| `/economy remove <member> <amount> [cash\|bank]` | Administrator | Removes currency, stopping at the configured floor and reporting any shortfall. |
+| `/income add <role> <payout> <cooldown>` | Administrator | Attaches income to a role. Cooldowns accept `30m`, `12h`, `1d`, `1d12h`. Re-running updates the rule. |
+| `/income remove <role>` | Administrator | Stops a role paying and clears its cooldowns. |
+| `/income list` | Administrator | Every earning role, its payout and cadence. |
 | `/collect` | Anyone | Collects every ready income role at once, and shows when the rest return. |
+| `/activity set <activity> <cooldown> <chance> <reward_min> <reward_max> <fine_min> <fine_max>` | Administrator | Configures an activity. Nothing is hardcoded. |
+| `/activity enable\|disable <activity>` | Administrator | Turns one on or off. |
+| `/activity list` | Administrator | Every activity and how it is configured. |
+| `/work`, `/crime`, `/slut` | Anyone | Attempt active income. Success pays from the reward range; failure is fined from the fine range. |
+| `/steal <member>` | Anyone | Takes cash from another member, capped at what they actually hold. |
 | `/ping` | Anyone | Connectivity check. |
 
 Members cannot voluntarily go negative. Balance floors exist so **fines** and administrative
 removals can collect into debt; they are not an overdraft members may draw on themselves.
 
+### Activities
+
+Activities do nothing until an administrator configures them — a fresh server has no accidental
+economy. Every number is per-guild and adjustable at any time: cooldown, success chance, reward
+range, and fine range.
+
+```
+/activity set activity:work cooldown:1h success_chance:75% reward_min:100 reward_max:400 fine_min:50 fine_max:150
+```
+
+Success chance accepts `75`, `75%`, or `0.75`. A failed attempt is fined using the tested
+cash-then-bank floor logic in `domain/fines.py`, and the response reports what was actually
+collected versus what could not be — a member already at their floor pays less than the fine
+demanded, and the message says so rather than quietly differing.
+
+`/steal` is the only activity that moves existing currency rather than creating it. It is capped at
+the target's cash, and a target already in debt has nothing takeable — stealing cannot push someone
+further below a floor they did not choose.
+
+Randomness is injected rather than generated inside the resolution logic, so every branch, boundary
+and rounding rule is tested deterministically. Rolls use `random.SystemRandom`.
+
 Missed income windows do not accumulate — a member three days late on a 12-hour income
 collects one payout, not six, and the next window starts from the moment they collect.
 Losing a role clears its cooldown, so regaining it grants immediate eligibility.
 
-Currency creation, removal, and role income configuration are limited to the guild owner
-and the application owner.
+### Who sees which commands
+
+Administrative commands declare `default_member_permissions = Administrator`, so Discord only
+shows them to administrators. Everything else is visible to every member.
+
+| Visible to administrators | Visible to everyone |
+|---|---|
+| `/setup`, `/economy add`, `/economy remove`, `/income add`, `/income remove`, `/income list` | `/settings`, `/balance`, `/deposit`, `/withdraw`, `/pay`, `/collect`, `/ping` |
+
+Two things to know about this:
+
+* **Discord applies the permission to a whole command group**, never per subcommand. `/income list`
+  is therefore administrator-only because it shares a group with `add` and `remove`. Members see
+  their own earning roles and cooldowns through `/collect`.
+* **Visibility is not authorisation.** `default_member_permissions` only decides what Discord
+  displays; server administrators can override it per role under Server Settings → Integrations.
+  Every administrative command independently re-checks authority in code, so overriding visibility
+  does not grant the ability to run anything.
+
+Currency creation, removal, and role income configuration accept the guild owner, the application
+owner, and — as an interim measure until capability grants exist — anyone with Discord's
+Administrator permission. See the deviation note in `ECONOMY_SPEC.md`.
+
+**If members cannot see commands they should**, check `@everyone` has **Use Application Commands**
+in Server Settings → Roles, and that no channel overwrite denies it. That permission is enforced by
+Discord before any of this applies.
 Discord's Administrator permission grants no economy authority — per `ECONOMY_SPEC.md`,
 delegation happens through capability grants, which are a later milestone.
 

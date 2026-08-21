@@ -8,6 +8,14 @@
 - The guild owner may grant capabilities to Discord roles.
 - Discord's general Administrator permission does not automatically grant economy access.
 
+> **Interim deviation (2026-08-19).** The delegated capability system is not built yet, which
+> would leave the guild owner as the only person able to run anything. Until it exists, members
+> holding Discord's **Administrator** permission are treated as economy administrators, and the
+> administrative commands are made visible to them by default. Audit records distinguish
+> `guild_owner`, `app_owner`, and `guild_admin`, so actions taken under this interim rule remain
+> identifiable afterwards. Revisit when capability grants land — `Authority.GUILD_ADMIN` in
+> `domain/authority.py` is the seam to remove.
+
 ## Delegated capabilities
 
 Initial capabilities are:

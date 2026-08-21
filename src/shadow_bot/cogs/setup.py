@@ -17,7 +17,7 @@ from discord.ext import commands
 from shadow_bot.db.economy import get_settings
 from shadow_bot.db.models import GuildSettings
 from shadow_bot.domain.amounts import CurrencyStyle, format_money
-from shadow_bot.domain.authority import is_economy_admin
+from shadow_bot.domain.authority import has_admin_permission, is_economy_admin
 from shadow_bot.domain.validation import (
     SettingError,
     validate_currency_name,
@@ -146,14 +146,19 @@ class EconomySetupCog(commands.Cog):
 
     @app_commands.command(name="setup", description="Configure this server's economy")
     @app_commands.guild_only()
+    # Visible to administrators by default. This controls who Discord *shows*
+    # the command to; the is_economy_admin check below is the actual gate.
+    @app_commands.default_permissions(administrator=True)
     async def setup_command(self, interaction: discord.Interaction) -> None:
         if not is_economy_admin(
             interaction.user.id,
             guild_owner_id=interaction.guild.owner_id if interaction.guild else None,
             app_owner_ids=self.bot.settings.bot_owner_ids,
+            has_administrator=has_admin_permission(interaction.user),
         ):
             await interaction.response.send_message(
-                "Only the server owner can configure the economy.", ephemeral=True
+                "You need Administrator permission to configure the economy.",
+                ephemeral=True,
             )
             return
 

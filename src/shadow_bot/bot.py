@@ -22,6 +22,7 @@ EXTENSIONS: tuple[str, ...] = (
     "shadow_bot.cogs.economy",
     "shadow_bot.cogs.admin",
     "shadow_bot.cogs.income",
+    "shadow_bot.cogs.activities",
 )
 
 

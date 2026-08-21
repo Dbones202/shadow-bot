@@ -1,6 +1,11 @@
 import pytest
 
-from shadow_bot.domain.authority import Authority, authority_of, is_economy_admin
+from shadow_bot.domain.authority import (
+    Authority,
+    authority_of,
+    has_admin_permission,
+    is_economy_admin,
+)
 
 OWNER = 100
 APP_OWNER = 200
@@ -48,3 +53,62 @@ def test_is_economy_admin_agrees_with_authority_of(user_id: int) -> None:
     assert is_economy_admin(user_id, guild_owner_id=OWNER, app_owner_ids=OWNERS) is (
         standing is not Authority.NONE
     )
+
+
+# --- Administrator permission (interim, see domain/authority.py) ---------------
+
+
+def test_administrator_grants_authority() -> None:
+    assert (
+        authority_of(STRANGER, guild_owner_id=OWNER, app_owner_ids=OWNERS, has_administrator=True)
+        is Authority.GUILD_ADMIN
+    )
+    assert is_economy_admin(
+        STRANGER, guild_owner_id=OWNER, app_owner_ids=OWNERS, has_administrator=True
+    )
+
+
+def test_administrator_is_ranked_below_ownership() -> None:
+    """An owner who also holds Administrator is recorded as the owner.
+
+    The audit trail should give the least surprising reason someone could act.
+    """
+    assert (
+        authority_of(OWNER, guild_owner_id=OWNER, app_owner_ids=OWNERS, has_administrator=True)
+        is Authority.GUILD_OWNER
+    )
+    assert (
+        authority_of(APP_OWNER, guild_owner_id=OWNER, app_owner_ids=OWNERS, has_administrator=True)
+        is Authority.APP_OWNER
+    )
+
+
+def test_administrator_defaults_to_false() -> None:
+    """Omitting the flag must never accidentally grant authority."""
+    assert authority_of(STRANGER, guild_owner_id=OWNER, app_owner_ids=OWNERS) is Authority.NONE
+
+
+def test_non_admin_member_still_has_nothing() -> None:
+    assert not is_economy_admin(
+        STRANGER, guild_owner_id=OWNER, app_owner_ids=OWNERS, has_administrator=False
+    )
+
+
+class _FakeMember:
+    def __init__(self, administrator: bool) -> None:
+        self.guild_permissions = type("P", (), {"administrator": administrator})()
+
+
+def test_has_admin_permission_reads_a_member() -> None:
+    assert has_admin_permission(_FakeMember(True)) is True
+    assert has_admin_permission(_FakeMember(False)) is False
+
+
+def test_has_admin_permission_is_false_for_a_plain_user() -> None:
+    """A User outside a guild has no guild_permissions at all."""
+
+    class _PlainUser:
+        pass
+
+    assert has_admin_permission(_PlainUser()) is False
+    assert has_admin_permission(None) is False

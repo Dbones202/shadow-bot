@@ -19,7 +19,7 @@ from shadow_bot.db import economy
 from shadow_bot.db.models import GuildSettings
 from shadow_bot.domain.amounts import MAX_AMOUNT, AmountError, CurrencyStyle, format_money
 from shadow_bot.domain.amounts import parse_amount as parse
-from shadow_bot.domain.authority import Authority, authority_of
+from shadow_bot.domain.authority import Authority, authority_of, has_admin_permission
 from shadow_bot.domain.banking import BankingError
 
 if TYPE_CHECKING:
@@ -38,8 +38,12 @@ class AdminEconomyCog(commands.Cog):
 
     group = app_commands.Group(
         name="economy",
-        description="Owner tools for managing currency",
+        description="Administrator tools for managing currency",
         guild_only=True,
+        # Discord applies default_member_permissions to the whole group; it
+        # cannot differ per subcommand. Both subcommands here mint or destroy
+        # currency, so one setting covers them correctly.
+        default_permissions=discord.Permissions(administrator=True),
     )
 
     def __init__(self, bot: EconomyBot) -> None:
@@ -55,10 +59,12 @@ class AdminEconomyCog(commands.Cog):
             interaction.user.id,
             guild_owner_id=interaction.guild.owner_id if interaction.guild else None,
             app_owner_ids=self.bot.settings.bot_owner_ids,
+            has_administrator=has_admin_permission(interaction.user),
         )
         if standing is Authority.NONE:
             await interaction.response.send_message(
-                "Only the server owner can create or remove currency.", ephemeral=True
+                "You need Administrator permission to create or remove currency.",
+                ephemeral=True,
             )
             return None
 
