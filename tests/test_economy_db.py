@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import random
 import uuid
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
@@ -31,9 +32,11 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from shadow_bot.db import activities as activity_db
 from shadow_bot.db import economy, income
+from shadow_bot.db import games as game_db
 from shadow_bot.db.models import (
     AuditEvent,
     EconomyAccount,
+    Game,
     GuildSettings,
     LedgerEntry,
     RoleCollectionCooldown,
@@ -61,9 +64,9 @@ async def sessions():
     async with maker.begin() as session:
         await session.execute(
             text(
-                "TRUNCATE audit_events, ledger_entries, activity_cooldowns, activity_rules, "
-                "role_collection_cooldowns, role_income_rules, economy_accounts, "
-                "guild_settings CASCADE"
+                "TRUNCATE audit_events, ledger_entries, game_participants, games, "
+                "activity_cooldowns, activity_rules, role_collection_cooldowns, "
+                "role_income_rules, economy_accounts, guild_settings CASCADE"
             )
         )
         session.add(GuildSettings(guild_id=GUILD, economy_enabled=True))
@@ -784,3 +787,233 @@ async def test_invalid_configuration_is_rejected_before_writing(sessions) -> Non
         await _configure(sessions, reward=(900, 100))
     async with sessions() as session:
         assert await activity_db.list_rules(session, GUILD) == []
+
+
+# --- Hungry Games -------------------------------------------------------------
+
+
+async def _game(sessions, *, fee=100, seed=0, min_players=2, signup=60):
+    async with sessions.begin() as session:
+        return await game_db.create_game(
+            session,
+            GUILD,
+            channel_id=1,
+            created_by=ADMIN,
+            entry_fee=fee,
+            seeded_pot=seed,
+            min_players=min_players,
+            signup_seconds=signup,
+        )
+
+
+async def _join(sessions, game_id, user_id):
+    async with sessions.begin() as session:
+        game = await session.get(Game, game_id)
+        return await game_db.join_game(session, game, user_id)
+
+
+async def test_creating_a_game_opens_signups(sessions) -> None:
+    game = await _game(sessions)
+    assert game.status == "signup"
+
+
+async def test_only_one_active_game_per_guild(sessions) -> None:
+    """Enforced by a partial unique index, not just by this check."""
+    await _game(sessions)
+    with pytest.raises(game_db.GameError, match="already open"):
+        await _game(sessions)
+
+
+async def test_a_seeded_pot_is_audited_as_currency_creation(sessions) -> None:
+    """It comes from nowhere, so it must appear in the audit trail."""
+    await _game(sessions, seed=5_000)
+    async with sessions() as session:
+        events = (
+            (
+                await session.execute(
+                    select(AuditEvent).where(AuditEvent.event_type == "currency_created")
+                )
+            )
+            .scalars()
+            .all()
+        )
+    assert len(events) == 1
+    assert events[0].details["amount"] == 5_000
+    assert events[0].details["reason"] == "hungrygames_seed"
+
+
+async def test_joining_takes_the_entry_fee(sessions) -> None:
+    game = await _game(sessions, fee=250)
+    await _grant(sessions, ALICE, 1_000)
+    await _join(sessions, game.id, ALICE)
+    assert await _balances(sessions, ALICE) == (750, 0)
+
+
+async def test_cannot_join_without_the_fee(sessions) -> None:
+    game = await _game(sessions, fee=250)
+    await _grant(sessions, ALICE, 100)
+    with pytest.raises(BankingError, match="entry fee"):
+        await _join(sessions, game.id, ALICE)
+
+
+async def test_cannot_join_twice(sessions) -> None:
+    game = await _game(sessions, fee=0)
+    await _join(sessions, game.id, ALICE)
+    with pytest.raises(game_db.GameError, match="already entered"):
+        await _join(sessions, game.id, ALICE)
+
+
+async def test_pot_is_seed_plus_every_fee(sessions) -> None:
+    game = await _game(sessions, fee=100, seed=500)
+    for user in (ALICE, BOB):
+        await _grant(sessions, user, 1_000)
+        await _join(sessions, game.id, user)
+    async with sessions() as session:
+        g = await session.get(Game, game.id)
+        assert await game_db.pot_for(session, g) == 700
+
+
+async def test_too_few_tributes_cancels_and_refunds(sessions) -> None:
+    game = await _game(sessions, fee=300, min_players=3)
+    for user in (ALICE, BOB):
+        await _grant(sessions, user, 1_000)
+        await _join(sessions, game.id, user)
+
+    async with sessions.begin() as session:
+        g = await session.get(Game, game.id)
+        started = await game_db.close_signups(session, g, round_seconds=15)
+    assert started is False
+
+    assert await _balances(sessions, ALICE) == (1_000, 0), "entry fee refunded"
+    assert await _balances(sessions, BOB) == (1_000, 0)
+    async with sessions() as session:
+        assert (await session.get(Game, game.id)).status == "cancelled"
+
+
+async def test_enough_tributes_starts_the_game(sessions) -> None:
+    game = await _game(sessions, fee=0, min_players=2)
+    for user in (ALICE, BOB):
+        await _join(sessions, game.id, user)
+    async with sessions.begin() as session:
+        g = await session.get(Game, game.id)
+        assert await game_db.close_signups(session, g, round_seconds=15) is True
+        assert g.status == "running"
+        assert g.next_tick_at is not None
+
+
+async def test_a_game_runs_to_a_single_winner_and_pays_the_pot(sessions) -> None:
+    game = await _game(sessions, fee=100, seed=400, min_players=2)
+    players = [ALICE, BOB, ADMIN]
+    for user in players:
+        await _grant(sessions, user, 1_000)
+        await _join(sessions, game.id, user)
+
+    async with sessions.begin() as session:
+        g = await session.get(Game, game.id)
+        await game_db.close_signups(session, g, round_seconds=0)
+
+    generator = random.Random(7)
+    outcome = None
+    for _ in range(50):
+        async with sessions.begin() as session:
+            g = await session.get(Game, game.id)
+            if g.status != "running":
+                break
+            outcome = await game_db.run_round(session, g, rng=generator, round_seconds=0)
+            if outcome.finished:
+                break
+    assert outcome is not None and outcome.finished
+    assert outcome.winner_user_id in players
+    assert outcome.pot == 700  # 400 seed + 3 x 100
+
+    total = 0
+    for user in players:
+        cash, _ = await _balances(sessions, user)
+        total += cash
+    # Each started with 1000, each paid 100, the 400 seed entered circulation.
+    assert total == 3 * 1_000 - 3 * 100 + 700
+
+
+async def test_entry_fees_are_redistributive_not_inflationary(sessions) -> None:
+    """With no seed, a game must not change the total currency in circulation."""
+    game = await _game(sessions, fee=250, seed=0, min_players=2)
+    players = [ALICE, BOB, ADMIN]
+    for user in players:
+        await _grant(sessions, user, 1_000)
+        await _join(sessions, game.id, user)
+
+    async with sessions.begin() as session:
+        g = await session.get(Game, game.id)
+        await game_db.close_signups(session, g, round_seconds=0)
+
+    generator = random.Random(3)
+    for _ in range(50):
+        async with sessions.begin() as session:
+            g = await session.get(Game, game.id)
+            if g.status != "running":
+                break
+            if (await game_db.run_round(session, g, rng=generator, round_seconds=0)).finished:
+                break
+
+    total = 0
+    for user in players:
+        cash, _ = await _balances(sessions, user)
+        total += cash
+    assert total == 3_000, "a fee-funded game created or destroyed currency"
+
+
+async def test_placements_are_recorded_for_everyone(sessions) -> None:
+    game = await _game(sessions, fee=0, min_players=2)
+    players = [ALICE, BOB, ADMIN]
+    for user in players:
+        await _join(sessions, game.id, user)
+    async with sessions.begin() as session:
+        g = await session.get(Game, game.id)
+        await game_db.close_signups(session, g, round_seconds=0)
+
+    generator = random.Random(11)
+    for _ in range(50):
+        async with sessions.begin() as session:
+            g = await session.get(Game, game.id)
+            if g.status != "running":
+                break
+            if (await game_db.run_round(session, g, rng=generator, round_seconds=0)).finished:
+                break
+
+    async with sessions() as session:
+        rows = await game_db.participants(session, game.id)
+    places = sorted(p.placement for p in rows)
+    assert places == [1, 2, 3], f"expected a full ranking, got {places}"
+
+
+async def test_due_games_finds_work(sessions) -> None:
+    game = await _game(sessions, fee=0, signup=0)
+    async with sessions.begin() as session:
+        due = await game_db.due_games(session)
+    assert [g.id for g in due] == [game.id]
+
+
+async def test_due_games_ignores_games_that_are_not_ready(sessions) -> None:
+    await _game(sessions, fee=0, signup=3_600)
+    async with sessions.begin() as session:
+        assert await game_db.due_games(session) == []
+
+
+async def test_a_completed_game_frees_the_guild_for_another(sessions) -> None:
+    game = await _game(sessions, fee=0, min_players=2)
+    for user in (ALICE, BOB):
+        await _join(sessions, game.id, user)
+    async with sessions.begin() as session:
+        g = await session.get(Game, game.id)
+        await game_db.close_signups(session, g, round_seconds=0)
+    generator = random.Random(5)
+    for _ in range(50):
+        async with sessions.begin() as session:
+            g = await session.get(Game, game.id)
+            if g.status != "running":
+                break
+            if (await game_db.run_round(session, g, rng=generator, round_seconds=0)).finished:
+                break
+    # The partial unique index only covers signup/running, so this must succeed.
+    second = await _game(sessions, fee=0)
+    assert second.status == "signup"

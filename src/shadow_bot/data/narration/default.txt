@@ -1,0 +1,117 @@
+# Default narration shipped with Shadow Bot.
+#
+# Format: one line per entry, grouped under [category.outcome] headers.
+# Blank lines and lines starting with # are ignored. No quoting or escaping —
+# apostrophes and quotes can be written normally.
+#
+# Placeholders are replaced where known and left visible where not, so a typo
+# like {amout} shows up in the message instead of vanishing.
+#
+#   {user}      the member acting          {amount}  formatted money
+#   {target}    the other member           {currency} plural currency name
+#   {tribute}   a games participant        {victim}  who they eliminated
+#   {winner}    the surviving tribute      {pot}     the prize pot
+#
+# A guild can override any section with /flavor add; its own lines then replace
+# the defaults for that section only.
+
+# =============================================================================
+# Activities
+# =============================================================================
+
+[work.success]
+{user} pulled a double at the diner and made {amount}.
+{user} sold hand-drawn portraits outside the station and earned {amount}.
+{user} spent the afternoon fixing someone's fence for {amount}.
+{user} walked eleven dogs at once and somehow came back with {amount}.
+{user} covered a shift nobody wanted and took home {amount}.
+
+[work.failure]
+{user} slept through the alarm and was docked {amount}.
+{user} put the decimal point in the wrong place. It cost {amount}.
+{user} reversed the delivery van into the manager's car. {amount} gone.
+
+[crime.success]
+{user} relieved a vending machine of its contents and got away with {amount}.
+{user} sold a bridge they did not own. {amount} richer.
+{user} ran a very convincing raffle with no prize. {amount}.
+
+[crime.failure]
+{user} tripped the alarm on the way out and was fined {amount}.
+{user} tried to rob a shop that was already being robbed. Fined {amount}.
+{user} left their wallet at the scene. {amount}.
+
+[steal.success]
+{user} lifted {amount} straight out of {target}'s pocket.
+{user} distracted {target} with a compliment and took {amount}.
+{target} really should not have left that bag open. {user} took {amount}.
+
+[steal.failure]
+{target} caught {user} mid-reach. {amount} in restitution.
+{user} picked the pocket of someone with faster hands. Fined {amount}.
+
+[steal.empty]
+{user} got into {target}'s pockets and found nothing but lint.
+{target} has nothing worth taking. {user} left disappointed.
+
+[slut.success]
+{user} worked the room and came away with {amount}.
+{user} charmed a very generous stranger out of {amount}.
+
+[slut.failure]
+{user} misread the room entirely. {amount}.
+{user} picked the wrong table and paid {amount} for the privilege.
+
+# =============================================================================
+# Hungry Games — round events
+# =============================================================================
+
+[hungrygames.death]
+{tribute} eats the wrong berries.
+{tribute} loses an argument with a ravine.
+{tribute} builds a fire, which is exactly as clever as it sounds.
+{tribute} is taken by something nobody sees clearly.
+{tribute} drinks from the wrong stream.
+{tribute} falls asleep in a very poorly chosen tree.
+
+[hungrygames.kill]
+{tribute} takes out {victim} with a well-aimed rock.
+{tribute} sets a snare. {victim} walks straight into it.
+{victim} trusts {tribute}. This turns out to be a mistake.
+{tribute} and {victim} fight over a tin of peaches. Only {tribute} leaves.
+{tribute} eliminates {victim} and does not seem sorry about it.
+
+[hungrygames.survive]
+{tribute} finds a river and rests.
+{tribute} spends the round hiding in a hedge, and it works.
+{tribute} makes camp somewhere sensible for once.
+{tribute} finds a crate of supplies and tells absolutely nobody.
+{tribute} does nothing memorable and survives anyway.
+
+[hungrygames.winner]
+{winner} is the last one standing, and takes {pot}.
+It is over. {winner} wins {pot}.
+{winner} outlasts everyone and claims {pot}.
+
+# =============================================================================
+# Hungry Games — forfeits and rewards
+#
+# Consequences attached to how someone left the arena. These are social, not
+# enforced by the bot — it posts them and the server does the rest.
+# =============================================================================
+
+[hungrygames.forfeit_death]
+{tribute} must post their most embarrassing photo.
+{tribute} owes the server one genuinely terrible joke.
+{tribute} has to change their nickname to something the winner picks.
+{tribute} must recount how they died, in detail, in voice chat.
+
+[hungrygames.forfeit_kill]
+{victim} must publicly congratulate {tribute} on a clean kill.
+{victim} owes {tribute} a favour of {tribute}'s choosing.
+{victim} has to say something nice about {tribute}. Out loud.
+
+[hungrygames.reward_winner]
+{winner} may assign one task to anyone who fell in the arena.
+{winner} picks what happens at the next game night.
+{winner} gets to rename one loser for the week.

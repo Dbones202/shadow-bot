@@ -22,6 +22,8 @@ separate container over the private LAN.
 - `/collect` — members collect every income role they hold that is ready
 - `/work`, `/crime`, `/steal`, `/slut` — active income, with per-guild odds, rewards and fines
 - `/activity set|enable|disable|list` — configure every number an activity uses
+- `/hungrygames start|join|status|cancel` — a paced elimination game with a shared pot
+- Editable narration — every activity and game line comes from a plain text file
 - `/ping` — Discord gateway latency and PostgreSQL reachability
 - Immediate economy-data deletion when a member leaves, is kicked, or is banned
 - Per-role collection cooldown reset when a member loses that role
@@ -30,8 +32,8 @@ separate container over the private LAN.
 - Tested capability combining for members holding several administrative roles
 - Hardened `systemd` unit
 
-Interest and delegated permissions are the next milestone. The schema already supports
-them — see `ECONOMY_SPEC.md`.
+Transaction history (`/history`), per-guild narration editing (`/flavor`), interest, and delegated
+permissions are the next milestone. The schema already supports them — see `ECONOMY_SPEC.md`.
 
 ### Command reference
 
@@ -54,6 +56,10 @@ them — see `ECONOMY_SPEC.md`.
 | `/activity list` | Administrator | Every activity and how it is configured. |
 | `/work`, `/crime`, `/slut` | Anyone | Attempt active income. Success pays from the reward range; failure is fined from the fine range. |
 | `/steal <member>` | Anyone | Takes cash from another member, capped at what they actually hold. |
+| `/hungrygames start [entry_fee] [signup] [seed] [min_players]` | Economy admin | Opens signups in the current channel. Every option defaults, so bare `/hungrygames start` gives a free game with a 2-minute signup. |
+| `/hungrygames join` | Anyone | Enters as a tribute, paying the entry fee from cash. |
+| `/hungrygames status` | Anyone | Current game state, tributes, and pot. |
+| `/hungrygames cancel` | Economy admin | Cancels the game and refunds every entry fee. |
 | `/ping` | Anyone | Connectivity check. |
 
 Members cannot voluntarily go negative. Balance floors exist so **fines** and administrative
@@ -85,6 +91,81 @@ Missed income windows do not accumulate — a member three days late on a 12-hou
 collects one payout, not six, and the next window starts from the moment they collect.
 Losing a role clears its cooldown, so regaining it grants immediate eligibility.
 
+### The Hungry Games
+
+An elimination game paced over real time. An administrator opens signups, members join as
+tributes, and once signups close the bot posts a round every few seconds until one tribute is
+left standing and takes the pot.
+
+```
+/hungrygames start entry_fee:250 signup:5m seed:5000 min_players:4
+```
+
+The pot is the admin seed plus every entry fee. **A seed creates currency** and is audited as
+`currency_created`, exactly like `/economy add`; entry fees only redistribute. Cancelling — or
+failing to reach `min_players` — refunds every fee.
+
+Game state lives in the database rather than in memory, so restarting the bot mid-game resumes
+it instead of stranding everyone's entry fees. A partial unique index enforces one active game
+per guild, so two people starting at the same instant cannot both succeed.
+
+Two rules keep a game finite and non-degenerate: at least one elimination whenever two or more
+tributes remain, so an unlucky run cannot continue forever; and never more than `alive - 1`, so
+the arena always ends with a winner rather than empty.
+
+`/hungrygames join` and `status` are open to everyone; `start` and `cancel` check authority in
+code. The group deliberately does **not** declare `default_member_permissions` — Discord honours
+that only on top-level commands and subcommands inherit it, so gating the group would have
+hidden `join` from the members who need it.
+
+### Narration
+
+Every activity and game line is read from `src/shadow_bot/data/narration/default.txt` rather than
+hardcoded:
+
+```
+[work.success]
+{user} pulled a double at the diner and made {amount}.
+{user} sold hand-drawn portraits outside the station and earned {amount}.
+```
+
+One line per entry under a `[category.outcome]` header. Blank lines and `#` comments are ignored.
+**Nothing needs quoting or escaping** — apostrophes and quotation marks are written normally,
+which is the entire reason this is not TOML or JSON.
+
+| Placeholder | Meaning |
+|---|---|
+| `{user}` | the member acting |
+| `{amount}` | formatted money |
+| `{target}` | the other member |
+| `{currency}` | plural currency name |
+| `{tribute}` | a games participant |
+| `{victim}` | who they eliminated |
+| `{winner}` | the surviving tribute |
+| `{pot}` | the prize pot |
+
+Substitution is a plain regex, **not** `str.format`. A line containing `{user.__class__.__mro__}`
+renders literally instead of reaching into the object — which matters because narration is meant
+to become editable from Discord. Unknown placeholders are left visible, so a typo like `{amout}`
+appears in the message rather than silently vanishing.
+
+The file ships as package data (`[tool.setuptools.package-data]`). Without that entry it would be
+missing from the installed package and every line would fall back to plain wording.
+
+#### Forfeits
+
+Three sections attach a **social consequence** to how a tribute left the arena, posted under the
+round line as `↳ *forfeit*`:
+
+| Section | When |
+|---|---|
+| `hungrygames.forfeit_death` | eliminated by the arena |
+| `hungrygames.forfeit_kill` | eliminated by another tribute — `{victim}` owes `{tribute}` |
+| `hungrygames.reward_winner` | what the winner gets to impose |
+
+The bot posts these and does not enforce them. That keeps the whole feature editable per guild
+with no extra schema, and it composes with the currency payout rather than replacing it.
+
 ### Who sees which commands
 
 Administrative commands declare `default_member_permissions = Administrator`, so Discord only
@@ -92,7 +173,7 @@ shows them to administrators. Everything else is visible to every member.
 
 | Visible to administrators | Visible to everyone |
 |---|---|
-| `/setup`, `/economy add`, `/economy remove`, `/income add`, `/income remove`, `/income list` | `/settings`, `/balance`, `/deposit`, `/withdraw`, `/pay`, `/collect`, `/ping` |
+| `/setup`, `/economy add`, `/economy remove`, `/income add`, `/income remove`, `/income list`, `/activity set`, `/activity enable`, `/activity disable`, `/activity list` | `/settings`, `/balance`, `/deposit`, `/withdraw`, `/pay`, `/collect`, `/work`, `/crime`, `/steal`, `/slut`, `/hungrygames`, `/ping` |
 
 Two things to know about this:
 
@@ -250,9 +331,9 @@ sudo systemctl status shadow-bot
 sudo journalctl -u shadow-bot -f
 ```
 
-A healthy startup logs `Loaded extension ...` twice, then `Synced N command(s)`,
-then `Ready as Shadow Bot`. Run `/ping` in the test server — it should report
-Discord and PostgreSQL both connected.
+A healthy startup logs one `Loaded extension ...` line per cog, then
+`Synced N command(s)`, then `Ready as Shadow Bot`. Run `/ping` in the test server
+— it should report Discord and PostgreSQL both connected.
 
 ### If it does not start
 
@@ -271,8 +352,16 @@ Discord and PostgreSQL both connected.
 1. `sudo systemctl stop shadow-bot`
 2. Copy the new files over `/opt/shadow-bot`
 3. `sudo -u shadowbot /opt/shadow-bot/.venv/bin/pip install --upgrade /opt/shadow-bot`
-4. `alembic upgrade head` with the environment loaded (step 5)
+4. `alembic upgrade head` with the environment loaded (section 5)
 5. `sudo systemctl start shadow-bot` and check the logs
+
+Step 4 is **not optional when a release adds a migration.** Copying files alone leaves the code
+expecting tables that do not exist, and the failure surfaces later as a command error rather than
+at startup. `alembic current` shows the deployed revision; `alembic heads` shows what the code
+expects. If they differ, run the upgrade.
+
+If commands look missing afterwards, **restart the Discord client** (Ctrl+R) before debugging the
+bot — Discord caches the command list on the client side.
 
 ---
 

@@ -31,6 +31,11 @@ shadow-bot = "shadow_bot.__main__:main"
 # release bump is one edit, and CI/tooling can read it without parsing TOML.
 version = { file = "VERSION" }
 
+[tool.setuptools.package-data]
+# Narration text ships with the package so a fresh guild reads well with
+# no configuration. Guilds override individual sections in the database.
+shadow_bot = ["data/narration/*.txt"]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 

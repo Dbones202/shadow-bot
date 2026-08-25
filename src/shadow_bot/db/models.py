@@ -12,6 +12,7 @@ from sqlalchemy import (
     Date,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     Numeric,
     String,
@@ -19,6 +20,7 @@ from sqlalchemy import (
     Time,
     UniqueConstraint,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
@@ -291,4 +293,70 @@ class AuditEvent(Base):
     details: Mapped[dict[str, Any]] = mapped_column("metadata", JSONB, default=dict, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False, index=True
+    )
+
+
+class Game(TimestampMixin, Base):
+    """One Hungry Games event.
+
+    State lives in the database rather than in memory because the game is paced
+    over real time — a bot restart mid-game must be able to pick it back up
+    rather than stranding everyone's entry fees.
+    """
+
+    __tablename__ = "games"
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('signup', 'running', 'complete', 'cancelled')", name="status_valid"
+        ),
+        CheckConstraint("entry_fee >= 0", name="entry_fee_nonnegative"),
+        CheckConstraint("seeded_pot >= 0", name="seeded_pot_nonnegative"),
+        CheckConstraint("min_players >= 2", name="min_players_sane"),
+        # At most one game per guild may be open or in progress. A partial
+        # unique index enforces this in the database, so two people running
+        # /hungrygames start at the same moment cannot both succeed.
+        Index(
+            "uq_games_one_active_per_guild",
+            "guild_id",
+            unique=True,
+            postgresql_where=text("status IN ('signup', 'running')"),
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    guild_id: Mapped[int] = mapped_column(
+        BigInteger,
+        ForeignKey("guild_settings.guild_id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    channel_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    status: Mapped[str] = mapped_column(String(16), default="signup", nullable=False, index=True)
+    entry_fee: Mapped[int] = mapped_column(BigInteger, default=0, nullable=False)
+    seeded_pot: Mapped[int] = mapped_column(BigInteger, default=0, nullable=False)
+    min_players: Mapped[int] = mapped_column(Integer, default=2, nullable=False)
+    signup_closes_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    #: When the next round should run. Null while signups are open.
+    next_tick_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
+    round_number: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    created_by: Mapped[int] = mapped_column(BigInteger, nullable=False)
+
+
+class GameParticipant(Base):
+    __tablename__ = "game_participants"
+
+    game_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("games.id", ondelete="CASCADE"), primary_key=True
+    )
+    #: Keyed on the account so a member who leaves the server is removed by the
+    #: same cascade that deletes the rest of their economy data.
+    account_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("economy_accounts.id", ondelete="CASCADE"), primary_key=True
+    )
+    user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    alive: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    eliminated_round: Mapped[int | None] = mapped_column(Integer)
+    placement: Mapped[int | None] = mapped_column(Integer)
+    joined_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
     )
