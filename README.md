@@ -23,9 +23,11 @@ separate container over the private LAN.
 - `/work`, `/crime`, `/steal`, `/slut` — active income, with per-guild odds, rewards and fines
 - `/activity set|enable|disable|list` — configure every number an activity uses
 - `/hungrygames start|join|status|cancel` — a paced elimination game with a shared pot
+- `/gameconfig show|set` — rename the game per server, set pacing, style and spoiler chance
+- `/leaderboard` and `/gamestats` — nine statistics over every completed game
 - Editable narration — every activity and game line comes from a plain text file
 - `/ping` — Discord gateway latency and PostgreSQL reachability
-- Immediate economy-data deletion when a member leaves, is kicked, or is banned
+- Immediate economy-data deletion when a member leaves; game history anonymised, not erased
 - Per-role collection cooldown reset when a member loses that role
 - Balance changes are row-locked and every movement writes a ledger entry
 - Tested fine behavior: cash to its floor first, then bank to its floor
@@ -56,10 +58,14 @@ permissions are the next milestone. The schema already supports them — see `EC
 | `/activity list` | Administrator | Every activity and how it is configured. |
 | `/work`, `/crime`, `/slut` | Anyone | Attempt active income. Success pays from the reward range; failure is fined from the fine range. |
 | `/steal <member>` | Anyone | Takes cash from another member, capped at what they actually hold. |
-| `/hungrygames start [entry_fee] [signup] [seed] [min_players]` | Economy admin | Opens signups in the current channel. Every option defaults, so bare `/hungrygames start` gives a free game with a 2-minute signup. |
+| `/hungrygames start [entry_fee] [signup] [seed] [min_players] [style] [round_time]` | Economy admin | Opens signups in the current channel. Every option defaults to the server setting, so bare `/hungrygames start` works. |
 | `/hungrygames join` | Anyone | Enters as a tribute, paying the entry fee from cash. |
 | `/hungrygames status` | Anyone | Current game state, tributes, and pot. |
 | `/hungrygames cancel` | Economy admin | Cancels the game and refunds every entry fee. |
+| `/gameconfig show` | Administrator | The server's game name, pacing, default style and spoiler chance. |
+| `/gameconfig set [name] [round_time] [signup] [default_style] [spoiler_percent]` | Administrator | Changes any of the above. Games already running keep their own pacing. |
+| `/leaderboard [stat]` | Anyone | Wins, kills, times killed, arena deaths, games played, win rate, winnings, average finish, best kill streak. |
+| `/gamestats [member]` | Anyone | One member's full record. Defaults to you. |
 | `/ping` | Anyone | Connectivity check. |
 
 Members cannot voluntarily go negative. Balance floors exist so **fines** and administrative
@@ -113,6 +119,48 @@ Two rules keep a game finite and non-degenerate: at least one elimination whenev
 tributes remain, so an unlucky run cannot continue forever; and never more than `alive - 1`, so
 the arena always ends with a winner rather than empty.
 
+**A game needs at least three tributes.** Two is a coin flip with narration attached. Player
+count fixes the length exactly — five tributes is always three rounds, twenty is always seven —
+so the round gap is what controls how long a game actually takes.
+
+#### Styles
+
+The organizer picks one at start; the server sets the default with `/gameconfig set`.
+
+| Style | What eliminations mean |
+|---|---|
+| `standard` | Nothing. Narration and the pot, no obligations afterwards. **Shipped default.** |
+| `random_tasks` | A forfeit drawn from the event files, different every time. |
+| `organizer_defined` | Three outcomes the organizer types into a modal at start. Shown in the signup embed, so nobody enters without reading the terms. |
+
+#### Numbering and statistics
+
+Games are numbered per server, sequentially, **and only when they finish**. A cancelled game
+keeps its ledger trail — the entry fees really did move and really were refunded — but never
+takes a number and never reaches a leaderboard. Numbering at completion rather than at start is
+what keeps the sequence contiguous.
+
+Every kill, arena death and survival is written to `game_events`. Statistics are queries over
+that table rather than running totals, which means a new statistic later needs no migration and
+is computed over games that already happened instead of starting from zero.
+
+`/leaderboard` covers wins, kills, times killed, arena deaths, games played, win rate, total
+winnings, average finish and best kill streak in a single game. Win rate requires at least three
+games played, or somebody who played once and won would sit permanently at 100%.
+
+#### Spoilers
+
+Roughly one round in ten posts with its names hidden behind Discord spoiler bars, so it has to be
+clicked to be read. The chance is per-guild (`/gameconfig set spoiler_percent:`). It is
+deliberately occasional: an always-spoilered game is a chore, a rare one is a surprise.
+
+#### Renaming
+
+`/gameconfig set name:"Crimson Fields"` changes every displayed name — embed titles, recaps,
+leaderboard headers. **It does not change the command.** Discord command names are global to the
+bot, so `/hungrygames` is what everyone types on every server regardless of what their game is
+called.
+
 `/hungrygames join` and `status` are open to everyone; `start` and `cancel` check authority in
 code. The group deliberately does **not** declare `default_member_permissions` — Discord honours
 that only on top-level commands and subcommands inherit it, so gating the group would have
@@ -140,9 +188,17 @@ which is the entire reason this is not TOML or JSON.
 | `{target}` | the other member |
 | `{currency}` | plural currency name |
 | `{tribute}` | a games participant |
+| `{killer}` | who made the kill (same as `{tribute}` in a kill line) |
+| `{game}` | this server's name for the game |
 | `{victim}` | who they eliminated |
 | `{winner}` | the surviving tribute |
 | `{pot}` | the prize pot |
+
+Within a single game, lines are drawn **without replacement** — a line will not appear again
+until its section is exhausted, and when the pool wraps it never lands on the line that just
+fired. Independent random draws repeat far more than people expect: a five-player game runs three
+rounds against five kill lines, and plain random selection produced two identical lines in
+adjacent events during testing. It reads as a bug even though each draw was fair.
 
 Substitution is a plain regex, **not** `str.format`. A line containing `{user.__class__.__mro__}`
 renders literally instead of reaching into the object — which matters because narration is meant
@@ -354,6 +410,10 @@ A healthy startup logs one `Loaded extension ...` line per cog, then
 3. `sudo -u shadowbot /opt/shadow-bot/.venv/bin/pip install --upgrade /opt/shadow-bot`
 4. `alembic upgrade head` with the environment loaded (section 5)
 5. `sudo systemctl start shadow-bot` and check the logs
+
+v0.6.0 adds **two** migrations: `0003` repairs CHECK constraint names created by `0001` and
+`0002` (catalog-only, no table rewrite), and `0004` is the games expansion. Run both with a
+single `alembic upgrade head`.
 
 Step 4 is **not optional when a release adds a migration.** Copying files alone leaves the code
 expecting tables that do not exist, and the failure surfaces later as a command error rather than

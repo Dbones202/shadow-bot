@@ -137,8 +137,68 @@ class NarrationLibrary:
 
         Returns ``fallback`` when nothing is configured, so a missing section
         degrades to a plain message rather than an empty embed.
+
+        Every call is independent. For anything with a run of related messages —
+        a whole game — use `NarrationSession`, which avoids repeats.
         """
         options = self.lines_for(category, outcome)
         if not options:
             return render(fallback, values) if fallback else ""
         return render(_RNG.choice(options), values)
+
+
+class NarrationSession:
+    """A library plus the memory of what it has already said.
+
+    Independent random choices repeat far more than people expect. A five-player
+    game runs three rounds off five kill lines, and picking each one freshly
+    produced this in testing::
+
+        Bree eliminates Odile and does not seem sorry about it.
+        Cassius eliminates Petra and does not seem sorry about it.
+
+    Two identical lines side by side read as a bug even though each draw was
+    perfectly fair. Drawing without replacement fixes it: a line is not offered
+    again until its section is exhausted, at which point the pool resets and the
+    section starts over.
+
+    Scope one of these to a single game (or a single command response) — the
+    memory is meant to be short-lived. `NarrationLibrary` stays stateless so it
+    can be shared across guilds and cached.
+    """
+
+    def __init__(self, library: NarrationLibrary, *, rng: random.Random | None = None) -> None:
+        self.library = library
+        self._rng = rng or _RNG
+        #: (category, outcome, line) triples already used in this session.
+        self._used: set[tuple[str, str, str]] = set()
+        #: The most recent line per section, so a pool reset cannot immediately
+        #: repeat the line it just finished on.
+        self._last: dict[tuple[str, str], str] = {}
+
+    def pick(
+        self, category: str, outcome: str, values: dict[str, str], *, fallback: str = ""
+    ) -> str:
+        category, outcome = category.lower(), outcome.lower()
+        options = self.library.lines_for(category, outcome)
+        if not options:
+            return render(fallback, values) if fallback else ""
+
+        fresh = [line for line in options if (category, outcome, line) not in self._used]
+        if not fresh:
+            # Exhausted: forget this section only and start it over. Other
+            # sections keep their memory, so a long game does not reset
+            # everything the moment one short section runs dry.
+            self._used -= {(category, outcome, line) for line in options}
+            fresh = list(options)
+            # A section with three lines and four uses wraps around, and without
+            # this the wrap can land on the line that just fired — the exact
+            # back-to-back repeat the whole class exists to prevent.
+            previous = self._last.get((category, outcome))
+            if previous is not None and len(fresh) > 1:
+                fresh = [line for line in fresh if line != previous]
+
+        chosen = self._rng.choice(fresh)
+        self._used.add((category, outcome, chosen))
+        self._last[(category, outcome)] = chosen
+        return render(chosen, values)

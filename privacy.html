@@ -387,7 +387,8 @@
                     We believe in minimal data footprint. Data is maintained only for as long as necessary to provide service functionality:
                 </p>
                 <ul>
-                    <li><strong>Member Departure Cleanup:</strong> When a member leaves, is kicked, or is banned from a Discord server, the Bot may immediately purge or reset that member's guild-specific account and balance records.</li>
+                    <li><strong>Member Departure Cleanup:</strong> When a member leaves, is kicked, or is banned from a Discord server, the Bot immediately purges that member's guild-specific account, balance, transaction and cooldown records.</li>
+                    <li><strong>Game History Anonymisation:</strong> Records of completed games are the one exception to the above, and are anonymised rather than deleted. Deleting them would retroactively alter games other members already played &mdash; a departing member's actions would vanish from the record and other participants' results would silently change. Instead, on departure the Bot removes the account link, the Discord User ID and the stored display name from those records, replacing the name with a generic placeholder. <strong>No identifier that could link the remaining record back to you is retained</strong>, and the member no longer appears on any leaderboard or statistic. What survives is the shape of a game that took place, with no participant identified.</li>
                     <li><strong>Server Removal / De-authorization:</strong> If the Bot is removed, kicked, or banned from a server, the server's associated data may be scheduled for permanent deletion.</li>
                     <li><strong>Diagnostic Logs:</strong> Temporary execution logs and error diagnostics are periodically overwritten or purged.</li>
                     <li><strong>Arbitrary Purge Rights:</strong> As a "use at your own risk" service, the bot maintainers reserve the right to wipe, reset, or purge any or all database records at any time without notice.</li>
@@ -430,7 +431,7 @@
                     You can remove your active data from the Bot's operational database at any time by:
                 </p>
                 <ul>
-                    <li>Leaving the Discord server(s) where the Bot is active (triggering automated member cleanup where enabled).</li>
+                    <li>Leaving the Discord server(s) where the Bot is active (triggering automated member cleanup where enabled, including the anonymisation of any game history described in Section 07).</li>
                     <li>Requesting a server administrator to reset your server profile or kick the Bot.</li>
                     <li>Contacting the bot maintainer directly to request a manual wipe of your Discord User ID from the database records.</li>
                 </ul>

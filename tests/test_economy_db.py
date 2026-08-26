@@ -37,6 +37,8 @@ from shadow_bot.db.models import (
     AuditEvent,
     EconomyAccount,
     Game,
+    GameEvent,
+    GameParticipant,
     GuildSettings,
     LedgerEntry,
     RoleCollectionCooldown,
@@ -54,6 +56,7 @@ pytestmark = [
 GUILD = 999_000_000_000_000_001
 ALICE = 111_000_000_000_000_001
 BOB = 222_000_000_000_000_002
+CAROL = 444_000_000_000_000_004
 
 
 @pytest_asyncio.fixture
@@ -64,7 +67,7 @@ async def sessions():
     async with maker.begin() as session:
         await session.execute(
             text(
-                "TRUNCATE audit_events, ledger_entries, game_participants, games, "
+                "TRUNCATE audit_events, ledger_entries, game_events, game_participants, games, "
                 "activity_cooldowns, activity_rules, role_collection_cooldowns, "
                 "role_income_rules, economy_accounts, guild_settings CASCADE"
             )
@@ -792,7 +795,7 @@ async def test_invalid_configuration_is_rejected_before_writing(sessions) -> Non
 # --- Hungry Games -------------------------------------------------------------
 
 
-async def _game(sessions, *, fee=100, seed=0, min_players=2, signup=60):
+async def _game(sessions, *, fee=100, seed=0, min_players=3, signup=60, round_seconds=15):
     async with sessions.begin() as session:
         return await game_db.create_game(
             session,
@@ -803,13 +806,27 @@ async def _game(sessions, *, fee=100, seed=0, min_players=2, signup=60):
             seeded_pot=seed,
             min_players=min_players,
             signup_seconds=signup,
+            round_seconds=round_seconds,
         )
 
 
-async def _join(sessions, game_id, user_id):
+async def _join(sessions, game_id, user_id, name=""):
     async with sessions.begin() as session:
         game = await session.get(Game, game_id)
-        return await game_db.join_game(session, game, user_id)
+        return await game_db.join_game(session, game, user_id, display_name=name)
+
+
+async def _play_out(sessions, game_id, seed=5):
+    """Run a game from signup to completion. Returns the final RoundOutcome."""
+    generator = random.Random(seed)
+    async with sessions.begin() as session:
+        g = await session.get(Game, game_id)
+        await game_db.close_signups(session, g)
+        for _ in range(40):
+            outcome = await game_db.run_round(session, g, rng=generator)
+            if outcome.finished:
+                return outcome
+    raise AssertionError("game never finished")
 
 
 async def test_creating_a_game_opens_signups(sessions) -> None:
@@ -881,7 +898,7 @@ async def test_too_few_tributes_cancels_and_refunds(sessions) -> None:
 
     async with sessions.begin() as session:
         g = await session.get(Game, game.id)
-        started = await game_db.close_signups(session, g, round_seconds=15)
+        started = await game_db.close_signups(session, g)
     assert started is False
 
     assert await _balances(sessions, ALICE) == (1_000, 0), "entry fee refunded"
@@ -891,18 +908,18 @@ async def test_too_few_tributes_cancels_and_refunds(sessions) -> None:
 
 
 async def test_enough_tributes_starts_the_game(sessions) -> None:
-    game = await _game(sessions, fee=0, min_players=2)
-    for user in (ALICE, BOB):
+    game = await _game(sessions, fee=0, min_players=3)
+    for user in (ALICE, BOB, CAROL):
         await _join(sessions, game.id, user)
     async with sessions.begin() as session:
         g = await session.get(Game, game.id)
-        assert await game_db.close_signups(session, g, round_seconds=15) is True
+        assert await game_db.close_signups(session, g) is True
         assert g.status == "running"
         assert g.next_tick_at is not None
 
 
 async def test_a_game_runs_to_a_single_winner_and_pays_the_pot(sessions) -> None:
-    game = await _game(sessions, fee=100, seed=400, min_players=2)
+    game = await _game(sessions, fee=100, seed=400, min_players=3)
     players = [ALICE, BOB, ADMIN]
     for user in players:
         await _grant(sessions, user, 1_000)
@@ -910,7 +927,7 @@ async def test_a_game_runs_to_a_single_winner_and_pays_the_pot(sessions) -> None
 
     async with sessions.begin() as session:
         g = await session.get(Game, game.id)
-        await game_db.close_signups(session, g, round_seconds=0)
+        await game_db.close_signups(session, g)
 
     generator = random.Random(7)
     outcome = None
@@ -919,7 +936,7 @@ async def test_a_game_runs_to_a_single_winner_and_pays_the_pot(sessions) -> None
             g = await session.get(Game, game.id)
             if g.status != "running":
                 break
-            outcome = await game_db.run_round(session, g, rng=generator, round_seconds=0)
+            outcome = await game_db.run_round(session, g, rng=generator)
             if outcome.finished:
                 break
     assert outcome is not None and outcome.finished
@@ -936,7 +953,7 @@ async def test_a_game_runs_to_a_single_winner_and_pays_the_pot(sessions) -> None
 
 async def test_entry_fees_are_redistributive_not_inflationary(sessions) -> None:
     """With no seed, a game must not change the total currency in circulation."""
-    game = await _game(sessions, fee=250, seed=0, min_players=2)
+    game = await _game(sessions, fee=250, seed=0, min_players=3)
     players = [ALICE, BOB, ADMIN]
     for user in players:
         await _grant(sessions, user, 1_000)
@@ -944,7 +961,7 @@ async def test_entry_fees_are_redistributive_not_inflationary(sessions) -> None:
 
     async with sessions.begin() as session:
         g = await session.get(Game, game.id)
-        await game_db.close_signups(session, g, round_seconds=0)
+        await game_db.close_signups(session, g)
 
     generator = random.Random(3)
     for _ in range(50):
@@ -952,7 +969,7 @@ async def test_entry_fees_are_redistributive_not_inflationary(sessions) -> None:
             g = await session.get(Game, game.id)
             if g.status != "running":
                 break
-            if (await game_db.run_round(session, g, rng=generator, round_seconds=0)).finished:
+            if (await game_db.run_round(session, g, rng=generator)).finished:
                 break
 
     total = 0
@@ -963,13 +980,13 @@ async def test_entry_fees_are_redistributive_not_inflationary(sessions) -> None:
 
 
 async def test_placements_are_recorded_for_everyone(sessions) -> None:
-    game = await _game(sessions, fee=0, min_players=2)
+    game = await _game(sessions, fee=0, min_players=3)
     players = [ALICE, BOB, ADMIN]
     for user in players:
         await _join(sessions, game.id, user)
     async with sessions.begin() as session:
         g = await session.get(Game, game.id)
-        await game_db.close_signups(session, g, round_seconds=0)
+        await game_db.close_signups(session, g)
 
     generator = random.Random(11)
     for _ in range(50):
@@ -977,7 +994,7 @@ async def test_placements_are_recorded_for_everyone(sessions) -> None:
             g = await session.get(Game, game.id)
             if g.status != "running":
                 break
-            if (await game_db.run_round(session, g, rng=generator, round_seconds=0)).finished:
+            if (await game_db.run_round(session, g, rng=generator)).finished:
                 break
 
     async with sessions() as session:
@@ -1000,20 +1017,321 @@ async def test_due_games_ignores_games_that_are_not_ready(sessions) -> None:
 
 
 async def test_a_completed_game_frees_the_guild_for_another(sessions) -> None:
-    game = await _game(sessions, fee=0, min_players=2)
+    game = await _game(sessions, fee=0, min_players=3)
     for user in (ALICE, BOB):
         await _join(sessions, game.id, user)
     async with sessions.begin() as session:
         g = await session.get(Game, game.id)
-        await game_db.close_signups(session, g, round_seconds=0)
+        await game_db.close_signups(session, g)
     generator = random.Random(5)
     for _ in range(50):
         async with sessions.begin() as session:
             g = await session.get(Game, game.id)
             if g.status != "running":
                 break
-            if (await game_db.run_round(session, g, rng=generator, round_seconds=0)).finished:
+            if (await game_db.run_round(session, g, rng=generator)).finished:
                 break
     # The partial unique index only covers signup/running, so this must succeed.
     second = await _game(sessions, fee=0)
     assert second.status == "signup"
+
+
+# --- Game numbering, the event log, and departures -----------------------------
+#
+# Numbers exist to be a stable public record ("Game #12"), so the properties that
+# matter are that they are contiguous and that they only ever describe a game
+# that actually finished.
+
+
+async def test_a_finished_game_gets_number_one(sessions) -> None:
+    game = await _game(sessions, fee=0)
+    for user in (ALICE, BOB, CAROL):
+        await _join(sessions, game.id, user)
+    outcome = await _play_out(sessions, game.id)
+    assert outcome.game_number == 1
+    async with sessions() as session:
+        assert (await session.get(Game, game.id)).game_number == 1
+
+
+async def test_numbers_are_contiguous_across_games(sessions) -> None:
+    for expected in (1, 2, 3):
+        game = await _game(sessions, fee=0)
+        for user in (ALICE, BOB, CAROL):
+            await _join(sessions, game.id, user)
+        assert (await _play_out(sessions, game.id)).game_number == expected
+
+
+async def test_a_cancelled_game_burns_no_number(sessions) -> None:
+    """The whole reason numbers are assigned at completion rather than at start.
+
+    A game that was called off did not happen as far as the record is concerned,
+    so the next real game must still be #2 and not #3.
+    """
+    first = await _game(sessions, fee=0)
+    for user in (ALICE, BOB, CAROL):
+        await _join(sessions, first.id, user)
+    assert (await _play_out(sessions, first.id)).game_number == 1
+
+    abandoned = await _game(sessions, fee=0)
+    await _join(sessions, abandoned.id, ALICE)
+    async with sessions.begin() as session:
+        g = await session.get(Game, abandoned.id)
+        assert await game_db.close_signups(session, g) is False  # too few tributes
+
+    async with sessions() as session:
+        cancelled = await session.get(Game, abandoned.id)
+        assert cancelled.status == "cancelled"
+        assert cancelled.game_number is None
+
+    third = await _game(sessions, fee=0)
+    for user in (ALICE, BOB, CAROL):
+        await _join(sessions, third.id, user)
+    assert (await _play_out(sessions, third.id)).game_number == 2
+
+
+async def test_a_game_below_the_floor_cannot_even_be_created(sessions) -> None:
+    with pytest.raises(game_db.GameError, match="at least 3"):
+        await _game(sessions, min_players=2)
+
+
+async def test_every_tribute_gets_an_event_in_every_round(sessions) -> None:
+    """Nobody is silently skipped, so the narration accounts for the full field."""
+    game = await _game(sessions, fee=0)
+    for user in (ALICE, BOB, CAROL):
+        await _join(sessions, game.id, user)
+    outcome = await _play_out(sessions, game.id)
+
+    async with sessions() as session:
+        rows = list(
+            (await session.execute(select(GameEvent).where(GameEvent.game_id == game.id)))
+            .scalars()
+            .all()
+        )
+    for round_number in range(1, outcome.round_number + 1):
+        in_round = [r for r in rows if r.round_number == round_number]
+        subjects = {r.subject_participant_id for r in in_round}
+        victims = {r.victim_participant_id for r in in_round if r.victim_participant_id}
+        # A kill covers two people in one row, so subjects + victims is the count.
+        assert len(subjects | victims) == len(subjects) + len(victims)
+
+
+async def test_kills_carry_a_victim_and_deaths_do_not(sessions) -> None:
+    """Enforced by a CHECK constraint too — this proves the writer honours it."""
+    game = await _game(sessions, fee=0)
+    for user in (ALICE, BOB, CAROL):
+        await _join(sessions, game.id, user)
+    await _play_out(sessions, game.id)
+
+    async with sessions() as session:
+        rows = list(
+            (await session.execute(select(GameEvent).where(GameEvent.game_id == game.id)))
+            .scalars()
+            .all()
+        )
+    assert rows, "a completed game must have written events"
+    for row in rows:
+        if row.kind == "kill":
+            assert row.victim_participant_id is not None
+        else:
+            assert row.victim_participant_id is None
+
+
+async def test_a_departing_member_is_anonymised_not_erased(sessions) -> None:
+    """The decision that makes game history durable.
+
+    Deleting these rows would rewrite games that already finished. Keeping them
+    with the identifiers stripped preserves the shape of the game while retaining
+    nothing that points back at the person.
+    """
+    game = await _game(sessions, fee=0)
+    for user, name in ((ALICE, "Alice"), (BOB, "Bob"), (CAROL, "Carol")):
+        await _join(sessions, game.id, user, name=name)
+    await _play_out(sessions, game.id)
+
+    async with sessions() as session:
+        before = len(
+            list(
+                (await session.execute(select(GameEvent).where(GameEvent.game_id == game.id)))
+                .scalars()
+                .all()
+            )
+        )
+
+    async with sessions.begin() as session:
+        assert await game_db.anonymise_participants(session, GUILD, ALICE) == 1
+
+    async with sessions() as session:
+        rows = list(
+            (
+                await session.execute(
+                    select(GameParticipant).where(GameParticipant.game_id == game.id)
+                )
+            )
+            .scalars()
+            .all()
+        )
+        after = len(
+            list(
+                (await session.execute(select(GameEvent).where(GameEvent.game_id == game.id)))
+                .scalars()
+                .all()
+            )
+        )
+
+    assert after == before, "history must survive the departure intact"
+    assert len(rows) == 3, "the tribute is kept, not deleted"
+
+    departed = [r for r in rows if r.display_name == game_db.TOMBSTONE]
+    assert len(departed) == 1
+    assert departed[0].user_id is None, "no identifier may survive"
+    assert departed[0].account_id is None
+    # The other two are untouched.
+    assert {r.display_name for r in rows if r.user_id is not None} == {"Bob", "Carol"}
+
+
+async def test_anonymising_leaves_other_guilds_alone(sessions) -> None:
+    """Guild isolation is a core claim; a departure is a per-guild event."""
+    game = await _game(sessions, fee=0)
+    for user in (ALICE, BOB, CAROL):
+        await _join(sessions, game.id, user)
+    await _play_out(sessions, game.id)
+    async with sessions.begin() as session:
+        assert await game_db.anonymise_participants(session, GUILD + 1, ALICE) == 0
+
+
+async def test_leaving_deletes_the_economy_but_keeps_the_game(sessions) -> None:
+    """The full departure path, exercised end to end.
+
+    The balance must be gone and the game must still read correctly. Ordering is
+    the subtle part: anonymising has to happen before the account is deleted.
+    """
+    from shadow_bot.db import member_cleanup
+
+    game = await _game(sessions, fee=0)
+    for user, name in ((ALICE, "Alice"), (BOB, "Bob"), (CAROL, "Carol")):
+        await _join(sessions, game.id, user, name=name)
+    await _play_out(sessions, game.id)
+
+    async with sessions.begin() as session:
+        assert await member_cleanup.delete_member_economy(session, GUILD, ALICE) == 1
+
+    async with sessions() as session:
+        gone = (
+            await session.execute(
+                select(EconomyAccount).where(
+                    EconomyAccount.guild_id == GUILD, EconomyAccount.user_id == ALICE
+                )
+            )
+        ).scalar_one_or_none()
+        rows = list(
+            (
+                await session.execute(
+                    select(GameParticipant).where(GameParticipant.game_id == game.id)
+                )
+            )
+            .scalars()
+            .all()
+        )
+
+    assert gone is None, "the account itself must be deleted"
+    assert len(rows) == 3, "the game must still have three tributes"
+    assert sum(1 for r in rows if r.user_id is None) == 1
+    assert all(r.user_id != ALICE for r in rows), "no identifier may survive"
+
+
+# --- Leaderboards --------------------------------------------------------------
+
+
+async def _finished_game(sessions, names):
+    game = await _game(sessions, fee=0)
+    for user, name in names:
+        await _join(sessions, game.id, user, name=name)
+    return await _play_out(sessions, game.id)
+
+
+async def test_leaderboard_counts_only_completed_games(sessions) -> None:
+    """A cancelled game must not appear in anybody's record."""
+    from shadow_bot.db import game_stats
+
+    roster = ((ALICE, "Alice"), (BOB, "Bob"), (CAROL, "Carol"))
+    await _finished_game(sessions, roster)
+
+    abandoned = await _game(sessions, fee=0)
+    await _join(sessions, abandoned.id, ALICE, name="Alice")
+    async with sessions.begin() as session:
+        await game_db.close_signups(session, await session.get(Game, abandoned.id))
+
+    async with sessions() as session:
+        played = await game_stats.leaderboard(session, GUILD, "games")
+    assert {row.value for row in played} == {1.0}, "the cancelled game must not count"
+
+
+async def test_leaderboard_reports_a_winner(sessions) -> None:
+    from shadow_bot.db import game_stats
+
+    outcome = await _finished_game(sessions, ((ALICE, "Alice"), (BOB, "Bob"), (CAROL, "Carol")))
+    async with sessions() as session:
+        wins = await game_stats.leaderboard(session, GUILD, "wins")
+    assert len(wins) == 1
+    assert wins[0].user_id == outcome.winner_user_id
+    assert wins[0].value == 1.0
+
+
+async def test_win_rate_ignores_anyone_below_the_floor(sessions) -> None:
+    """One game and one win is not a 100% win rate worth publishing."""
+    from shadow_bot.db import game_stats
+
+    await _finished_game(sessions, ((ALICE, "Alice"), (BOB, "Bob"), (CAROL, "Carol")))
+    async with sessions() as session:
+        assert await game_stats.leaderboard(session, GUILD, "win_rate") == []
+
+
+async def test_kills_and_deaths_reconcile(sessions) -> None:
+    """Every kill has exactly one victim, so the two boards must total the same."""
+    from shadow_bot.db import game_stats
+
+    await _finished_game(sessions, ((ALICE, "Alice"), (BOB, "Bob"), (CAROL, "Carol")))
+    async with sessions() as session:
+        kills = await game_stats.leaderboard(session, GUILD, "kills")
+        killed = await game_stats.leaderboard(session, GUILD, "deaths_by_others")
+    assert sum(r.value for r in kills) == sum(r.value for r in killed)
+
+
+async def test_member_stats_add_up(sessions) -> None:
+    from shadow_bot.db import game_stats
+
+    outcome = await _finished_game(sessions, ((ALICE, "Alice"), (BOB, "Bob"), (CAROL, "Carol")))
+    async with sessions() as session:
+        stats = await game_stats.member_stats(session, GUILD, outcome.winner_user_id)
+    assert stats.games == 1
+    assert stats.wins == 1
+    assert stats.best_placement == 1
+    assert stats.win_rate is None, "one game is below the reporting floor"
+
+
+async def test_a_departed_member_leaves_the_leaderboards(sessions) -> None:
+    """Anonymised rows have no user id, so they drop out without extra filtering."""
+    from shadow_bot.db import game_stats
+
+    await _finished_game(sessions, ((ALICE, "Alice"), (BOB, "Bob"), (CAROL, "Carol")))
+    async with sessions() as session:
+        before = await game_stats.leaderboard(session, GUILD, "games")
+    assert len(before) == 3
+
+    async with sessions.begin() as session:
+        await game_db.anonymise_participants(session, GUILD, ALICE)
+
+    async with sessions() as session:
+        after = await game_stats.leaderboard(session, GUILD, "games")
+    assert len(after) == 2
+    assert all(row.user_id != ALICE for row in after)
+
+
+async def test_every_declared_stat_actually_runs(sessions) -> None:
+    """Cheap guard against a board that raises the first time someone opens it."""
+    from shadow_bot.db import game_stats
+
+    await _finished_game(sessions, ((ALICE, "Alice"), (BOB, "Bob"), (CAROL, "Carol")))
+    async with sessions() as session:
+        for key in game_stats.STAT_KEYS:
+            await game_stats.leaderboard(session, GUILD, key)

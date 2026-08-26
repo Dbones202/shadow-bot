@@ -54,6 +54,23 @@ class GuildSettings(TimestampMixin, Base):
     audit_channel_id: Mapped[int | None] = mapped_column(BigInteger)
     economy_enabled: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
+    # --- Games -------------------------------------------------------------
+    #: What this guild calls the game. Cosmetic only: Discord command names are
+    #: global, so `/hungrygames` is the invocation everywhere no matter what a
+    #: server renames it to. This name is what appears in embeds and recaps.
+    game_name: Mapped[str] = mapped_column(String(64), default="Hungry Games", nullable=False)
+    #: Seconds between rounds. Per-guild default; the organizer may override it
+    #: for a single game.
+    game_round_seconds: Mapped[int] = mapped_column(Integer, default=15, nullable=False)
+    #: How long signups stay open, in seconds. Same override rule.
+    game_signup_seconds: Mapped[int] = mapped_column(Integer, default=300, nullable=False)
+    #: Style used when the organizer does not pick one.
+    game_default_style: Mapped[str] = mapped_column(String(24), default="standard", nullable=False)
+    #: Chance per round that the round's names and card post behind a spoiler,
+    #: as a percentage. Deliberately rare — always-on spoilers become a chore,
+    #: an occasional one stays a surprise.
+    game_spoiler_percent: Mapped[int] = mapped_column(Integer, default=10, nullable=False)
+
 
 class EconomyAccount(TimestampMixin, Base):
     __tablename__ = "economy_accounts"
@@ -311,7 +328,10 @@ class Game(TimestampMixin, Base):
         ),
         CheckConstraint("entry_fee >= 0", name="entry_fee_nonnegative"),
         CheckConstraint("seeded_pot >= 0", name="seeded_pot_nonnegative"),
-        CheckConstraint("min_players >= 2", name="min_players_sane"),
+        CheckConstraint("min_players >= 3", name="min_players_sane"),
+        CheckConstraint(
+            "style IN ('standard', 'random_tasks', 'organizer_defined')", name="style_valid"
+        ),
         # At most one game per guild may be open or in progress. A partial
         # unique index enforces this in the database, so two people running
         # /hungrygames start at the same moment cannot both succeed.
@@ -320,6 +340,15 @@ class Game(TimestampMixin, Base):
             "guild_id",
             unique=True,
             postgresql_where=text("status IN ('signup', 'running')"),
+        ),
+        # Numbers are assigned at completion, so cancelled games leave no gaps.
+        # Partial, because in-flight and cancelled games have no number at all.
+        Index(
+            "uq_games_number_per_guild",
+            "guild_id",
+            "game_number",
+            unique=True,
+            postgresql_where=text("game_number IS NOT NULL"),
         ),
     )
 
@@ -334,29 +363,115 @@ class Game(TimestampMixin, Base):
     status: Mapped[str] = mapped_column(String(16), default="signup", nullable=False, index=True)
     entry_fee: Mapped[int] = mapped_column(BigInteger, default=0, nullable=False)
     seeded_pot: Mapped[int] = mapped_column(BigInteger, default=0, nullable=False)
-    min_players: Mapped[int] = mapped_column(Integer, default=2, nullable=False)
+    min_players: Mapped[int] = mapped_column(Integer, default=3, nullable=False)
     signup_closes_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     #: When the next round should run. Null while signups are open.
     next_tick_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
     round_number: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     created_by: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    #: Seconds between rounds for this game. Copied from the guild default at
+    #: creation so that changing the guild setting mid-game does not re-pace a
+    #: game already in flight.
+    round_seconds: Mapped[int] = mapped_column(Integer, default=15, nullable=False)
+
+    #: Sequential per guild, counting only games that ran to completion.
+    #: Null while in flight and forever for cancelled games — a game that never
+    #: finished did not happen as far as the record is concerned.
+    game_number: Mapped[int | None] = mapped_column(Integer)
+    style: Mapped[str] = mapped_column(String(24), default="standard", nullable=False)
+
+    #: Only used by the `organizer_defined` style. Filled in at start and shown
+    #: in the signup embed, so nobody joins without knowing what they are in for.
+    outcome_winner: Mapped[str | None] = mapped_column(Text)
+    outcome_killed_by: Mapped[str | None] = mapped_column(Text)
+    outcome_killed_self: Mapped[str | None] = mapped_column(Text)
 
 
 class GameParticipant(Base):
-    __tablename__ = "game_participants"
+    """One tribute in one game.
 
+    Deliberately **not** keyed on the account. A member who leaves the server has
+    their economy data deleted, but erasing them here would silently rewrite
+    finished games — their kills would vanish and their victims would lose a
+    killer. Instead the account and user ids are nulled and the stored name is
+    replaced with a tombstone, so no identifier is retained and the game still
+    reads back correctly. See `db.member_cleanup`.
+    """
+
+    __tablename__ = "game_participants"
+    __table_args__ = (
+        # One entry per member per game, but only while they are identifiable —
+        # several anonymised rows in the same game must be able to coexist.
+        Index(
+            "uq_game_participant_user",
+            "game_id",
+            "user_id",
+            unique=True,
+            postgresql_where=text("user_id IS NOT NULL"),
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     game_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("games.id", ondelete="CASCADE"), primary_key=True
+        UUID(as_uuid=True), ForeignKey("games.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    #: Keyed on the account so a member who leaves the server is removed by the
-    #: same cascade that deletes the rest of their economy data.
-    account_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("economy_accounts.id", ondelete="CASCADE"), primary_key=True
+    #: Null once the member has left the server.
+    account_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("economy_accounts.id", ondelete="SET NULL")
     )
-    user_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    #: Null once the member has left the server, which is also what drops them
+    #: off every leaderboard.
+    user_id: Mapped[int | None] = mapped_column(BigInteger, index=True)
+    #: Captured at join time so a finished game can be read back years later
+    #: without asking Discord who a departed ID used to be.
+    display_name: Mapped[str] = mapped_column(String(64), default="", nullable=False)
     alive: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     eliminated_round: Mapped[int | None] = mapped_column(Integer)
     placement: Mapped[int | None] = mapped_column(Integer)
     joined_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class GameEvent(Base):
+    """One thing that happened to one tribute in one round.
+
+    Every stat Donovan asked for is a query over this table, and keeping the raw
+    events means a new stat idea later needs no migration and can be backfilled
+    over games that already happened.
+
+    Subject and victim point at participants rather than user ids, so
+    anonymising a departed member anonymises their whole history in one update
+    instead of leaving orphaned identifiers scattered through the log.
+    """
+
+    __tablename__ = "game_events"
+    __table_args__ = (
+        CheckConstraint("kind IN ('death', 'kill', 'survive')", name="event_kind_valid"),
+        # A kill needs a victim; the other two must not have one. Cheap to
+        # enforce here and it makes every downstream count trustworthy.
+        CheckConstraint(
+            "(kind = 'kill') = (victim_participant_id IS NOT NULL)", name="event_victim_consistent"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    game_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("games.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    round_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    #: 'death' means nobody was responsible — the arena, or their own bad idea.
+    #: That is the same bucket as "killed self"; there is no third category.
+    kind: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
+    subject_participant_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("game_participants.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    victim_participant_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("game_participants.id", ondelete="CASCADE"), index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
