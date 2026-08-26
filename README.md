@@ -23,7 +23,8 @@ separate container over the private LAN.
 - `/work`, `/crime`, `/steal`, `/slut` — active income, with per-guild odds, rewards and fines
 - `/activity set|enable|disable|list` — configure every number an activity uses
 - `/hungrygames start|join|status|cancel` — a paced elimination game with a shared pot
-- `/gameconfig show|set` — rename the game per server, set pacing, style and spoiler chance
+- `/gameconfig show|set` — rename the game per server, set pacing, style, spoilers and card mode
+- A join button on the signup message, and a generated battle card each round
 - `/leaderboard` and `/gamestats` — nine statistics over every completed game
 - Editable narration — every activity and game line comes from a plain text file
 - `/ping` — Discord gateway latency and PostgreSQL reachability
@@ -59,11 +60,11 @@ permissions are the next milestone. The schema already supports them — see `EC
 | `/work`, `/crime`, `/slut` | Anyone | Attempt active income. Success pays from the reward range; failure is fined from the fine range. |
 | `/steal <member>` | Anyone | Takes cash from another member, capped at what they actually hold. |
 | `/hungrygames start [entry_fee] [signup] [seed] [min_players] [style] [round_time]` | Economy admin | Opens signups in the current channel. Every option defaults to the server setting, so bare `/hungrygames start` works. |
-| `/hungrygames join` | Anyone | Enters as a tribute, paying the entry fee from cash. |
+| `/hungrygames join` | Anyone | Enters as a tribute, paying the entry fee from cash. The signup message also carries an **Enter the arena** button that does the same thing. |
 | `/hungrygames status` | Anyone | Current game state, tributes, and pot. |
 | `/hungrygames cancel` | Economy admin | Cancels the game and refunds every entry fee. |
 | `/gameconfig show` | Administrator | The server's game name, pacing, default style and spoiler chance. |
-| `/gameconfig set [name] [round_time] [signup] [default_style] [spoiler_percent]` | Administrator | Changes any of the above. Games already running keep their own pacing. |
+| `/gameconfig set [name] [round_time] [signup] [default_style] [spoiler_percent] [battle_cards]` | Administrator | Changes any of the above. Games already running keep their own pacing. |
 | `/leaderboard [stat]` | Anyone | Wins, kills, times killed, arena deaths, games played, win rate, winnings, average finish, best kill streak. |
 | `/gamestats [member]` | Anyone | One member's full record. Defaults to you. |
 | `/ping` | Anyone | Connectivity check. |
@@ -148,11 +149,37 @@ is computed over games that already happened instead of starting from zero.
 winnings, average finish and best kill streak in a single game. Win rate requires at least three
 games played, or somebody who played once and won would sit permanently at 100%.
 
+#### Battle cards
+
+Each round with an elimination posts a generated image: the killer and their victim side by side
+with crossed swords, or a lone portrait for whoever the arena took. The eliminated face is
+greyscaled and dimmed, so the outcome reads without reading.
+
+The card is **drawn in code rather than composited onto a template**, because servers can rename
+the game — a name baked into an image asset would have every server's card announcing the same
+thing. Drawing it means the card says theirs.
+
+Nothing touches disk. Cards render to memory and upload directly, which is what lets the systemd
+unit keep `ProtectSystem=strict` with no `ReadWritePaths=` exception.
+
+`/gameconfig set battle_cards:` switches between `off`, one card per `round`, and one per `kill`.
+**Turning them off is a slash command, never a deploy** — the point of shipping this separately
+was being able to back out of it in seconds.
+
+Cost is recorded per game: cards drawn, milliseconds spent, bytes uploaded. Logs answer "was that
+round slow"; the counters on the game row answer "what has this cost me over a month", which is
+the question that decides whether it stays. Rendering is capped at three pairs per card and runs
+in a worker thread so a slow draw cannot stall the game loop, and any failure posts the round
+without a picture rather than dropping it.
+
 #### Spoilers
 
 Roughly one round in ten posts with its names hidden behind Discord spoiler bars, so it has to be
 clicked to be read. The chance is per-guild (`/gameconfig set spoiler_percent:`). It is
 deliberately occasional: an always-spoilered game is a chore, a rare one is a surprise.
+
+A hidden round's card is sent as a standalone spoilered attachment rather than inside the embed —
+an image pulled into an embed renders immediately and the spoiler would be lost.
 
 #### Renaming
 
@@ -411,7 +438,8 @@ A healthy startup logs one `Loaded extension ...` line per cog, then
 4. `alembic upgrade head` with the environment loaded (section 5)
 5. `sudo systemctl start shadow-bot` and check the logs
 
-v0.6.0 adds **two** migrations: `0003` repairs CHECK constraint names created by `0001` and
+v0.7.0 adds `0005` (battle cards) and a new dependency, **Pillow** — `pip install --upgrade`
+is therefore not optional either. v0.6.0 added **two** migrations: `0003` repairs CHECK constraint names created by `0001` and
 `0002` (catalog-only, no table rewrite), and `0004` is the games expansion. Run both with a
 single `alembic upgrade head`.
 

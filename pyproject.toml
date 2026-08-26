@@ -11,6 +11,9 @@ requires-python = ">=3.11"
 dependencies = [
   "alembic>=1.14,<2",
   "discord.py>=2.5,<3",
+  # Battle cards. The prebuilt Linux wheels bundle libjpeg and zlib, so this
+  # needs no system packages on the container.
+  "Pillow>=11,<13",
   "psycopg[binary]>=3.2,<4",
   "python-dotenv>=1.0,<2",
   "SQLAlchemy[asyncio]>=2.0,<3",
@@ -34,7 +37,10 @@ version = { file = "VERSION" }
 [tool.setuptools.package-data]
 # Narration text ships with the package so a fresh guild reads well with
 # no configuration. Guilds override individual sections in the database.
-shadow_bot = ["data/narration/*.txt"]
+# The font is bundled rather than taken from the host so cards render
+# identically everywhere; a missing system font would otherwise mean a working
+# dev box and a blank banner in production. Licence text ships beside it.
+shadow_bot = ["data/narration/*.txt", "data/fonts/*.ttf", "data/fonts/*.txt"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

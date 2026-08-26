@@ -42,6 +42,7 @@ class GuildSettings(TimestampMixin, Base):
     __table_args__ = (
         CheckConstraint("cash_floor <= 0", name="cash_floor_nonpositive"),
         CheckConstraint("bank_floor <= 0", name="bank_floor_nonpositive"),
+        CheckConstraint("battle_cards IN ('off', 'round', 'kill')", name="battle_cards_valid"),
     )
 
     guild_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=False)
@@ -70,6 +71,10 @@ class GuildSettings(TimestampMixin, Base):
     #: as a percentage. Deliberately rare — always-on spoilers become a chore,
     #: an occasional one stays a surprise.
     game_spoiler_percent: Mapped[int] = mapped_column(Integer, default=10, nullable=False)
+    #: Battle card policy: 'off', 'round' (one card per round) or 'kill' (one
+    #: per duel). A setting rather than a config value so switching images off
+    #: is a slash command, not a deploy.
+    battle_cards: Mapped[str] = mapped_column(String(8), default="round", nullable=False)
 
 
 class EconomyAccount(TimestampMixin, Base):
@@ -385,6 +390,17 @@ class Game(TimestampMixin, Base):
     outcome_winner: Mapped[str | None] = mapped_column(Text)
     outcome_killed_by: Mapped[str | None] = mapped_column(Text)
     outcome_killed_self: Mapped[str | None] = mapped_column(Text)
+
+    #: The signup message, so the join button can be disabled and the roster
+    #: written back when signups close.
+    signup_message_id: Mapped[int | None] = mapped_column(BigInteger)
+
+    # Card cost, accumulated per game. Logs say whether one round was slow;
+    # these say what the feature costs over a month, which is the question that
+    # decides whether it stays.
+    cards_rendered: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    card_render_ms: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    card_bytes: Mapped[int] = mapped_column(BigInteger, default=0, nullable=False)
 
 
 class GameParticipant(Base):
