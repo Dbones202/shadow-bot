@@ -53,6 +53,21 @@ def _optional_path(name: str) -> Path | None:
     return Path(value)
 
 
+def _optional_str(name: str) -> str | None:
+    value = os.getenv(name, "").strip()
+    return value or None
+
+
+def _optional_int(name: str) -> int | None:
+    value = os.getenv(name, "").strip()
+    if not value:
+        return None
+    try:
+        return int(value)
+    except ValueError as exc:
+        raise ConfigurationError(f"{name} must be an integer") from exc
+
+
 def _boolean(name: str, default: bool) -> bool:
     raw = os.getenv(name)
     if raw is None:
@@ -75,6 +90,21 @@ class Settings:
     enable_members_intent: bool
     enable_message_content_intent: bool
     log_level: str
+    #: The only user id allowed to run /media allow|revoke. Deliberately not
+    #: bot_owner_ids — that set already carries economy-admin fallback
+    #: authority in every guild, and reusing it here would mean anyone ever
+    #: added there for economy support also silently gained media-request
+    #: gatekeeping. A missing value just means /media allow refuses everyone,
+    #: which is the safe default until Donovan sets it.
+    media_owner_id: int | None
+    radarr_url: str | None
+    radarr_api_key: str | None
+    radarr_quality_profile_id: int | None
+    radarr_root_folder: str | None
+    sonarr_url: str | None
+    sonarr_api_key: str | None
+    sonarr_quality_profile_id: int | None
+    sonarr_root_folder: str | None
 
     @classmethod
     def from_environment(cls) -> Settings:
@@ -96,4 +126,13 @@ class Settings:
             enable_members_intent=_boolean("ENABLE_MEMBERS_INTENT", True),
             enable_message_content_intent=_boolean("ENABLE_MESSAGE_CONTENT_INTENT", False),
             log_level=os.getenv("LOG_LEVEL", "INFO").upper(),
+            media_owner_id=_optional_snowflake("MEDIA_OWNER_ID"),
+            radarr_url=_optional_str("RADARR_URL"),
+            radarr_api_key=_optional_str("RADARR_API_KEY"),
+            radarr_quality_profile_id=_optional_int("RADARR_QUALITY_PROFILE_ID"),
+            radarr_root_folder=_optional_str("RADARR_ROOT_FOLDER"),
+            sonarr_url=_optional_str("SONARR_URL"),
+            sonarr_api_key=_optional_str("SONARR_API_KEY"),
+            sonarr_quality_profile_id=_optional_int("SONARR_QUALITY_PROFILE_ID"),
+            sonarr_root_folder=_optional_str("SONARR_ROOT_FOLDER"),
         )

@@ -491,3 +491,65 @@ class GameEvent(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
+
+
+class MediaAllowlistEntry(Base):
+    """A Discord user allowed to run /request_movie and /request_tv.
+
+    Global rather than per-guild — Donovan asked for one list that works the
+    same in every server the bot is in, since it maps to one Radarr/Sonarr
+    pair he runs, not to any one guild's economy. `added_by` is who ran
+    `/media allow`, which today can only be MEDIA_OWNER_ID, but the column
+    stays even though it is a single value in practice — an audit record
+    should say who granted access without a reader having to already know
+    that rule.
+    """
+
+    __tablename__ = "media_allowlist"
+
+    user_id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    #: Cached at grant time so `/media list` reads as names, not bare ids, even
+    #: for someone who has since left every mutual guild with the bot.
+    username: Mapped[str] = mapped_column(String(64), default="", nullable=False)
+    added_by: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    added_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class MediaRequest(Base):
+    """One /request_movie or /request_tv request, tracked through to completion.
+
+    Guild/channel are captured so the completion poller knows where to reply —
+    Donovan chose a channel reply over a DM, so there is no other way back to
+    the right place once the interaction that created this row is long gone.
+    `external_id` is the Radarr/Sonarr internal id for the added movie/series,
+    used to poll that app's queue and history for the request's status.
+    """
+
+    __tablename__ = "media_requests"
+    __table_args__ = (
+        CheckConstraint("media_type IN ('movie', 'tv')", name="media_request_type_valid"),
+        CheckConstraint(
+            "status IN ('pending', 'downloaded', 'failed')", name="media_request_status_valid"
+        ),
+        Index("ix_media_requests_pending", "status", postgresql_where=text("status = 'pending'")),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    guild_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True)
+    channel_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    requested_by: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True)
+    media_type: Mapped[str] = mapped_column(String(8), nullable=False)
+    #: Radarr's movie id or Sonarr's series id — what the poller asks about.
+    external_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    tmdb_id: Mapped[int | None] = mapped_column(Integer)
+    tvdb_id: Mapped[int | None] = mapped_column(Integer)
+    imdb_id: Mapped[str | None] = mapped_column(String(16))
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    year: Mapped[int | None] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(16), default="pending", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    notified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

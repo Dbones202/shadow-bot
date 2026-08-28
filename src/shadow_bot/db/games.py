@@ -25,6 +25,7 @@ from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import aliased
 
 from shadow_bot.db.economy import _audit, _ledger, find_account, get_or_create_account
 from shadow_bot.db.models import EconomyAccount, Game, GameEvent, GameParticipant, GuildSettings
@@ -464,6 +465,44 @@ async def due_games(session: AsyncSession, *, now: datetime | None = None) -> li
         .scalars()
         .all()
     )
+
+
+async def elimination_causes(
+    session: AsyncSession, game_id: uuid.UUID
+) -> dict[int, tuple[str, int | None]]:
+    """How each eliminated tribute went out, by user id.
+
+    Maps to `("kill", killer_user_id)` or `("death", None)`. Drives the final
+    recap, where the consequence shown for each participant depends on whether
+    another tribute killed them (and who) or the arena did. Built from
+    `game_events` rather than carried on `GameParticipant`, since the event log
+    is already the source of truth and this needs no new column.
+
+    `subject`/`victim` are two aliases of the same table — `GameEvent` records
+    a KILL as (subject=killer, victim=killed) and a DEATH as (subject=the one
+    who died, victim=None), so resolving both sides in one query needs a
+    self-join. A participant who has since left keeps their `user_id` cleared
+    by `anonymise_participants`, so those rows are skipped here too — there is
+    no user id left to key a recap line on.
+    """
+    subject = aliased(GameParticipant)
+    victim = aliased(GameParticipant)
+    rows = (
+        await session.execute(
+            select(GameEvent.kind, subject.user_id, victim.user_id)
+            .select_from(GameEvent)
+            .join(subject, GameEvent.subject_participant_id == subject.id)
+            .outerjoin(victim, GameEvent.victim_participant_id == victim.id)
+            .where(GameEvent.game_id == game_id, GameEvent.kind.in_(("kill", "death")))
+        )
+    ).all()
+    causes: dict[int, tuple[str, int | None]] = {}
+    for kind, subject_user_id, victim_user_id in rows:
+        if kind == "kill" and victim_user_id is not None:
+            causes[victim_user_id] = ("kill", subject_user_id)
+        elif kind == "death" and subject_user_id is not None:
+            causes[subject_user_id] = ("death", None)
+    return causes
 
 
 async def anonymise_participants(session: AsyncSession, guild_id: int, user_id: int) -> int:

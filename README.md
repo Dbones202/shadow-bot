@@ -1,7 +1,8 @@
 # Shadow Bot
 
 A private, multi-server Discord bot. Each guild gets a fully isolated economy,
-configuration, and currency identity. Radarr/Sonarr request features come later.
+configuration, and currency identity. `/request_movie` and `/request_tv` (Radarr/Sonarr
+request features) are global across every server the bot is in, gated by a single owner id.
 
 Deployment target: a Debian LXC container on Proxmox, talking to PostgreSQL in a
 separate container over the private LAN.
@@ -28,6 +29,9 @@ separate container over the private LAN.
 - `/leaderboard` and `/gamestats` — nine statistics over every completed game
 - Editable narration — every activity and game line comes from a plain text file
 - `/ping` — Discord gateway latency and PostgreSQL reachability
+- `/request_movie`, `/request_tv` — search Radarr/Sonarr and request with a button click; a daily
+  poller replies in the request channel once the download finishes
+- `/media allow|revoke|list` — a single owner id controls the global allowlist of who can request
 - Immediate economy-data deletion when a member leaves; game history anonymised, not erased
 - Per-role collection cooldown reset when a member loses that role
 - Balance changes are row-locked and every movement writes a ledger entry
@@ -68,6 +72,11 @@ permissions are the next milestone. The schema already supports them — see `EC
 | `/leaderboard [stat]` | Anyone | Wins, kills, times killed, arena deaths, games played, win rate, winnings, average finish, best kill streak. |
 | `/gamestats [member]` | Anyone | One member's full record. Defaults to you. |
 | `/ping` | Anyone | Connectivity check. |
+| `/request_movie <title>` | On the media allowlist | Searches Radarr, shows up to 5 results with poster, title(year), and an IMDb link; a button adds the pick. |
+| `/request_tv <title>` | On the media allowlist | Same, against Sonarr. Requests the whole series — every season monitored and searched. |
+| `/media allow <member>` | The media owner | Grants a member access to `/request_movie` and `/request_tv`, in every server. |
+| `/media revoke <member>` | The media owner | Removes that access. |
+| `/media list` | The media owner | Everyone currently allowed to request media. |
 
 Members cannot voluntarily go negative. Balance floors exist so **fines** and administrative
 removals can collect into debt; they are not an overdraft members may draw on themselves.
@@ -193,6 +202,28 @@ code. The group deliberately does **not** declare `default_member_permissions` �
 that only on top-level commands and subcommands inherit it, so gating the group would have
 hidden `join` from the members who need it.
 
+### Media requests
+
+`/request_movie` and `/request_tv` search Radarr/Sonarr's own `lookup` endpoints — the same search
+those apps use internally — so no separate IMDb/TVDB API key is needed. Results show a poster,
+title(year), and an IMDb link built from the `imdbId` the lookup already returns, with a button per
+result. Picking one adds it to Radarr/Sonarr using whichever quality profile and root folder is
+configured (`RADARR_QUALITY_PROFILE_ID`/`RADARR_ROOT_FOLDER`, and the Sonarr equivalents) — or,
+left unset, the first one Radarr/Sonarr reports, since most setups only have one.
+
+TV requests always add the **whole series**: every season monitored, every missing episode
+searched. There is no per-season picker.
+
+Access is gated by a single global allowlist (`media_allowlist` — no `guild_id` column), because
+one Radarr/Sonarr pair serves every server the bot is in. Only `MEDIA_OWNER_ID` can change who is
+on it, via `/media allow` and `/media revoke` — deliberately **not** `BOT_OWNER_IDS`, so economy
+support access can never silently double as media-request gatekeeping.
+
+A background loop checks Radarr/Sonarr once a day for anything still pending and, the moment a
+title has a file (movie) or every monitored episode does (series), replies in the channel the
+request was made in — not a DM, so the requester does not have to remember which show they asked
+for weeks ago.
+
 ### Narration
 
 Every activity and game line is read from `src/shadow_bot/data/narration/default.txt` rather than
@@ -271,6 +302,11 @@ Two things to know about this:
 Currency creation, removal, and role income configuration accept the guild owner, the application
 owner, and — as an interim measure until capability grants exist — anyone with Discord's
 Administrator permission. See the deviation note in `ECONOMY_SPEC.md`.
+
+`/request_movie`, `/request_tv`, and `/media` are visible to everyone for the same reason
+`/hungrygames` is: Discord's permission system has no concept of "one specific user id", so
+`MEDIA_OWNER_ID` and the media allowlist are checked in code instead. Running one without
+permission gets a plain refusal, not a hidden command.
 
 **If members cannot see commands they should**, check `@everyone` has **Use Application Commands**
 in Server Settings → Roles, and that no channel overwrite denies it. That permission is enforced by

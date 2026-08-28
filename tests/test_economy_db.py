@@ -1136,6 +1136,79 @@ async def test_kills_carry_a_victim_and_deaths_do_not(sessions) -> None:
             assert row.victim_participant_id is None
 
 
+async def test_elimination_causes_maps_kills_to_their_killer(sessions) -> None:
+    game = await _game(sessions, fee=0)
+    for user in (ALICE, BOB, CAROL):
+        await _join(sessions, game.id, user)
+    await _play_out(sessions, game.id)
+
+    async with sessions() as session:
+        rows = list(
+            (await session.execute(select(GameEvent).where(GameEvent.game_id == game.id)))
+            .scalars()
+            .all()
+        )
+        by_id = {p.id: p.user_id for p in await game_db.participants(session, game.id)}
+        causes = await game_db.elimination_causes(session, game.id)
+
+    for row in rows:
+        if row.kind != "kill":
+            continue
+        victim_id = by_id[row.victim_participant_id]
+        killer_id = by_id[row.subject_participant_id]
+        assert causes[victim_id] == ("kill", killer_id)
+
+
+async def test_elimination_causes_maps_deaths_to_no_killer(sessions) -> None:
+    game = await _game(sessions, fee=0)
+    for user in (ALICE, BOB, CAROL):
+        await _join(sessions, game.id, user)
+    await _play_out(sessions, game.id)
+
+    async with sessions() as session:
+        rows = list(
+            (await session.execute(select(GameEvent).where(GameEvent.game_id == game.id)))
+            .scalars()
+            .all()
+        )
+        by_id = {p.id: p.user_id for p in await game_db.participants(session, game.id)}
+        causes = await game_db.elimination_causes(session, game.id)
+
+    for row in rows:
+        if row.kind != "death":
+            continue
+        assert causes[by_id[row.subject_participant_id]] == ("death", None)
+
+
+async def test_elimination_causes_has_no_entry_for_the_winner(sessions) -> None:
+    """The winner was never the subject of a KILL or the victim of a DEATH."""
+    game = await _game(sessions, fee=0)
+    for user in (ALICE, BOB, CAROL):
+        await _join(sessions, game.id, user)
+    outcome = await _play_out(sessions, game.id)
+
+    async with sessions() as session:
+        causes = await game_db.elimination_causes(session, game.id)
+    assert outcome.winner_user_id not in causes
+
+
+async def test_elimination_causes_skips_anonymised_participants(sessions) -> None:
+    """A departed tribute's rows keep their events but lose their user_id — the
+    same identifier the recap needs, so they simply cannot appear as a key."""
+    game = await _game(sessions, fee=0)
+    for user in (ALICE, BOB, CAROL):
+        await _join(sessions, game.id, user)
+    await _play_out(sessions, game.id)
+
+    async with sessions.begin() as session:
+        await game_db.anonymise_participants(session, GUILD, ALICE)
+
+    async with sessions() as session:
+        causes = await game_db.elimination_causes(session, game.id)
+    assert ALICE not in causes
+    assert ALICE not in {killer for _, killer in causes.values() if killer is not None}
+
+
 async def test_a_departing_member_is_anonymised_not_erased(sessions) -> None:
     """The decision that makes game history durable.
 

@@ -23,3 +23,6 @@ graphify-out/
 
 # Scratch
 _to_delete/
+
+# Personal deploy cheat sheet — not for the repo, has host/SSH specifics
+personal_upgrade_dir.md

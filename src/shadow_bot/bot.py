@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 
+import aiohttp
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -25,6 +26,7 @@ EXTENSIONS: tuple[str, ...] = (
     "shadow_bot.cogs.income",
     "shadow_bot.cogs.activities",
     "shadow_bot.cogs.games",
+    "shadow_bot.cogs.media",
 )
 
 
@@ -43,9 +45,15 @@ class EconomyBot(commands.Bot):
         #: only Donovan edits these files, and a restart is cheap enough that a
         #: reload command would be public-facing complexity nothing needs.
         self.narration_defaults = load_event_library(settings.events_dir)
+        #: One shared session for Radarr/Sonarr calls (M10), opened here rather
+        #: than per-request so connections are pooled and TCP handshakes aren't
+        #: repeated on every /request_movie. Created in setup_hook rather than
+        #: __init__ because aiohttp wants a running event loop.
+        self.http_session: aiohttp.ClientSession = None  # type: ignore[assignment]
 
     async def setup_hook(self) -> None:
         await self.database.check_connection()
+        self.http_session = aiohttp.ClientSession()
 
         sections = sum(len(lines) for lines in self.narration_defaults.values())
         LOGGER.info(
@@ -69,6 +77,8 @@ class EconomyBot(commands.Bot):
             LOGGER.info("Synced %s global command(s)", len(synced))
 
     async def close(self) -> None:
+        if self.http_session is not None:
+            await self.http_session.close()
         await self.database.close()
         await super().close()
 

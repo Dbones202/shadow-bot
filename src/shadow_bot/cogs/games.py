@@ -66,6 +66,15 @@ CATEGORY = "hungrygames"
 MIN_SIGNUP_SECONDS = 30
 MAX_SIGNUP_SECONDS = 3600
 
+#: Stand-ins for the signup embed, where a forfeit is shown before anyone has
+#: a name to fill {tribute}/{victim} with yet.
+_PREVIEW_VALUES = {
+    "tribute": "whoever gets you",
+    "victim": "you",
+    "winner": "the winner",
+    "pot": "the pot",
+}
+
 
 @dataclass(frozen=True, slots=True)
 class StyleRules:
@@ -218,20 +227,32 @@ class GamesCog(commands.Cog):
         member = guild.get_member(user_id) if guild else None
         return member.display_name if member else f"<@{user_id}>"
 
-    def _forfeit(self, rules: StyleRules, key: str, values: dict[str, str], narrator) -> str:
+    def _pick_template(self, library: NarrationLibrary, key: str) -> str | None:
+        """One raw line from the event files, unrendered.
+
+        Used once, at `/hungrygames start`, for a `random_tasks` game — not at
+        each elimination. Picking once and reusing it for the whole game gives
+        it the same shape as `organizer_defined`: a fixed consequence everyone
+        reads in the signup embed before joining, not a surprise redrawn every
+        time someone falls.
+        """
+        options = library.lines_for(CATEGORY, key)
+        return _RNG.choice(options) if options else None
+
+    def _forfeit(self, rules: StyleRules, key: str, values: dict[str, str]) -> str:
         """The consequence line attached to an elimination, if the style has one.
 
         * `standard` — none at all. Narration and pot, nothing owed afterwards.
-        * `random_tasks` — drawn from the event files, different every time.
-        * `organizer_defined` — the fixed text the organizer typed at start,
-          which everyone already read in the signup embed before joining.
+        * `random_tasks` and `organizer_defined` — a fixed line chosen once for
+          the whole game, before signups opened: drawn at random from the event
+          files for `random_tasks`, typed by the organizer for
+          `organizer_defined`. Either way it was already in the signup embed,
+          so nobody is surprised by what round three costs them.
         """
         if rules.style == "standard":
             return ""
-        if rules.style == "organizer_defined":
-            template = rules.killed_by if key == "forfeit_kill" else rules.killed_self
-            return render(template, values) if template else ""
-        return narrator.pick(CATEGORY, key, values)
+        template = rules.killed_by if key == "forfeit_kill" else rules.killed_self
+        return render(template, values) if template else ""
 
     def _narrate(
         self,
@@ -267,14 +288,14 @@ class GamesCog(commands.Cog):
                         CATEGORY, "kill", values, fallback="{tribute} eliminates {victim}."
                     )
                 )
-                forfeit = self._forfeit(rules, "forfeit_kill", values, narrator)
+                forfeit = self._forfeit(rules, "forfeit_kill", values)
                 if forfeit:
                     lines.append(f"  ↳ *{forfeit}*")
             elif event.kind is EventKind.DEATH:
                 lines.append(
                     narrator.pick(CATEGORY, "death", values, fallback="{tribute} is eliminated.")
                 )
-                forfeit = self._forfeit(rules, "forfeit_death", values, narrator)
+                forfeit = self._forfeit(rules, "forfeit_death", values)
                 if forfeit:
                     lines.append(f"  ↳ *{forfeit}*")
             else:
@@ -320,7 +341,7 @@ class GamesCog(commands.Cog):
         style=[
             app_commands.Choice(name="Standard - narration and pot only", value="standard"),
             app_commands.Choice(
-                name="Random tasks - forfeits drawn at random", value="random_tasks"
+                name="Random tasks - picked once, shown before you join", value="random_tasks"
             ),
             app_commands.Choice(
                 name="Organizer defined - you set the outcomes", value="organizer_defined"
@@ -379,14 +400,27 @@ class GamesCog(commands.Cog):
             await interaction.response.send_modal(OutcomesModal(self, params, settings))
             return
 
-        await self._open_signups(interaction, params, settings)
+        # random_tasks draws its three consequences here, once, rather than
+        # fresh at each elimination — see `_pick_template`. They ride in the
+        # same `outcomes` tuple organizer_defined uses, so `_open_signups` and
+        # `create_game` need no separate path for it.
+        outcomes = None
+        if chosen_style == "random_tasks":
+            library = await self._library(interaction.guild_id)
+            outcomes = (
+                self._pick_template(library, "reward_winner"),
+                self._pick_template(library, "forfeit_kill"),
+                self._pick_template(library, "forfeit_death"),
+            )
+
+        await self._open_signups(interaction, params, settings, outcomes=outcomes)
 
     async def _open_signups(
         self,
         interaction: discord.Interaction,
         params: StartParams,
         settings: GuildSettings,
-        outcomes: tuple[str, str, str] | None = None,
+        outcomes: tuple[str | None, str | None, str | None] | None = None,
     ) -> None:
         """Create the game and post the signup embed. Shared by both start paths."""
         assert interaction.guild_id is not None
@@ -432,11 +466,26 @@ class GamesCog(commands.Cog):
         embed.add_field(name="Closes", value=relative_timestamp(closes), inline=True)
 
         # Everyone reads the terms before entering, which is the whole point of
-        # asking the organizer for them up front.
+        # asking the organizer for them up front — and, for random_tasks, the
+        # whole point of picking the lines at signup time instead of at each
+        # elimination. render() is a no-op on organizer_defined's plain text
+        # (it has no {placeholders}), so one code path covers both styles.
         if outcomes:
-            embed.add_field(name="If you are killed", value=killed_by or "-", inline=False)
-            embed.add_field(name="If the arena gets you", value=killed_self or "-", inline=False)
-            embed.add_field(name="If you win", value=winner or "-", inline=False)
+            embed.add_field(
+                name="If you are killed",
+                value=render(killed_by, _PREVIEW_VALUES) if killed_by else "-",
+                inline=False,
+            )
+            embed.add_field(
+                name="If the arena gets you",
+                value=render(killed_self, _PREVIEW_VALUES) if killed_self else "-",
+                inline=False,
+            )
+            embed.add_field(
+                name="If you win",
+                value=render(winner, _PREVIEW_VALUES) if winner else "-",
+                inline=False,
+            )
         elif params.style == "standard":
             embed.add_field(
                 name="Style", value="Standard - no forfeits, just the pot.", inline=False
@@ -749,15 +798,19 @@ class GamesCog(commands.Cog):
             color=discord.Color.gold(),
         )
 
-        # The winner's spoils follow the same style rule as the forfeits.
-        if rules.style == "organizer_defined" and rules.winner:
+        # The winner's spoils follow the same style rule as the forfeits: fixed
+        # text chosen once at signup time (typed by the organizer, or drawn
+        # from the event files for random_tasks — see `_pick_template`), not
+        # redrawn here at completion.
+        if rules.style != "standard" and rules.winner:
             final.add_field(name="Spoils", value=render(rules.winner, values), inline=False)
-        elif rules.style == "random_tasks":
-            reward = narrator.pick(CATEGORY, "reward_winner", values)
-            if reward:
-                final.add_field(name="Spoils", value=reward, inline=False)
 
-        recap = self._standings_text(outcome, guild)
+        causes: dict[int, tuple[str, int | None]] = {}
+        if rules.style != "standard":
+            async with self.bot.database.sessions() as session:
+                causes = await game_db.elimination_causes(session, game_id)
+
+        recap = self._standings_text(outcome, guild, rules=rules, causes=causes)
         if recap:
             final.add_field(name="Final standings", value=recap, inline=False)
         await channel.send(embed=final)
@@ -884,16 +937,62 @@ class GamesCog(commands.Cog):
         except discord.HTTPException:
             LOGGER.debug("Could not retire the signup button", exc_info=True)
 
-    def _standings_text(self, outcome, guild: discord.Guild | None) -> str:
-        """Top placements, capped so a thirty-player game still fits an embed."""
+    def _consequence_text(
+        self,
+        guild: discord.Guild | None,
+        user_id: int,
+        rules: StyleRules,
+        causes: dict[int, tuple[str, int | None]],
+    ) -> str:
+        """What this particular tribute owes, rendered with who actually got them.
+
+        `causes` maps a user id to how they went out (`"kill"` or `"death"`)
+        and, for a kill, the killer's user id — see `db.games.elimination_causes`.
+        A user id missing from `causes` means no elimination event was found for
+        them (unreachable in practice: every non-winner in `outcome.standings`
+        was eliminated), so this degrades to no line rather than a crash.
+        """
+        entry = causes.get(user_id)
+        if entry is None:
+            return ""
+        cause, other_user_id = entry
+        template = rules.killed_by if cause == "kill" else rules.killed_self
+        if not template:
+            return ""
+        values = {
+            "tribute": self._name(guild, other_user_id) if other_user_id else "the arena",
+            "victim": self._name(guild, user_id),
+        }
+        return render(template, values)
+
+    def _standings_text(
+        self,
+        outcome,
+        guild: discord.Guild | None,
+        *,
+        rules: StyleRules | None = None,
+        causes: dict[int, tuple[str, int | None]] | None = None,
+    ) -> str:
+        """Top placements, capped so a thirty-player game still fits an embed.
+
+        For a style with forfeits, each row past first place also shows what
+        that tribute owes — the same text everyone read in the signup embed,
+        resolved now to what actually happened to them. First place is skipped
+        because the Spoils field above already covers the winner.
+        """
         if not outcome.standings:
             return ""
         ordered = sorted(outcome.standings.items(), key=lambda pair: pair[1])
         medals = {1: "🥇", 2: "🥈", 3: "🥉"}
-        rows = [
-            f"{medals.get(place, f'{place}.')} {self._name(guild, user_id)}"
-            for user_id, place in ordered[:10]
-        ]
+        causes = causes or {}
+        rows = []
+        for user_id, place in ordered[:10]:
+            row = f"{medals.get(place, f'{place}.')} {self._name(guild, user_id)}"
+            if rules is not None and rules.style != "standard" and place != 1:
+                consequence = self._consequence_text(guild, user_id, rules, causes)
+                if consequence:
+                    row += f" — *{consequence}*"
+            rows.append(row)
         if len(ordered) > 10:
             rows.append(f"…and {len(ordered) - 10} more")
         return "\n".join(rows)
