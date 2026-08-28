@@ -3,6 +3,12 @@
 Every number is configured per guild by an administrator — cooldown, success
 chance, reward range, fine range. Nothing is hardcoded, and an activity does
 nothing until it has been set up, so a fresh server has no accidental economy.
+
+Narration (M9) comes from the same place Hungry Games reads it: `bot.narration_defaults`
+(bundled or `EVENTS_DIR`, see `domain.narration.load_event_library`), layered with this
+guild's own lines via `cogs._narration.guild_library`. Until `work.md` / `crime.md` /
+`steal.md` / `slut.md` have lines for a given outcome, `NarrationLibrary.pick` falls back
+to the plain sentence this cog always used, so today's behaviour is unchanged.
 """
 
 from __future__ import annotations
@@ -16,6 +22,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from shadow_bot.cogs._narration import guild_library
 from shadow_bot.db import activities as activity_db
 from shadow_bot.db import economy
 from shadow_bot.db.models import GuildSettings
@@ -29,9 +36,15 @@ from shadow_bot.domain.durations import (
     parse_duration,
     relative_timestamp,
 )
+from shadow_bot.domain.narration import NarrationLibrary
 
 if TYPE_CHECKING:
     from shadow_bot.bot import EconomyBot
+
+
+def _display_name(user: discord.Member | discord.User) -> str:
+    """A guild nickname where there is one, the account name otherwise."""
+    return getattr(user, "display_name", user.name)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -334,7 +347,8 @@ class ActivitiesCog(commands.Cog):
             await interaction.response.send_message(str(exc), ephemeral=True)
             return
 
-        embed = self._render(activity, result, style, target)
+        library = await guild_library(self.bot, interaction.guild_id)
+        embed = self._render(activity, result, style, target, interaction.user, library)
         embed.set_footer(
             text=f"Cash {format_money(result.cash, style)} · "
             f"Bank {format_money(result.bank, style)}"
@@ -356,24 +370,44 @@ class ActivitiesCog(commands.Cog):
         result: activity_db.AttemptResult,
         style: CurrencyStyle,
         target: discord.Member | None,
+        actor: discord.Member | discord.User,
+        library: NarrationLibrary,
     ) -> discord.Embed:
+        """Build the result embed, narrated where a line is configured.
+
+        `library.pick` is what does the work here: it renders a random
+        configured line when one exists for `(activity, outcome)`, and
+        otherwise renders `fallback` — the exact sentence this cog always
+        used — so behaviour is unchanged until `work.md` / `crime.md` /
+        `steal.md` / `slut.md` actually have lines for a given outcome.
+        """
         outcome = result.outcome
+        category = activity.value
+        values = {"user": _display_name(actor), "currency": style.plural}
+        if target is not None:
+            values["target"] = _display_name(target)
 
         if outcome.succeeded and outcome.target_was_empty:
+            fallback = (
+                f"You got into {target.mention}'s pockets and found them empty."
+                if target
+                else "There was nothing to take."
+            )
+            description = library.pick(category, "empty", values, fallback=fallback)
             return discord.Embed(
                 title="Nothing to take",
-                description=f"You got into {target.mention}'s pockets and found them empty."
-                if target
-                else "There was nothing to take.",
+                description=description,
                 color=discord.Color.greyple(),
             )
 
         if outcome.succeeded:
-            description = (
+            values["amount"] = format_money(outcome.amount, style)
+            fallback = (
                 f"You took **{format_money(outcome.amount, style)}** from {target.mention}."
                 if target
                 else f"You earned **{format_money(outcome.amount, style)}**."
             )
+            description = library.pick(category, "success", values, fallback=fallback)
             if outcome.capped:
                 description += "\nThat was everything they had."
             return discord.Embed(
@@ -382,9 +416,12 @@ class ActivitiesCog(commands.Cog):
                 color=discord.Color.green(),
             )
 
+        values["amount"] = format_money(result.collected, style)
+        fallback = f"You were fined **{format_money(result.collected, style)}**."
+        description = library.pick(category, "failure", values, fallback=fallback)
         embed = discord.Embed(
             title="Caught",
-            description=f"You were fined **{format_money(result.collected, style)}**.",
+            description=description,
             color=discord.Color.red(),
         )
         if result.uncollected:

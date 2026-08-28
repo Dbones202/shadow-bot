@@ -8,6 +8,7 @@ from discord.ext import commands
 
 from shadow_bot.config import Settings
 from shadow_bot.db.session import Database
+from shadow_bot.domain.narration import load_event_library
 from shadow_bot.logging_config import configure_logging
 
 LOGGER = logging.getLogger(__name__)
@@ -35,9 +36,24 @@ class EconomyBot(commands.Bot):
         super().__init__(command_prefix=commands.when_mentioned, intents=intents)
         self.settings = settings
         self.database = database
+        #: Narration defaults (M9): read once at startup from EVENTS_DIR, with
+        #: the packaged copy as a fallback. GamesCog and ActivitiesCog both
+        #: build their per-guild NarrationLibrary from this same dict, layered
+        #: with that guild's FlavorText overrides. There is no live reload —
+        #: only Donovan edits these files, and a restart is cheap enough that a
+        #: reload command would be public-facing complexity nothing needs.
+        self.narration_defaults = load_event_library(settings.events_dir)
 
     async def setup_hook(self) -> None:
         await self.database.check_connection()
+
+        sections = sum(len(lines) for lines in self.narration_defaults.values())
+        LOGGER.info(
+            "Loaded narration: %s section(s), %s line(s) (EVENTS_DIR=%s)",
+            len(self.narration_defaults),
+            sections,
+            self.settings.events_dir or "unset — using packaged defaults",
+        )
 
         for extension in EXTENSIONS:
             await self.load_extension(extension)

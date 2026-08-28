@@ -3,9 +3,12 @@ import random
 import pytest
 
 from shadow_bot.domain.narration import (
+    EVENT_CATEGORY_FILES,
     NarrationError,
     NarrationLibrary,
     NarrationSession,
+    load_bundle,
+    load_event_library,
     parse,
     placeholders_in,
     render,
@@ -246,3 +249,67 @@ def test_a_single_line_section_still_works() -> None:
     """The guard must not empty the pool when there is nothing else to pick."""
     session = _session({("a", "b"): ["only line"]})
     assert [session.pick("a", "b", {}) for _ in range(3)] == ["only line"] * 3
+
+
+# --- Event file library (M9) ---------------------------------------------------
+#
+# EVENTS_DIR lives outside the installed package so Donovan's edits survive a
+# `pip install --upgrade`. These cover the fallback ladder: a good directory is
+# used as-is, a missing/empty one falls back to the packaged copy, and a broken
+# file in the directory falls back too rather than crashing the bot at startup.
+
+
+def test_load_bundle_merges_multiple_files(tmp_path) -> None:
+    (tmp_path / "work.md").write_text("[work.success]\nline one\n", encoding="utf-8")
+    (tmp_path / "crime.md").write_text("[crime.failure]\nline two\n", encoding="utf-8")
+    merged = load_bundle([tmp_path / "work.md", tmp_path / "crime.md"])
+    assert merged[("work", "success")] == ["line one"]
+    assert merged[("crime", "failure")] == ["line two"]
+
+
+def test_load_bundle_raises_with_the_offending_path(tmp_path) -> None:
+    bad = tmp_path / "work.md"
+    bad.write_text("not a header\n", encoding="utf-8")
+    with pytest.raises(NarrationError, match=str(bad)):
+        load_bundle([bad])
+
+
+def test_load_event_library_prefers_events_dir_when_present(tmp_path) -> None:
+    (tmp_path / "work.md").write_text("[work.success]\ncustom line\n", encoding="utf-8")
+    library = load_event_library(tmp_path)
+    assert library[("work", "success")] == ["custom line"]
+    # Only the file that exists in events_dir is read — nothing packaged leaks in.
+    assert ("crime", "success") not in library
+
+
+def test_load_event_library_falls_back_when_events_dir_is_none() -> None:
+    library = load_event_library(None)
+    assert ("work", "success") in library
+    assert ("hungrygames", "winner") in library
+
+
+def test_load_event_library_falls_back_when_events_dir_is_missing(tmp_path) -> None:
+    library = load_event_library(tmp_path / "does-not-exist")
+    assert ("work", "success") in library
+
+
+def test_load_event_library_falls_back_when_events_dir_is_empty(tmp_path) -> None:
+    library = load_event_library(tmp_path)
+    assert ("work", "success") in library
+
+
+def test_load_event_library_falls_back_when_a_file_is_broken(tmp_path) -> None:
+    """A bad edit must not leave the bot mute or take down startup."""
+    (tmp_path / "work.md").write_text("not a header\n", encoding="utf-8")
+    library = load_event_library(tmp_path)
+    assert ("work", "success") in library
+
+
+def test_event_category_files_cover_every_activity_and_hungrygames() -> None:
+    assert set(EVENT_CATEGORY_FILES) == {
+        "hungrygames.md",
+        "work.md",
+        "crime.md",
+        "steal.md",
+        "slut.md",
+    }

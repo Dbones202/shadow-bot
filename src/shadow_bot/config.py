@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -45,6 +46,13 @@ def _snowflake_set(name: str) -> frozenset[int]:
     return values
 
 
+def _optional_path(name: str) -> Path | None:
+    value = os.getenv(name, "").strip()
+    if not value:
+        return None
+    return Path(value)
+
+
 def _boolean(name: str, default: bool) -> bool:
     raw = os.getenv(name)
     if raw is None:
@@ -63,6 +71,7 @@ class Settings:
     database_url: str
     bot_owner_ids: frozenset[int]
     test_guild_id: int | None
+    events_dir: Path | None
     enable_members_intent: bool
     enable_message_content_intent: bool
     log_level: str
@@ -80,6 +89,10 @@ class Settings:
             database_url=database_url,
             bot_owner_ids=_snowflake_set("BOT_OWNER_IDS"),
             test_guild_id=_optional_snowflake("TEST_GUILD_ID"),
+            # Not required to exist — a missing or empty directory just means
+            # load_event_library() falls back to the packaged narration.
+            # Validating it here would turn "not deployed yet" into a boot failure.
+            events_dir=_optional_path("EVENTS_DIR"),
             enable_members_intent=_boolean("ENABLE_MEMBERS_INTENT", True),
             enable_message_content_intent=_boolean("ENABLE_MESSAGE_CONTENT_INTENT", False),
             log_level=os.getenv("LOG_LEVEL", "INFO").upper(),

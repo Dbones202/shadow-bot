@@ -5,6 +5,22 @@ All notable changes to Shadow Bot will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-08-28
+
+### Added
+- **Event file library (M9)**: narration text moved off the single bundled `default.txt` into
+  five per-category files (`hungrygames.md`, `work.md`, `crime.md`, `steal.md`, `slut.md`), plus
+  an optional `EVENTS_DIR` env var pointing at an external copy outside the installed package —
+  edits there survive `pip install --upgrade`, with a fallback to the packaged copy if it's
+  unset, missing, empty, or has an invalid file. No live reload; a restart picks up an edit.
+- **`/work`, `/crime`, `/steal`, `/slut` now narrate**: these previously rendered no flavor text
+  at all. They now pull the guild's narration library per outcome, falling back to the original
+  hardcoded sentence until the corresponding `.md` file has lines.
+
+### Changed
+- `GamesCog` and `ActivitiesCog` now share one narration-assembly path (`cogs._narration`,
+  `db.narration`) instead of `GamesCog` alone owning the bundled defaults.
+
 ## [0.4.0] - 2026-08-21
 
 ### Added

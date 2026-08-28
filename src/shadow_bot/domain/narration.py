@@ -30,9 +30,12 @@ crashing or silently vanishing.
 
 from __future__ import annotations
 
+import logging
 import random
 import re
 from collections import defaultdict
+from collections.abc import Iterable
+from importlib.resources import as_file, files
 from pathlib import Path
 
 #: ``{name}`` where name is letters, digits and underscores.
@@ -40,6 +43,19 @@ _PLACEHOLDER = re.compile(r"\{(\w+)\}")
 _SECTION = re.compile(r"^\[([a-z0-9_]+)\.([a-z0-9_]+)\]$", re.IGNORECASE)
 
 _RNG = random.SystemRandom()
+
+LOGGER = logging.getLogger(__name__)
+
+#: The event-file library (M9): one file per category, holding every
+#: [outcome] section for that category. Order does not matter for loading —
+#: it only matters here in that it is the authoritative list of what ships.
+EVENT_CATEGORY_FILES: tuple[str, ...] = (
+    "hungrygames.md",
+    "work.md",
+    "crime.md",
+    "steal.md",
+    "slut.md",
+)
 
 
 class NarrationError(ValueError):
@@ -105,6 +121,87 @@ def load(path: Path) -> dict[tuple[str, str], list[str]]:
         return parse(path.read_text(encoding="utf-8"))
     except OSError as exc:
         raise NarrationError(f"Could not read {path}: {exc}") from exc
+
+
+def load_bundle(paths: Iterable[Path]) -> dict[tuple[str, str], list[str]]:
+    """Load and merge several narration files.
+
+    Sections are additive across files — two files defining the same
+    ``[category.outcome]`` header both contribute lines rather than one
+    replacing the other, though in practice each category owns one file.
+    A parse error anywhere aborts the whole bundle: ``load_event_library``
+    treats that as "this source is unusable" and falls back, rather than
+    silently shipping a half-loaded library.
+    """
+    merged: dict[tuple[str, str], list[str]] = defaultdict(list)
+    for path in paths:
+        try:
+            for key, lines in load(path).items():
+                merged[key].extend(lines)
+        except NarrationError as exc:
+            raise NarrationError(f"{path}: {exc}") from exc
+    return dict(merged)
+
+
+def load_event_library(events_dir: Path | None) -> dict[tuple[str, str], list[str]]:
+    """Load the narration defaults every guild falls back to.
+
+    Donovan is the sole editor of these. ``events_dir`` — conventionally
+    ``/etc/shadow-bot/events/`` — lives outside the installed package so a
+    ``pip install --upgrade`` cannot clobber his edits; the packaged copy
+    under ``data/narration/`` ships as a working default so a fresh install
+    is never mute.
+
+    Reloading is not a live operation — there is no running command that
+    swaps this out from under the bot. It is read once, at startup. To pick
+    up an edit, restart the bot; that is a deliberate simplification, not an
+    oversight, because only Donovan has access to the box.
+
+    Falls back to the packaged copy whenever ``events_dir`` is unset, does
+    not exist, contains none of the expected category files, or fails to
+    parse — a bad edit should not leave the bot without narration, or worse,
+    fail to start.
+    """
+    if events_dir is not None:
+        try:
+            candidates = [
+                events_dir / name
+                for name in EVENT_CATEGORY_FILES
+                if (events_dir / name).is_file()
+            ]
+        except OSError:
+            candidates = []
+
+        if candidates:
+            try:
+                return load_bundle(candidates)
+            except NarrationError:
+                LOGGER.exception(
+                    "EVENTS_DIR %s has an invalid narration file; "
+                    "falling back to the packaged defaults",
+                    events_dir,
+                )
+        else:
+            LOGGER.info(
+                "EVENTS_DIR %s has none of the expected narration files "
+                "(%s); using the packaged defaults",
+                events_dir,
+                ", ".join(EVENT_CATEGORY_FILES),
+            )
+
+    packaged = files("shadow_bot") / "data" / "narration"
+    with as_file(packaged) as packaged_dir:
+        try:
+            return load_bundle(
+                packaged_dir / name
+                for name in EVENT_CATEGORY_FILES
+                if (packaged_dir / name).is_file()
+            )
+        except NarrationError:
+            LOGGER.exception(
+                "Packaged narration is invalid; the bot is starting with no narration at all"
+            )
+            return {}
 
 
 class NarrationLibrary:

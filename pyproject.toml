@@ -40,7 +40,7 @@ version = { file = "VERSION" }
 # The font is bundled rather than taken from the host so cards render
 # identically everywhere; a missing system font would otherwise mean a working
 # dev box and a blank banner in production. Licence text ships beside it.
-shadow_bot = ["data/narration/*.txt", "data/fonts/*.ttf", "data/fonts/*.txt"]
+shadow_bot = ["data/narration/*.md", "data/fonts/*.ttf", "data/fonts/*.txt"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

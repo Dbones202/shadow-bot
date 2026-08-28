@@ -5,8 +5,10 @@ one message, because watching it unfold is the point. That means state lives in
 the database — a restart mid-game resumes from where it left off instead of
 stranding everyone's entry fees.
 
-Narration comes from `domain.narration`: bundled defaults, overridden per guild
-by rows in `flavor_texts`. The logic in `domain.games` never sees a word of it.
+Narration comes from `domain.narration`: defaults loaded once at startup onto
+`bot.narration_defaults` (see M9 — `domain.narration.load_event_library`),
+overridden per guild by rows in `flavor_texts` via `cogs._narration.guild_library`.
+The logic in `domain.games` never sees a word of it.
 """
 
 from __future__ import annotations
@@ -19,17 +21,16 @@ import time
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from importlib.resources import files
 from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
 from discord.ext import commands, tasks
-from sqlalchemy import select
 
+from shadow_bot.cogs._narration import guild_library
 from shadow_bot.db import economy, game_stats
 from shadow_bot.db import games as game_db
-from shadow_bot.db.models import FlavorText, Game, GuildSettings
+from shadow_bot.db.models import Game, GuildSettings
 from shadow_bot.domain import cards
 from shadow_bot.domain.amounts import MAX_AMOUNT, AmountError, CurrencyStyle, format_money
 from shadow_bot.domain.amounts import parse_amount as parse
@@ -42,13 +43,7 @@ from shadow_bot.domain.durations import (
     relative_timestamp,
 )
 from shadow_bot.domain.games import EventKind, RoundPlan
-from shadow_bot.domain.narration import (
-    NarrationError,
-    NarrationLibrary,
-    NarrationSession,
-    render,
-)
-from shadow_bot.domain.narration import parse as parse_narration
+from shadow_bot.domain.narration import NarrationLibrary, NarrationSession, render
 
 if TYPE_CHECKING:
     from shadow_bot.bot import EconomyBot
@@ -186,21 +181,6 @@ class SignupView(discord.ui.View):
         self.add_item(JoinButton(game_id))
 
 
-def _load_defaults() -> dict[tuple[str, str], list[str]]:
-    """Read the bundled narration. A broken file must not stop the bot booting."""
-    try:
-        text = (files("shadow_bot") / "data" / "narration" / "default.txt").read_text(
-            encoding="utf-8"
-        )
-        return parse_narration(text)
-    except (OSError, NarrationError):
-        LOGGER.exception("Could not load bundled narration; falling back to plain messages")
-        return {}
-
-
-DEFAULT_NARRATION = _load_defaults()
-
-
 class GamesCog(commands.Cog):
     group = app_commands.Group(
         name="hungrygames",
@@ -231,19 +211,8 @@ class GamesCog(commands.Cog):
     # --- Narration ------------------------------------------------------------
 
     async def _library(self, guild_id: int) -> NarrationLibrary:
-        """Bundled defaults, with this guild's own lines taking precedence."""
-        overrides: dict[tuple[str, str], list[str]] = {}
-        async with self.bot.database.sessions() as session:
-            rows = (
-                (await session.execute(select(FlavorText).where(FlavorText.guild_id == guild_id)))
-                .scalars()
-                .all()
-            )
-        for row in rows:
-            overrides.setdefault((row.activity_key.lower(), row.outcome.lower()), []).append(
-                row.text
-            )
-        return NarrationLibrary(defaults=DEFAULT_NARRATION, overrides=overrides)
+        """Bundled/EVENTS_DIR defaults, with this guild's own lines taking precedence."""
+        return await guild_library(self.bot, guild_id)
 
     def _name(self, guild: discord.Guild | None, user_id: int) -> str:
         member = guild.get_member(user_id) if guild else None
