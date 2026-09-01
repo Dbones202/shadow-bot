@@ -1,4 +1,5 @@
 import random
+import re
 
 import pytest
 
@@ -270,7 +271,7 @@ def test_load_bundle_merges_multiple_files(tmp_path) -> None:
 def test_load_bundle_raises_with_the_offending_path(tmp_path) -> None:
     bad = tmp_path / "work.md"
     bad.write_text("not a header\n", encoding="utf-8")
-    with pytest.raises(NarrationError, match=str(bad)):
+    with pytest.raises(NarrationError, match=re.escape(str(bad))):
         load_bundle([bad])
 
 

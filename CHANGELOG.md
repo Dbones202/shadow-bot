@@ -5,6 +5,16 @@ All notable changes to Shadow Bot will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.0] - 2026-09-01
+
+### Added
+- **Expanded Narratives Library**: Substantially expanded the bundled flavor text and narration scenarios across `crime.md`, `hungrygames.md`, `slut.md`, and `work.md` with hundreds of new unique narrative outcomes.
+
+## [0.9.0] - 2026-08-28
+
+### Added
+- **Media Requests System**: Sonarr and Radarr service integrations with `/request` commands for movies and TV shows, tracking requests, quotas, and approvals.
+
 ## [0.8.0] - 2026-08-28
 
 ### Added
