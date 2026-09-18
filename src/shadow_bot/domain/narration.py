@@ -165,9 +165,7 @@ def load_event_library(events_dir: Path | None) -> dict[tuple[str, str], list[st
     if events_dir is not None:
         try:
             candidates = [
-                events_dir / name
-                for name in EVENT_CATEGORY_FILES
-                if (events_dir / name).is_file()
+                events_dir / name for name in EVENT_CATEGORY_FILES if (events_dir / name).is_file()
             ]
         except OSError:
             candidates = []

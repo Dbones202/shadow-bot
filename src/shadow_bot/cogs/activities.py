@@ -46,6 +46,7 @@ def _display_name(user: discord.Member | discord.User) -> str:
     """A guild nickname where there is one, the account name otherwise."""
     return getattr(user, "display_name", user.name)
 
+
 LOGGER = logging.getLogger(__name__)
 
 #: Not because anyone will realistically attack a Discord economy, but because

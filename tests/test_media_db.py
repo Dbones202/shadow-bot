@@ -34,9 +34,7 @@ async def sessions():
 
     async with maker.begin() as session:
         await session.execute(
-            text(
-                "TRUNCATE media_issue_reports, media_requests, media_allowlist CASCADE"
-            )
+            text("TRUNCATE media_issue_reports, media_requests, media_allowlist CASCADE")
         )
 
     yield maker

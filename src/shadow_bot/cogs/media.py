@@ -304,7 +304,7 @@ class MediaCog(commands.Cog):
         if channel is not None:
             kind = "movie" if media_type == "movie" else "TV show"
             await channel.send(
-                f"\U0001F4E5 {interaction.user.mention} requested the {kind} "
+                f"\U0001f4e5 {interaction.user.mention} requested the {kind} "
                 f"**{candidate.display_title}**."
             )
 
@@ -344,8 +344,10 @@ class MediaCog(commands.Cog):
 
         channel = await self._log_channel()
         if channel is not None:
-            lines = [f"\u26A0\uFE0F {interaction.user.mention} reported an issue with "
-                     f"**{title}**:", issue]
+            lines = [
+                f"\u26a0\ufe0f {interaction.user.mention} reported an issue with **{title}**:",
+                issue,
+            ]
             if matched is not None and matched.requested_by != interaction.user.id:
                 lines.append(f"-# Originally requested by <@{matched.requested_by}>")
             await channel.send("\n".join(lines))
