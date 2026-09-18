@@ -5,6 +5,15 @@ All notable changes to Shadow Bot will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Store and inventory (M11)**: `/store list|buy|additem|edititem|removeitem` and `/inventory`. Per-guild items, optional finite stock, cosmetic/inventory-only in this pass — purchases move cash and add to a member's inventory, nothing else. New tables `store_items` and `inventory_items` (migration `0007_store`); purchases write a `store_purchase` ledger entry through the existing `LedgerEntry.category` column.
+- **Plex request logging**: when `MEDIA_LOG_CHANNEL_ID` is set, every `/request_movie` and `/request_tv` posts a "who requested what" line to that channel.
+- **`/report_issue <title> <issue>`**: lets anyone on the media allowlist flag a problem with something already in the library (wrong audio language, a bad rip, missing subtitles), logged to the same channel and linked back to the original requester when the title matches a past request. New table `media_issue_reports` (migration `0008_media_issue_reports`).
+- **Private library filtering**: `RADARR_HIDDEN_ROOT_FOLDERS`/`SONARR_HIDDEN_ROOT_FOLDERS` (comma-separated root folder paths) drop matching titles from `/request_movie`/`/request_tv` search results entirely, rather than showing them with a disabled "already in library" button.
+- **Store items future-proofed for real effects**: `store_items` now carries `effect_type`/`effect_data` columns, unused by any code path yet (always `"none"`/`{}`), so a later "items can grant a role/unlock an activity" milestone needs a dispatcher, not another migration.
+
 ## [0.10.0] - 2026-09-01
 
 ### Added

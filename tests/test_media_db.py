@@ -9,11 +9,11 @@ import os
 
 import pytest
 import pytest_asyncio
-from sqlalchemy import text
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from shadow_bot.db import media as media_db
-from shadow_bot.db.models import MediaRequest
+from shadow_bot.db.models import MediaIssueReport, MediaRequest
 
 TEST_URL = os.getenv("TEST_DATABASE_URL")
 
@@ -33,7 +33,11 @@ async def sessions():
     maker = async_sessionmaker(engine, expire_on_commit=False)
 
     async with maker.begin() as session:
-        await session.execute(text("TRUNCATE media_requests, media_allowlist CASCADE"))
+        await session.execute(
+            text(
+                "TRUNCATE media_issue_reports, media_requests, media_allowlist CASCADE"
+            )
+        )
 
     yield maker
     await engine.dispose()
@@ -139,3 +143,84 @@ async def test_mark_downloaded_drops_it_out_of_pending(sessions) -> None:
     async with sessions() as session:
         pending = await media_db.pending_requests(session)
     assert pending == []
+
+
+async def test_find_request_by_title_matches_case_insensitively(sessions) -> None:
+    async with sessions.begin() as session:
+        await media_db.create_request(
+            session,
+            guild_id=1,
+            channel_id=2,
+            requested_by=ALICE,
+            media_type="movie",
+            external_id=10,
+            tmdb_id=None,
+            tvdb_id=None,
+            imdb_id=None,
+            title="Arrival",
+            year=2016,
+        )
+
+    async with sessions() as session:
+        found = await media_db.find_request_by_title(session, "arrival")
+    assert found is not None
+    assert found.requested_by == ALICE
+
+
+async def test_find_request_by_title_no_match_returns_none(sessions) -> None:
+    async with sessions() as session:
+        assert await media_db.find_request_by_title(session, "Nothing Like This") is None
+
+
+async def test_create_issue_report_links_to_matched_request(sessions) -> None:
+    async with sessions.begin() as session:
+        request = await media_db.create_request(
+            session,
+            guild_id=1,
+            channel_id=2,
+            requested_by=ALICE,
+            media_type="movie",
+            external_id=10,
+            tmdb_id=None,
+            tvdb_id=None,
+            imdb_id=None,
+            title="Arrival",
+            year=2016,
+        )
+        await session.flush()
+        request_id = request.id
+
+    async with sessions.begin() as session:
+        await media_db.create_issue_report(
+            session,
+            guild_id=1,
+            channel_id=2,
+            reported_by=BOB,
+            title="Arrival",
+            description="Audio is in Russian, not English.",
+            media_request_id=request_id,
+        )
+
+    async with sessions() as session:
+        reports = (await session.execute(select(MediaIssueReport))).scalars().all()
+    assert len(reports) == 1
+    assert reports[0].media_request_id == request_id
+    assert reports[0].reported_by == BOB
+
+
+async def test_create_issue_report_without_a_match_leaves_it_null(sessions) -> None:
+    async with sessions.begin() as session:
+        await media_db.create_issue_report(
+            session,
+            guild_id=1,
+            channel_id=2,
+            reported_by=BOB,
+            title="Something Pre-Bot",
+            description="Wrong subtitles.",
+            media_request_id=None,
+        )
+
+    async with sessions() as session:
+        reports = (await session.execute(select(MediaIssueReport))).scalars().all()
+    assert len(reports) == 1
+    assert reports[0].media_request_id is None

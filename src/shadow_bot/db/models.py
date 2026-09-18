@@ -553,3 +553,103 @@ class MediaRequest(Base):
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
     notified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class StoreItem(TimestampMixin, Base):
+    """An item a guild's economy admins have made available to buy (M11).
+
+    Per-guild — each server defines its own items. v1 *behavior* is
+    deliberately cosmetic/inventory-only: a purchase moves money and adds a
+    row to `inventory_items`, nothing else — `effect_type`/`effect_data`
+    below are not read by anything yet. The columns exist now anyway so that
+    a later "items can grant a role / unlock an activity / affect a game"
+    milestone (see the roadmap doc) needs a dispatcher and a taxonomy, not
+    another migration and a backfill.
+    """
+
+    __tablename__ = "store_items"
+    __table_args__ = (
+        UniqueConstraint("guild_id", "name", name="uq_store_item_guild_name"),
+        CheckConstraint("price >= 0", name="store_item_price_nonnegative"),
+        CheckConstraint("stock IS NULL OR stock >= 0", name="store_item_stock_nonnegative"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    guild_id: Mapped[int] = mapped_column(
+        BigInteger,
+        ForeignKey("guild_settings.guild_id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    name: Mapped[str] = mapped_column(String(80), nullable=False)
+    description: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    price: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    #: Null means unlimited — most cosmetic items never run out. A number
+    #: decrements on every purchase and blocks buying once it hits zero.
+    stock: Mapped[int | None] = mapped_column(Integer)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_by: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    #: Reserved for the M11 fast-follow. "none" today, always — no code path
+    #: sets anything else, and no code path reads this to *do* anything.
+    #: Free text rather than a CHECK-constrained enum because the taxonomy
+    #: ("grant_role", "unlock_activity", ...) has not been designed yet; a
+    #: constraint written today would just need loosening later.
+    effect_type: Mapped[str] = mapped_column(String(32), default="none", nullable=False)
+    #: Parameters for `effect_type` (a role id, an activity key, ...) once
+    #: something reads it. `{}` today, always.
+    effect_data: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict, nullable=False)
+
+
+class InventoryItem(Base):
+    """How many of one store item a member owns (M11).
+
+    One row per (account, item), holding a running quantity, rather than one
+    row per purchase — the ledger already records each individual
+    `store_purchase` event, so this table only has to answer "how many does
+    this member have right now."
+    """
+
+    __tablename__ = "inventory_items"
+    __table_args__ = (CheckConstraint("quantity > 0", name="inventory_item_quantity_positive"),)
+
+    account_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("economy_accounts.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    item_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("store_items.id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    quantity: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+
+class MediaIssueReport(Base):
+    """A report that something already in the library has a problem —
+    wrong-language audio, a bad rip, missing subtitles (M10 follow-up).
+
+    `title` is free text rather than a hard link to `media_requests`, because
+    much of the library predates this bot and was never requested through
+    it. `media_request_id` is filled in only when a title match against past
+    requests is found, so the original requester can be credited without
+    requiring one to exist.
+    """
+
+    __tablename__ = "media_issue_reports"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    guild_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True)
+    channel_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    reported_by: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    media_request_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("media_requests.id", ondelete="SET NULL")
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False, index=True
+    )

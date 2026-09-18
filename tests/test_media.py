@@ -1,6 +1,7 @@
 from shadow_bot.domain.media import (
     build_radarr_add_payload,
     build_sonarr_add_payload,
+    filter_hidden_root_folders,
     movie_is_downloaded,
     parse_radarr_lookup,
     parse_sonarr_lookup,
@@ -96,3 +97,40 @@ def test_series_is_downloaded_is_false_when_metadata_has_not_populated_yet() -> 
     # is still 0. That must never read as "complete".
     assert series_is_downloaded({"statistics": {"episodeCount": 0, "episodeFileCount": 0}}) is False
     assert series_is_downloaded({}) is False
+
+
+def test_filter_hidden_root_folders_drops_matching_candidate() -> None:
+    (public,) = parse_radarr_lookup(
+        [{**RADARR_RESULT, "id": 1, "rootFolderPath": "/opt/plextnas/Movies"}]
+    )
+    (private,) = parse_radarr_lookup(
+        [{**RADARR_RESULT, "id": 2, "rootFolderPath": "/opt/plextnas/Movies_Private"}]
+    )
+    kept = filter_hidden_root_folders(
+        [public, private], frozenset({"/opt/plextnas/Movies_Private"})
+    )
+    assert kept == [public]
+
+
+def test_filter_hidden_root_folders_ignores_trailing_slash_and_case() -> None:
+    (private,) = parse_radarr_lookup(
+        [{**RADARR_RESULT, "id": 2, "rootFolderPath": "/opt/plextnas/Movies_Private/"}]
+    )
+    kept = filter_hidden_root_folders([private], frozenset({"/OPT/plextnas/movies_private"}))
+    assert kept == []
+
+
+def test_filter_hidden_root_folders_keeps_not_yet_added_candidate() -> None:
+    # id=0 (not in library) means no root_folder_path at all — it cannot be
+    # "in" a hidden folder it was never added to.
+    (candidate,) = parse_radarr_lookup([{**RADARR_RESULT, "id": 0}])
+    assert candidate.root_folder_path is None
+    kept = filter_hidden_root_folders([candidate], frozenset({"/opt/plextnas/Movies_Private"}))
+    assert kept == [candidate]
+
+
+def test_filter_hidden_root_folders_empty_set_is_a_no_op() -> None:
+    (candidate,) = parse_radarr_lookup(
+        [{**RADARR_RESULT, "id": 2, "rootFolderPath": "/opt/plextnas/Movies_Private"}]
+    )
+    assert filter_hidden_root_folders([candidate], frozenset()) == [candidate]

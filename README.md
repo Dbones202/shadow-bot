@@ -32,6 +32,11 @@ separate container over the private LAN.
 - `/request_movie`, `/request_tv` — search Radarr/Sonarr and request with a button click; a daily
   poller replies in the request channel once the download finishes
 - `/media allow|revoke|list` — a single owner id controls the global allowlist of who can request
+- `/report_issue` — flag a problem with something already in Plex, credited back to the original
+  requester when a title match is found
+- A `MEDIA_LOG_CHANNEL_ID` channel logs every media request and issue report as it happens
+- `/store list|buy|additem|edititem|removeitem` and `/inventory` — a per-guild store, buyable
+  with the guild's currency, tracked in each member's inventory
 - Immediate economy-data deletion when a member leaves; game history anonymised, not erased
 - Per-role collection cooldown reset when a member loses that role
 - Balance changes are row-locked and every movement writes a ledger entry
@@ -39,8 +44,9 @@ separate container over the private LAN.
 - Tested capability combining for members holding several administrative roles
 - Hardened `systemd` unit
 
-Transaction history (`/history`), per-guild narration editing (`/flavor`), interest, and delegated
-permissions are the next milestone. The schema already supports them — see `ECONOMY_SPEC.md`.
+Transaction history (`/history`), per-guild narration editing (`/flavor`), interest, delegated
+permissions, and a web dashboard are next. The schema already supports the first four — see
+`ECONOMY_SPEC.md`.
 
 ### Command reference
 
@@ -77,6 +83,13 @@ permissions are the next milestone. The schema already supports them — see `EC
 | `/media allow <member>` | The media owner | Grants a member access to `/request_movie` and `/request_tv`, in every server. |
 | `/media revoke <member>` | The media owner | Removes that access. |
 | `/media list` | The media owner | Everyone currently allowed to request media. |
+| `/report_issue <title> <issue>` | On the media allowlist | Flags a problem with something already in the library (wrong audio language, a bad rip, missing subtitles). Logged to the media log channel; links back to the original requester when the title matches a past request. |
+| `/store list` | Anyone | Shows what's for sale, with price, stock, and description. |
+| `/store buy <item> [quantity]` | Anyone | Buys an item with cash. Cannot overdraft; blocked once stock runs out. |
+| `/store additem <name> <price> [description] [stock]` | Economy admin | Adds a new item. Leave `stock` unset for unlimited. |
+| `/store edititem <name> [price] [description] [stock] [unlimited_stock] [enabled]` | Economy admin | Changes any field on an existing item. |
+| `/store removeitem <name>` | Economy admin | Takes an item off sale. Disables rather than deletes — members who already own it keep it. |
+| `/inventory [member]` | Anyone | Shows what a member has bought from the store. Defaults to you. |
 
 Members cannot voluntarily go negative. Balance floors exist so **fines** and administrative
 removals can collect into debt; they are not an overdraft members may draw on themselves.
@@ -214,6 +227,15 @@ left unset, the first one Radarr/Sonarr reports, since most setups only have one
 TV requests always add the **whole series**: every season monitored, every missing episode
 searched. There is no per-season picker.
 
+**Private libraries stay invisible.** `RADARR_HIDDEN_ROOT_FOLDERS` and
+`SONARR_HIDDEN_ROOT_FOLDERS` (comma-separated root folder paths, e.g.
+`/opt/plextnas/Movies_Private`) are excluded from search results entirely —
+`domain.media.filter_hidden_root_folders` drops a matching title before anything is shown,
+rather than showing it with a disabled "already in library" button. Radarr/Sonarr's lookup
+endpoint returns the full existing record (folder included) for anything already added, and
+nothing folder-related for a title that isn't, so nothing not-yet-added can ever match a
+hidden folder — it has no folder yet. Leaving this unset searches every configured library.
+
 Access is gated by a single global allowlist (`media_allowlist` — no `guild_id` column), because
 one Radarr/Sonarr pair serves every server the bot is in. Only `MEDIA_OWNER_ID` can change who is
 on it, via `/media allow` and `/media revoke` — deliberately **not** `BOT_OWNER_IDS`, so economy
@@ -223,6 +245,24 @@ A background loop checks Radarr/Sonarr once a day for anything still pending and
 title has a file (movie) or every monitored episode does (series), replies in the channel the
 request was made in — not a DM, so the requester does not have to remember which show they asked
 for weeks ago.
+
+**Request and issue-report logging.** When `MEDIA_LOG_CHANNEL_ID` is set, every `/request_movie`/`/request_tv` posts a "who requested what" line there, and every `/report_issue` posts the reporter and their description — a dedicated channel rather than a DM, so the whole history stays visible and searchable instead of scattered across private messages. Leaving it unset does not break requests or reports; they just are not logged anywhere.
+
+**`/report_issue <title> <issue>`** lets anyone on the media allowlist flag a problem with something already in the library — wrong-language audio, a bad rip, missing subtitles — separate from requesting something new. It is free text on both fields rather than a picker, since most of the library predates this bot and was never requested through it; if the title matches a past request, the log message credits the original requester.
+
+### Store and inventory
+
+**Adding an item** is one command:
+
+```
+/store additem name:"VIP Flex" price:500 description:"Bragging rights, cosmetic only." stock:10
+```
+
+`name` must be unique per guild (case-insensitive). `price` is whole currency. `description` is optional, shown under the item in `/store list`, and renders Discord markdown since it's placed directly in an embed field. `stock` is optional and means unlimited when left unset — set it for anything genuinely limited. `/store edititem <name> [price] [description] [stock] [unlimited_stock] [enabled]` changes any of those later; leaving a field unset keeps its current value. Both commands autocomplete `name` against the guild's existing items.
+
+v1 *behavior* is deliberately cosmetic/inventory-only — a purchase moves cash and adds a row to a member's inventory, and nothing else happens automatically. Buying locks the buyer's account and the item row (in that order, always), so two members racing for the last unit of a limited item cannot both succeed. `/store removeitem` disables an item rather than deleting it — `/inventory` needs to keep reading correctly for whoever already owns it, and a hard delete would cascade their rows away.
+
+**Future-proofed for items with real effects.** Every `store_items` row already carries `effect_type` (a free-text tag, always `"none"` today) and `effect_data` (a JSON blob, always `{}` today). Nothing reads or writes anything but those defaults right now — no command exposes them — but the columns exist so that a later "this item grants a role" / "unlocks an activity" / "affects a game" milestone is a dispatcher and a taxonomy to design, not a migration and a backfill to run first. `db.store.create_item` already accepts `effect_type`/`effect_data` keyword arguments for whenever a command starts passing them. The ledger and audit trail this reuses (`store_purchase` entries) already support recording whatever that effect turns out to be, too.
 
 ### Narration
 
@@ -287,7 +327,7 @@ shows them to administrators. Everything else is visible to every member.
 
 | Visible to administrators | Visible to everyone |
 |---|---|
-| `/setup`, `/economy add`, `/economy remove`, `/income add`, `/income remove`, `/income list`, `/activity set`, `/activity enable`, `/activity disable`, `/activity list` | `/settings`, `/balance`, `/deposit`, `/withdraw`, `/pay`, `/collect`, `/work`, `/crime`, `/steal`, `/slut`, `/hungrygames`, `/ping` |
+| `/setup`, `/economy add`, `/economy remove`, `/income add`, `/income remove`, `/income list`, `/activity set`, `/activity enable`, `/activity disable`, `/activity list` | `/settings`, `/balance`, `/deposit`, `/withdraw`, `/pay`, `/collect`, `/work`, `/crime`, `/steal`, `/slut`, `/hungrygames`, `/ping`, `/store`, `/inventory` |
 
 Two things to know about this:
 
@@ -303,10 +343,14 @@ Currency creation, removal, and role income configuration accept the guild owner
 owner, and — as an interim measure until capability grants exist — anyone with Discord's
 Administrator permission. See the deviation note in `ECONOMY_SPEC.md`.
 
-`/request_movie`, `/request_tv`, and `/media` are visible to everyone for the same reason
-`/hungrygames` is: Discord's permission system has no concept of "one specific user id", so
-`MEDIA_OWNER_ID` and the media allowlist are checked in code instead. Running one without
-permission gets a plain refusal, not a hidden command.
+`/request_movie`, `/request_tv`, `/report_issue`, and `/media` are visible to everyone for the
+same reason `/hungrygames` is: Discord's permission system has no concept of "one specific user
+id", so `MEDIA_OWNER_ID` and the media allowlist are checked in code instead. Running one
+without permission gets a plain refusal, not a hidden command.
+
+`/store` is visible to everyone for the same reason `/hungrygames` is — `list` and `buy` need
+to stay visible to members, so `additem`/`edititem`/`removeitem` check economy admin authority
+in code instead of hiding the whole group.
 
 **If members cannot see commands they should**, check `@everyone` has **Use Application Commands**
 in Server Settings → Roles, and that no channel overwrite denies it. That permission is enforced by

@@ -9,13 +9,14 @@ the Hungry Games clock.
 
 from __future__ import annotations
 
+import uuid
 from collections.abc import Sequence
 from datetime import UTC, datetime
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from shadow_bot.db.models import MediaAllowlistEntry, MediaRequest
+from shadow_bot.db.models import MediaAllowlistEntry, MediaIssueReport, MediaRequest
 
 
 async def is_allowed(session: AsyncSession, user_id: int) -> bool:
@@ -106,3 +107,47 @@ async def pending_requests(session: AsyncSession) -> Sequence[MediaRequest]:
 async def mark_downloaded(session: AsyncSession, request: MediaRequest) -> None:
     request.status = "downloaded"
     request.notified_at = datetime.now(UTC)
+
+
+async def find_request_by_title(session: AsyncSession, title: str) -> MediaRequest | None:
+    """Best-effort link from an issue report back to the request that brought
+    the title in, so the original requester can be credited/notified.
+
+    Exact, case-insensitive match against the most recent matching request —
+    good enough for a small personal library. A title requested more than
+    once (a re-request after a bad rip) resolves to the newest one, which is
+    also the one most likely to be what is currently in the library.
+    """
+    return (
+        (
+            await session.execute(
+                select(MediaRequest)
+                .where(MediaRequest.title.ilike(title))
+                .order_by(MediaRequest.created_at.desc())
+            )
+        )
+        .scalars()
+        .first()
+    )
+
+
+async def create_issue_report(
+    session: AsyncSession,
+    *,
+    guild_id: int,
+    channel_id: int,
+    reported_by: int,
+    title: str,
+    description: str,
+    media_request_id: uuid.UUID | None,
+) -> MediaIssueReport:
+    report = MediaIssueReport(
+        guild_id=guild_id,
+        channel_id=channel_id,
+        reported_by=reported_by,
+        title=title,
+        description=description,
+        media_request_id=media_request_id,
+    )
+    session.add(report)
+    return report

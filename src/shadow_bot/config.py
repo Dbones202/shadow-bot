@@ -68,6 +68,13 @@ def _optional_int(name: str) -> int | None:
         raise ConfigurationError(f"{name} must be an integer") from exc
 
 
+def _string_set(name: str) -> frozenset[str]:
+    raw = os.getenv(name, "").strip()
+    if not raw:
+        return frozenset()
+    return frozenset(item.strip() for item in raw.split(",") if item.strip())
+
+
 def _boolean(name: str, default: bool) -> bool:
     raw = os.getenv(name)
     if raw is None:
@@ -97,14 +104,27 @@ class Settings:
     #: gatekeeping. A missing value just means /media allow refuses everyone,
     #: which is the safe default until Donovan sets it.
     media_owner_id: int | None
+    #: Channel that request-time ("who requested what") and issue-report
+    #: notifications post to. Global, like media_owner_id — one channel on
+    #: Donovan's own server, not one per guild. A missing value just means
+    #: those notifications are skipped; requests and reports still work.
+    media_log_channel_id: int | None
     radarr_url: str | None
     radarr_api_key: str | None
     radarr_quality_profile_id: int | None
     radarr_root_folder: str | None
+    #: Root folder paths (as Radarr reports them, e.g. /opt/plextnas/Movies_Private)
+    #: to exclude entirely from /request_movie search results. A title already
+    #: sitting in one of these is dropped from the results before anything is
+    #: shown, not just hidden behind an "already in library" note — Donovan's
+    #: private library should not be discoverable through the bot at all.
+    radarr_hidden_root_folders: frozenset[str]
     sonarr_url: str | None
     sonarr_api_key: str | None
     sonarr_quality_profile_id: int | None
     sonarr_root_folder: str | None
+    #: Same idea as radarr_hidden_root_folders, for Sonarr series.
+    sonarr_hidden_root_folders: frozenset[str]
 
     @classmethod
     def from_environment(cls) -> Settings:
@@ -127,12 +147,15 @@ class Settings:
             enable_message_content_intent=_boolean("ENABLE_MESSAGE_CONTENT_INTENT", False),
             log_level=os.getenv("LOG_LEVEL", "INFO").upper(),
             media_owner_id=_optional_snowflake("MEDIA_OWNER_ID"),
+            media_log_channel_id=_optional_snowflake("MEDIA_LOG_CHANNEL_ID"),
             radarr_url=_optional_str("RADARR_URL"),
             radarr_api_key=_optional_str("RADARR_API_KEY"),
             radarr_quality_profile_id=_optional_int("RADARR_QUALITY_PROFILE_ID"),
             radarr_root_folder=_optional_str("RADARR_ROOT_FOLDER"),
+            radarr_hidden_root_folders=_string_set("RADARR_HIDDEN_ROOT_FOLDERS"),
             sonarr_url=_optional_str("SONARR_URL"),
             sonarr_api_key=_optional_str("SONARR_API_KEY"),
             sonarr_quality_profile_id=_optional_int("SONARR_QUALITY_PROFILE_ID"),
             sonarr_root_folder=_optional_str("SONARR_ROOT_FOLDER"),
+            sonarr_hidden_root_folders=_string_set("SONARR_HIDDEN_ROOT_FOLDERS"),
         )

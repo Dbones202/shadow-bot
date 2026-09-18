@@ -27,6 +27,7 @@ EXTENSIONS: tuple[str, ...] = (
     "shadow_bot.cogs.activities",
     "shadow_bot.cogs.games",
     "shadow_bot.cogs.media",
+    "shadow_bot.cogs.store",
 )
 
 

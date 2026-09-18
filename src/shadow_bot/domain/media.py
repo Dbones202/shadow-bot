@@ -26,6 +26,12 @@ class MediaCandidate:
     #: derived, rather than trusting a separate flag either API might change.
     external_id: int
     already_in_library: bool
+    #: Set only for a title already in the library — Radarr/Sonarr's lookup
+    #: returns the full existing record (including its folder) for anything
+    #: already added, and nothing folder-related for a title that isn't.
+    #: `None` for anything not yet added, which can never be in a hidden
+    #: folder because it has no folder at all yet.
+    root_folder_path: str | None
 
     @property
     def imdb_url(self) -> str | None:
@@ -62,6 +68,7 @@ def _candidate(raw: dict) -> MediaCandidate:
         tvdb_id=raw.get("tvdbId") or None,
         external_id=external_id,
         already_in_library=bool(external_id),
+        root_folder_path=raw.get("rootFolderPath") or None,
     )
 
 
@@ -121,3 +128,30 @@ def series_is_downloaded(record: dict) -> bool:
     episode_count = stats.get("episodeCount") or 0
     file_count = stats.get("episodeFileCount") or 0
     return episode_count > 0 and file_count >= episode_count
+
+
+def _normalize_path(path: str) -> str:
+    """Loose enough to match `/movies` against `/movies/` without pulling in a
+    real path library — Radarr/Sonarr run on Linux, so this is not chasing
+    Windows-style separators or drive letters."""
+    return path.rstrip("/").lower()
+
+
+def filter_hidden_root_folders(
+    candidates: list[MediaCandidate], hidden_root_folders: frozenset[str]
+) -> list[MediaCandidate]:
+    """Drop any candidate already sitting in a root folder the owner has
+    marked hidden — e.g. a private library that should never be searchable,
+    requestable, or even show up as "already in library" through the bot.
+
+    A candidate not yet in the library has no `root_folder_path` at all, so
+    it can never match here — it isn't sitting anywhere yet.
+    """
+    if not hidden_root_folders:
+        return candidates
+    hidden = {_normalize_path(p) for p in hidden_root_folders}
+    return [
+        c
+        for c in candidates
+        if c.root_folder_path is None or _normalize_path(c.root_folder_path) not in hidden
+    ]

@@ -24,7 +24,12 @@ from discord.ext import commands, tasks
 
 from shadow_bot.db import media as media_db
 from shadow_bot.db.models import MediaRequest
-from shadow_bot.domain.media import MediaCandidate, movie_is_downloaded, series_is_downloaded
+from shadow_bot.domain.media import (
+    MediaCandidate,
+    filter_hidden_root_folders,
+    movie_is_downloaded,
+    series_is_downloaded,
+)
 from shadow_bot.services.radarr import RadarrClient
 from shadow_bot.services.sonarr import SonarrClient
 
@@ -206,6 +211,18 @@ class MediaCog(commands.Cog):
             )
             return
 
+        # A title already sitting in a hidden root folder (e.g. a private
+        # library) is dropped entirely before anything is shown — not left
+        # visible as "already in library". Whoever is searching should not be
+        # able to tell it exists at all.
+        settings = self.bot.settings
+        hidden = (
+            settings.radarr_hidden_root_folders
+            if media_type == "movie"
+            else settings.sonarr_hidden_root_folders
+        )
+        candidates = filter_hidden_root_folders(candidates, hidden)
+
         if not candidates:
             await interaction.followup.send(f"No results for **{title}**.", ephemeral=True)
             return
@@ -282,6 +299,73 @@ class MediaCog(commands.Cog):
             f"I'll reply in this channel once it's downloaded.",
             ephemeral=True,
         )
+
+        channel = await self._log_channel()
+        if channel is not None:
+            kind = "movie" if media_type == "movie" else "TV show"
+            await channel.send(
+                f"\U0001F4E5 {interaction.user.mention} requested the {kind} "
+                f"**{candidate.display_title}**."
+            )
+
+    # --- Issue reports -------------------------------------------------------
+
+    @app_commands.command(
+        name="report_issue", description="Report a problem with something already in Plex"
+    )
+    @app_commands.describe(
+        title="The movie or TV show title", issue="What's wrong with it, e.g. wrong audio language"
+    )
+    async def report_issue(self, interaction: discord.Interaction, title: str, issue: str) -> None:
+        async with self.bot.database.sessions() as session:
+            allowed = await media_db.is_allowed(session, interaction.user.id)
+        if not allowed:
+            await interaction.response.send_message(
+                "You're not on the list of people who can report media issues.", ephemeral=True
+            )
+            return
+
+        assert interaction.guild_id is not None
+        async with self.bot.database.sessions.begin() as session:
+            matched = await media_db.find_request_by_title(session, title)
+            await media_db.create_issue_report(
+                session,
+                guild_id=interaction.guild_id,
+                channel_id=interaction.channel_id,
+                reported_by=interaction.user.id,
+                title=title,
+                description=issue,
+                media_request_id=matched.id if matched else None,
+            )
+
+        await interaction.response.send_message(
+            f"Reported an issue with **{title}**. Thanks — I've flagged it.", ephemeral=True
+        )
+
+        channel = await self._log_channel()
+        if channel is not None:
+            lines = [f"\u26A0\uFE0F {interaction.user.mention} reported an issue with "
+                     f"**{title}**:", issue]
+            if matched is not None and matched.requested_by != interaction.user.id:
+                lines.append(f"-# Originally requested by <@{matched.requested_by}>")
+            await channel.send("\n".join(lines))
+
+    async def _log_channel(self) -> discord.abc.Messageable | None:
+        """The dedicated channel for "who requested what" and issue-report
+        notifications, if one is configured. A missing/unreachable channel is
+        not an error — requests and reports still work, they just are not
+        logged anywhere until MEDIA_LOG_CHANNEL_ID is set correctly."""
+        channel_id = self.bot.settings.media_log_channel_id
+        if channel_id is None:
+            return None
+        channel = self.bot.get_channel(channel_id)
+        if channel is None:
+            try:
+                channel = await self.bot.fetch_channel(channel_id)
+            except discord.HTTPException:
+                LOGGER.warning("Could not reach media log channel %s", channel_id)
+                return None
+        return channel
 
     # --- Background pacing ---------------------------------------------------
 
